@@ -363,16 +363,20 @@ $partners = $partners ?? [];
 
 <!-- 6. RUANG KHIDMAH -->
 <!-- Background Elegan: Radial gradient memusat di atas, memudar ke hitam pekat di bawah -->
-<section class="py-5 position-relative" id="khidmah" style="background: radial-gradient(ellipse at 50% 0%, #3a0000 0%, #0a0a0a 60%, #000000 100%); overflow: hidden;">
+<!-- 6. RUANG KHIDMAH (DENGAN BACKGROUND IMAGE & OVERLAY) -->
+<section class="py-5 position-relative text-white" id="khidmah" style="background: url('<?= base_url('uploads/reference/exact/bamusi-hero-community.jpg'); ?>') no-repeat center center / cover; overflow: hidden;">
+
+    <!-- Overlay Gradasi Gelap & Marun (Kiri pekat agar teks terbaca, kanan tembus pandang melihat foto) -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, #1f0202 0%, rgba(31,2,2,0.95) 35%, rgba(10,10,10,0.75) 70%, rgba(10,10,10,0.5) 100%); z-index: 1;"></div>
 
     <!-- Dekorasi aksen garis tipis menyala di batas atas section -->
-    <div class="position-absolute top-0 start-0 w-100" style="height: 1px; background: linear-gradient(90deg, transparent, rgba(204,0,0,0.6), transparent);"></div>
+    <div class="position-absolute top-0 start-0 w-100" style="height: 1px; background: linear-gradient(90deg, transparent, rgba(204,0,0,0.8), transparent); z-index: 2;"></div>
 
     <!-- Konten Utama -->
-    <div class="container-fluid px-4 px-lg-5 py-lg-5 py-4 position-relative" style="z-index: 1;">
+    <div class="container-fluid px-4 px-lg-5 py-lg-5 py-4 position-relative" style="z-index: 2;">
 
         <div class="row mb-5">
-            <div class="col-lg-8">
+            <div class="col-lg-7">
                 <span class="eyebrow-text text-uppercase fw-bold" style="color: #ff4d4d; letter-spacing: 2px; font-size: 0.85rem;">
                     Ruang Khidmah
                 </span>
@@ -380,8 +384,8 @@ $partners = $partners ?? [];
                     Kerja yang membumi,<br>gagasan yang meluas.
                 </h2>
                 <!-- Garis pemisah tipis dan deskripsi -->
-                <div class="pt-4 mt-2" style="border-top: 1px solid rgba(255,255,255,0.1); max-width: 800px;">
-                    <p class="fs-5 mb-0 text-white opacity-75 lh-base">
+                <div class="pt-4 mt-2" style="border-top: 1px solid rgba(255,255,255,0.2); max-width: 700px;">
+                    <p class="fs-5 mb-0 text-white opacity-85 lh-base">
                         Ruang Khidmah adalah etalase kegiatan bidang-bidang BAMUSI — dari dakwah kebangsaan, pesantren, kemanusiaan, keluarga, hingga literasi digital.
                     </p>
                 </div>
@@ -393,16 +397,16 @@ $partners = $partners ?? [];
             <?php if (!empty($programs)): ?>
                 <?php foreach (array_slice($programs, 0, 5) as $i => $program): ?>
                     <div class="col">
-                        <!-- Kartu Interaktif -->
+                        <!-- Kartu Interaktif dengan efek Glassmorphism di atas background foto -->
                         <a href="#" class="text-decoration-none d-block h-100">
                             <article class="p-4 rounded-4 position-relative h-100 d-flex flex-column overflow-hidden"
-                                style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(10px); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);"
-                                onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.transform='translateY(-8px)'; this.style.borderColor='rgba(255,255,255,0.2)'; this.querySelector('.watermark-letter').style.opacity='0.08'; this.querySelector('.arrow-icon').style.transform='translate(3px, -3px)';"
-                                onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.06)'; this.querySelector('.watermark-letter').style.opacity='0.02'; this.querySelector('.arrow-icon').style.transform='translate(0, 0)';">
+                                style="background: rgba(20, 5, 5, 0.65); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(12px); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);"
+                                onmouseover="this.style.background='rgba(150, 0, 0, 0.4)'; this.style.transform='translateY(-8px)'; this.style.borderColor='rgba(255,255,255,0.3)'; this.querySelector('.watermark-letter').style.opacity='0.12'; this.querySelector('.arrow-icon').style.transform='translate(3px, -3px)';"
+                                onmouseout="this.style.background='rgba(20, 5, 5, 0.65)'; this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.12)'; this.querySelector('.watermark-letter').style.opacity='0.03'; this.querySelector('.arrow-icon').style.transform='translate(0, 0)';">
 
                                 <!-- Watermark Huruf A, B, C (Besar dan samar di belakang teks) -->
                                 <span class="watermark-letter position-absolute fw-black"
-                                    style="font-size: 8rem; right: -10px; bottom: -20px; opacity: 0.02; color: #ffffff; line-height: 1; pointer-events: none; transition: opacity 0.4s ease;">
+                                    style="font-size: 8rem; right: -10px; bottom: -20px; opacity: 0.03; color: #ffffff; line-height: 1; pointer-events: none; transition: opacity 0.4s ease;">
                                     <?= chr(65 + $i); ?>
                                 </span>
 
@@ -421,7 +425,7 @@ $partners = $partners ?? [];
                                         0<?= $i + 1; ?>
                                     </span>
                                     <div class="arrow-icon text-white rounded-circle d-flex align-items-center justify-content-center"
-                                        style="width: 35px; height: 35px; background: rgba(255,255,255,0.1); transition: transform 0.3s ease;">
+                                        style="width: 35px; height: 35px; background: rgba(255,255,255,0.15); transition: transform 0.3s ease;">
                                         <span class="fs-6">↗</span>
                                     </div>
                                 </div>
