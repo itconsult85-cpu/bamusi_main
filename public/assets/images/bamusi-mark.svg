@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">BAMUSI</title><desc id="desc">Monogram B dengan ornamen geometris Islam</desc>
+  <rect width="96" height="96" rx="24" fill="#0b4032"/>
+  <path d="M48 12 83 32v32L48 84 13 64V32z" fill="none" stroke="#d7ad5b" stroke-width="3"/>
+  <path d="M31 28h18c12 0 18 5 18 13 0 5-3 9-8 11 6 2 10 6 10 13 0 8-7 13-20 13H31zm12 9v11h6c4 0 6-2 6-5s-2-6-6-6zm0 20v12h7c5 0 8-2 8-6s-3-6-8-6z" fill="#fffdf8"/>
+  <circle cx="48" cy="12" r="3" fill="#d7ad5b"/><circle cx="83" cy="32" r="3" fill="#d7ad5b"/><circle cx="83" cy="64" r="3" fill="#d7ad5b"/><circle cx="48" cy="84" r="3" fill="#d7ad5b"/><circle cx="13" cy="64" r="3" fill="#d7ad5b"/><circle cx="13" cy="32" r="3" fill="#d7ad5b"/>
+</svg>
