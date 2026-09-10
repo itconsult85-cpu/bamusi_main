@@ -11,11 +11,16 @@ class CmsItemModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
+
+    // KOLOM _en SUDAH DITAMBAHKAN DI SINI AGAR DIIZINKAN DISIMPAN
     protected $allowedFields    = [
         'kind',
         'title',
+        'title_en',       // Kolom terjemahan judul
         'summary',
+        'summary_en',     // Kolom terjemahan ringkasan
         'body',
+        'body_en',        // Kolom terjemahan isi
         'url',
         'image_url',
         'category',

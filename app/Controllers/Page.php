@@ -1,0 +1,146 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\PageModel;
+use App\Models\BoardMemberModel;
+
+class Page extends BaseController
+{
+    protected $pageModel;
+    protected $boardModel;
+
+    public function __construct()
+    {
+        $this->pageModel  = new PageModel();
+        $this->boardModel = new BoardMemberModel();
+    }
+
+    /**
+     * Menampilkan halaman statis berdasarkan slug.
+     * URL: /{slug}   (misal /sejarah, /struktur-pengurus)
+     */
+    public function show($slug = null)
+    {
+        if (empty($slug)) {
+            return view('frontend/404');
+        }
+
+        $page = $this->pageModel
+            ->where('slug', $slug)
+            ->where('published', 1)
+            ->first();
+
+        if (!$page) {
+            return view('frontend/404');
+        }
+
+        $db = \Config\Database::connect();
+
+        // Data umum (settings + menu)
+        $settings = array_column(
+            $db->table('site_settings')->get()->getResultArray(),
+            'setting_value',
+            'setting_key'
+        );
+
+        // Menu navigasi (pages yang show_in_menu = 1)
+        $navMenu = $this->pageModel
+            ->where('published', 1)
+            ->where('show_in_menu', 1)
+            ->orderBy('sort_order', 'ASC')
+            ->findAll();
+
+        $data = [
+            'page'     => $page,
+            'settings' => $settings,
+            'navMenu'  => $navMenu,
+            'locale'   => session()->get('lang') ?? 'id',
+        ];
+
+        // Khusus halaman struktur-pengurus → ambil board members
+        if ($slug === 'struktur-pengurus') {
+            $rows = $this->boardModel
+                ->where('published', 1)
+                ->orderBy('group_order', 'ASC')
+                ->orderBy('member_order', 'ASC')
+                ->orderBy('sort_order', 'ASC')
+                ->findAll();
+
+            // Kelompokkan
+            $groups = [];
+            foreach ($rows as $row) {
+                $key = $row['group_name'] ?: 'Lainnya';
+                if (!isset($groups[$key])) {
+                    $groups[$key] = [
+                        'name'    => $key,
+                        'name_en' => $row['group_name_en'] ?: $key,
+                        'order'   => (int)($row['group_order'] ?? 999),
+                        'members' => [],
+                    ];
+                }
+                $groups[$key]['members'][] = $row;
+            }
+            usort($groups, fn($a, $b) => $a['order'] <=> $b['order']);
+
+            $data['groups'] = $groups;
+            return view('frontend/page_struktur', $data);
+        }
+
+        // Halaman statis biasa
+        return view('frontend/page', $data);
+    }
+
+    /**
+     * Listing semua halaman statis (opsional).
+     * URL: /halaman
+     */
+    public function index()
+    {
+        $pages = $this->pageModel
+            ->where('published', 1)
+            ->orderBy('sort_order', 'ASC')
+            ->findAll();
+
+        $db = \Config\Database::connect();
+        $settings = array_column(
+            $db->table('site_settings')->get()->getResultArray(),
+            'setting_value',
+            'setting_key'
+        );
+
+        return view('frontend/page_list', [
+            'pages'    => $pages,
+            'settings' => $settings,
+            'locale'   => session()->get('lang') ?? 'id',
+        ]);
+    }
+
+    protected function buildMenu()
+    {
+        $db = \Config\Database::connect();
+        $all = $db->table('pages')
+            ->where('published', 1)
+            ->where('show_in_menu', 1)
+            ->orderBy('sort_order', 'ASC')
+            ->get()->getResultArray();
+
+        $parents = [];
+        $children = [];
+
+        foreach ($all as $row) {
+            if (empty($row['parent_id'])) {
+                $parents[$row['id']] = $row;
+                $parents[$row['id']]['children'] = [];
+            } else {
+                $children[$row['parent_id']][] = $row;
+            }
+        }
+        foreach ($children as $parentId => $kids) {
+            if (isset($parents[$parentId])) {
+                $parents[$parentId]['children'] = $kids;
+            }
+        }
+        return array_values($parents);
+    }
+}

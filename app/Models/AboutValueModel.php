@@ -6,8 +6,6 @@ use CodeIgniter\Model;
 
 class AboutValueModel extends Model
 {
-    protected $table            = 'about_values';
-    protected $primaryKey       = 'id';
-    protected $allowedFields    = ['label', 'description', 'sort_order', 'published'];
-    protected $useTimestamps    = true;
+    protected $table = 'about_values';
+    protected $allowedFields = ['label', 'label_en', 'description', 'description_en', 'sort_order', 'published'];
 }
