@@ -406,3 +406,13 @@ body {
   outline: none;
   border-bottom-color: var(--bamusi-red);
 }
+
+/* --- Ruang Khidmah - Curved Banner --- */
+.curved-banner {
+  border-bottom-right-radius: 120px;
+}
+@media (max-width: 992px) {
+  .curved-banner {
+    border-bottom-right-radius: 60px;
+  }
+}

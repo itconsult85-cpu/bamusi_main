@@ -361,45 +361,48 @@ $partners = $partners ?? [];
     </div>
 </section>
 
-<!-- 6. RUANG KHIDMAH -->
-<!-- Background Elegan: Radial gradient memusat di atas, memudar ke hitam pekat di bawah -->
-<!-- 6. RUANG KHIDMAH (DENGAN BACKGROUND IMAGE & OVERLAY) -->
-<section class="py-5 position-relative text-white" id="khidmah" style="background: url('<?= base_url('uploads/reference/exact/bamusi-hero-community.jpg'); ?>') no-repeat center center / cover; overflow: hidden;">
+<!-- 6. RUANG KHIDMAH (POSISI BACKGROUND BOTTOM RIGHT & TAMBAHAN TINGGI) -->
+<section class="py-0 position-relative" id="khidmah" style="background-color: #0a0a0a;">
 
-    <!-- Overlay Gradasi Gelap & Marun (Kiri pekat agar teks terbaca, kanan tembus pandang melihat foto) -->
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, #1f0202 0%, rgba(31,2,2,0.95) 35%, rgba(10,10,10,0.75) 70%, rgba(10,10,10,0.5) 100%); z-index: 1;"></div>
+    <!-- Bagian Atas: Background diatur "right bottom" dan ditambah min-height agar foto tidak terpotong di bawah -->
+    <div class="position-relative text-white py-5 curved-banner overflow-hidden" style="background: url('<?= base_url('uploads/reference/bamusi-khidmah-community.jpg'); ?>') no-repeat right bottom / cover; min-height: 550px; display: flex; align-items: center;">
 
-    <!-- Dekorasi aksen garis tipis menyala di batas atas section -->
-    <div class="position-absolute top-0 start-0 w-100" style="height: 1px; background: linear-gradient(90deg, transparent, rgba(204,0,0,0.8), transparent); z-index: 2;"></div>
+        <!-- Overlay Gradasi: Pekat di kiri, transparan di kanan -->
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, #3a0202 0%, #3a0202 40%, rgba(58,2,2,0.85) 60%, rgba(0,0,0,0.3) 100%);"></div>
 
-    <!-- Konten Utama -->
-    <div class="container-fluid px-4 px-lg-5 py-lg-5 py-4 position-relative" style="z-index: 2;">
-
-        <div class="row mb-5">
-            <div class="col-lg-7">
-                <span class="eyebrow-text text-uppercase fw-bold" style="color: #ff4d4d; letter-spacing: 2px; font-size: 0.85rem;">
-                    Ruang Khidmah
-                </span>
-                <h2 class="fw-bolder mt-3 mb-4 text-white" style="font-size: clamp(2.5rem, 4.5vw, 4.5rem); letter-spacing:-1.5px; line-height: 1.1;">
-                    Kerja yang membumi,<br>gagasan yang meluas.
-                </h2>
-                <!-- Garis pemisah tipis dan deskripsi -->
-                <div class="pt-4 mt-2" style="border-top: 1px solid rgba(255,255,255,0.2); max-width: 700px;">
-                    <p class="fs-5 mb-0 text-white opacity-85 lh-base">
+        <div class="container-fluid px-4 px-lg-5 py-5 position-relative w-100" style="z-index: 2;">
+            <div class="row align-items-center">
+                <div class="col-lg-7 py-4">
+                    <span class="eyebrow-text text-uppercase fw-bold" style="color: #ff9999; letter-spacing: 2px; font-size: 0.85rem;">
+                        Ruang Khidmah
+                    </span>
+                    <h2 class="fw-bolder mt-3 mb-4 text-white" style="font-size: clamp(2.5rem, 4.5vw, 4.5rem); letter-spacing:-1.5px; line-height: 1.1;">
+                        Kerja yang membumi,<br>gagasan yang meluas.
+                    </h2>
+                    <p class="fs-5 mb-4 text-white opacity-85 lh-base pe-lg-5">
                         Ruang Khidmah adalah etalase kegiatan bidang-bidang BAMUSI — dari dakwah kebangsaan, pesantren, kemanusiaan, keluarga, hingga literasi digital.
                     </p>
+
+                    <!-- Tombol Jelajahi Bidang -->
+                    <a href="#daftar-bidang" class="btn bg-white text-dark rounded-pill fw-bold px-4 py-3 mt-2 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.85rem;" onclick="document.getElementById('daftar-bidang').scrollIntoView({behavior: 'smooth'}); return false;">
+                        Jelajahi Bidang
+                        <span class="fs-6">↘</span>
+                    </a>
                 </div>
+                <div class="col-lg-5 d-none d-lg-block"></div>
             </div>
         </div>
+    </div>
 
-        <!-- Grid 5 Kolom (Responsif: 1 di HP, 2 di Tablet, 3 di Laptop, 5 di Layar Lebar) -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-4 mt-4">
+    <!-- Bagian Bawah: Grid Card dengan Background Gelap Sesuai Style Sebelumnya -->
+    <div class="container-fluid px-4 px-lg-5 py-5" id="daftar-bidang" style="background: radial-gradient(ellipse at 50% 0%, #3a0000 0%, #0a0a0a 60%, #000000 100%);">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-4 py-4">
             <?php if (!empty($programs)): ?>
                 <?php foreach (array_slice($programs, 0, 5) as $i => $program): ?>
                     <div class="col">
-                        <!-- Kartu Interaktif dengan efek Glassmorphism di atas background foto -->
+                        <!-- Kartu Interaktif dengan Style Background Sebelumnya -->
                         <a href="#" class="text-decoration-none d-block h-100">
-                            <article class="p-4 rounded-4 position-relative h-100 d-flex flex-column overflow-hidden"
+                            <article class="p-4 rounded-4 position-relative h-100 d-flex flex-column overflow-hidden text-white"
                                 style="background: rgba(20, 5, 5, 0.65); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(12px); transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);"
                                 onmouseover="this.style.background='rgba(150, 0, 0, 0.4)'; this.style.transform='translateY(-8px)'; this.style.borderColor='rgba(255,255,255,0.3)'; this.querySelector('.watermark-letter').style.opacity='0.12'; this.querySelector('.arrow-icon').style.transform='translate(3px, -3px)';"
                                 onmouseout="this.style.background='rgba(20, 5, 5, 0.65)'; this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.12)'; this.querySelector('.watermark-letter').style.opacity='0.03'; this.querySelector('.arrow-icon').style.transform='translate(0, 0)';">
@@ -410,7 +413,7 @@ $partners = $partners ?? [];
                                     <?= chr(65 + $i); ?>
                                 </span>
 
-                                <!-- Konten Teks (z-index 1 agar berada di atas watermark) -->
+                                <!-- Konten Teks -->
                                 <h3 class="fs-5 fw-bold mb-3 text-white position-relative" style="z-index: 1;">
                                     <?= esc($program['name']); ?>
                                 </h3>
@@ -436,91 +439,83 @@ $partners = $partners ?? [];
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
-
     </div>
+
 </section>
 
-<!-- 7. PROGRAM UNGGULAN -->
-<!-- Tambahkan position-relative dan overflow-hidden agar ornamen SVG tidak keluar jalur -->
-<section class="py-5 bg-white position-relative overflow-hidden" id="program-unggulan">
+<!-- 7. PROGRAM UNGGULAN (SPLIT LAYOUT GAYA VIDEO - REVISI ORNAMEN & LIST) -->
+<section class="bg-light" id="program-unggulan">
+    <!-- Container p-0 agar sisi kiri layar menempel rapat tanpa celah -->
+    <div class="container-fluid p-0">
+        <div class="row g-0 align-items-stretch">
 
-    <!-- Ornamen Latar Belakang (Pola Geometris Islam / Bintang 8) -->
-    <!-- Opacity 0.04 (sangat samar) dan warna stroke merah -->
-    <div class="position-absolute w-100 h-100 top-0 start-0" style="opacity: 0.04; pointer-events: none; z-index: 0;">
-        <svg width="100%" height="100%">
-            <defs>
-                <pattern id="islamic-pattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
-                    <!-- Pola belah ketupat -->
-                    <path d="M40 0 L80 40 L40 80 L0 40 Z" fill="none" stroke="var(--bamusi-red, #c8102e)" stroke-width="1.5" />
-                    <!-- Pola bujur sangkar -->
-                    <path d="M20 20 L60 20 L60 60 L20 60 Z" fill="none" stroke="var(--bamusi-red, #c8102e)" stroke-width="1.5" />
-                    <!-- Bintang 8 kecil di tengah -->
-                    <path d="M40 28 L43 37 L52 40 L43 43 L40 52 L37 43 L28 40 L37 37 Z" fill="var(--bamusi-red, #c8102e)" />
-                </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#islamic-pattern)" />
-        </svg>
-    </div>
+            <!-- Kolom Kiri: Gambar Rapat Tepi Kiri & Atas -->
+            <div class="col-lg-6 position-relative pe-lg-4 pb-4 pb-lg-0 d-flex">
 
-    <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
+                <!-- Wrapper Gambar (Melengkung di Kanan Atas) -->
+                <div class="position-relative overflow-hidden w-100" style="border-top-right-radius: 120px;">
 
-        <!-- Header Section -->
-        <div class="row align-items-end pb-4 mb-5" style="border-bottom: 2px solid var(--bamusi-dark, #212529);">
-            <div class="col-lg-4 mb-3 mb-lg-0">
-                <span class="eyebrow-text text-uppercase fw-bold" style="color: var(--bamusi-red, #c8102e); letter-spacing: 2px; font-size: 0.85rem;">
-                    Program Unggulan
-                </span>
+                    <!-- Gambar -->
+                    <img src="<?= base_url('uploads/reference/exact/bamusi-pesantren-kebangsaan.jpg'); ?>" alt="Program Unggulan" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 550px;">
+
+                    <!-- Ornamen Garis Putih (DI DALAM GAMBAR) -->
+                    <!-- Posisi inset: jarak 30px dari atas dan kanan, dengan border hanya di sisi atas & kanan -->
+                    <div class="position-absolute" style="top: 30px; right: 30px; bottom: -10px; left: -10px; border-top: 2px solid rgba(255,255,255,0.9); border-right: 2px solid rgba(255,255,255,0.9); border-top-right-radius: 90px; z-index: 2; pointer-events: none;"></div>
+
+                </div>
+
             </div>
-            <div class="col-lg-8">
-                <h2 class="fw-bolder mb-0 text-dark" style="font-size: clamp(2.5rem, 4vw, 3.5rem); letter-spacing: -1.5px; line-height: 1;">
-                    Pesantren Kebangsaan
-                </h2>
-            </div>
-        </div>
 
-        <!-- Grid Program (3 Kolom) -->
-        <div class="row g-4 g-lg-5 mt-2">
-            <?php for ($i = 1; $i <= 3; $i++):
-                $title = $texts['home.feature_item_' . $i . '_title'] ?? '';
-                $body = $texts['home.feature_item_' . $i . '_body'] ?? '';
-                if ($title !== ''): ?>
+            <!-- Kolom Kanan: Teks Pengantar & List Program -->
+            <div class="col-lg-6 py-5 px-4 px-lg-5 d-flex align-items-center">
+                <div class="ps-lg-5 w-100" style="max-width: 650px;">
 
-                    <div class="col-lg-4">
-                        <!-- Kartu Editorial (Dilengkapi efek hover transisi ringan) -->
-                        <article class="d-flex flex-column h-100 p-4 rounded-4 bg-white"
-                            style="border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: transform 0.3s ease, box-shadow 0.3s ease;"
-                            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(200,0,0,0.08)';"
-                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.02)';">
+                    <!-- Deskripsi Pengantar (Besar dan Tipis) -->
+                    <p class="text-dark mb-5 lh-base" style="font-size: clamp(1.3rem, 2vw, 1.7rem); font-weight: 400;">
+                        <?= esc($texts['home.feature_intro'] ?? 'Untuk mempertemukan tradisi pesantren, wawasan kebangsaan, dan bahasa politik yang santun namun terang.'); ?>
+                    </p>
 
-                            <div class="d-flex gap-4 align-items-start">
-                                <!-- Penomoran (Merah) -->
-                                <span class="fw-bolder" style="font-size: 3rem; color: var(--bamusi-red, #c8102e); line-height: 0.8;">
-                                    <?= str_pad((string)$i, 2, '0', STR_PAD_LEFT); ?>
-                                </span>
+                    <!-- Daftar Program -->
+                    <div class="d-flex flex-column">
+                        <?php for ($i = 1; $i <= 3; $i++):
+                            $title = $texts['home.feature_item_' . $i . '_title'] ?? '';
+                            $body = $texts['home.feature_item_' . $i . '_body'] ?? '';
+                            if ($title !== ''): ?>
 
-                                <!-- Konten Teks -->
-                                <div>
-                                    <h3 class="fw-bold fs-4 mb-3 text-dark" style="letter-spacing: -0.5px;">
-                                        <?= esc($title); ?>
-                                    </h3>
-                                    <p class="text-secondary mb-0 lh-base" style="font-size: 0.95rem;">
-                                        <?= esc($body); ?>
-                                    </p>
+                                <!-- Item Program dengan Garis Pemisah (Border Top) -->
+                                <div class="d-flex align-items-start py-4 border-top" style="border-color: #dcdcdc !important;">
+
+                                    <!-- Nomor Urut -->
+                                    <div class="me-4" style="color: var(--bamusi-red, #cc0000); min-width: 40px; margin-top: 2px;">
+                                        <span class="fs-5 fw-medium" style="letter-spacing: 1px;">
+                                            <?= str_pad((string)$i, 2, '0', STR_PAD_LEFT); ?>
+                                        </span>
+                                    </div>
+
+                                    <!-- Konten Teks -->
+                                    <div>
+                                        <h3 class="fw-bold fs-5 mb-2 text-dark">
+                                            <?= esc($title); ?>
+                                        </h3>
+                                        <p class="text-secondary mb-0" style="font-size: 0.95rem; line-height: 1.6;">
+                                            <?= esc($body); ?>
+                                        </p>
+                                    </div>
+
                                 </div>
-                            </div>
 
-                        </article>
+                        <?php endif;
+                        endfor; ?>
                     </div>
 
-            <?php endif;
-            endfor; ?>
-        </div>
+                </div>
+            </div>
 
+        </div>
     </div>
 </section>
 
 <!-- 8. AGENDA KEGIATAN -->
-<!-- Background diganti dengan gradasi merah gelap yang elegan & tidak monoton -->
 <section class="py-5 text-white position-relative overflow-hidden" id="agenda" style="background: linear-gradient(135deg, #8a0000 0%, #4a0000 50%, #200000 100%);">
 
     <!-- Dekorasi aksen cahaya halus (glow) di latar belakang -->
@@ -687,106 +682,342 @@ $partners = $partners ?? [];
     </div>
 </section>
 
-<!-- 10. KOLOM TULISAN -->
-<section class="py-5 bg-light" id="tulisan">
-    <div class="container-fluid px-4 px-lg-5 py-5 border-thick-top border-thick-bottom">
-        <h2 class="fw-bolder text-center mb-5" style="font-size: clamp(2rem, 3vw, 3.5rem); letter-spacing:-1px; color: var(--bamusi-dark);">Gagasan untuk Islam,<br>demokrasi, dan Indonesia.</h2>
-        <div class="row g-0 border-thick-top">
-            <?php for ($i = 1; $i <= 4; $i++): $topic = $texts['home.writing_topic_' . $i] ?? '';
+<!-- 10. KOLOM TULISAN (DENGAN GRID LINK INTERAKTIF) -->
+<section class="py-5 bg-light position-relative" id="tulisan" style="overflow: hidden;">
+
+    <!-- Ornamen Lengkungan Transparan (Di kanan bawah) -->
+    <div class="position-absolute" style="bottom: -20px; right: 8%; width: 180px; height: 220px; border: 30px solid rgba(204,0,0,0.06); border-bottom: 0; border-top-left-radius: 100px; border-top-right-radius: 100px; z-index: 0; pointer-events: none;"></div>
+
+    <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
+
+        <!-- Bagian Atas: Split Layout -->
+        <div class="row mb-5 align-items-center">
+
+            <div class="col-lg-6 mb-4 mb-lg-0 pe-lg-5">
+                <span class="text-uppercase fw-bold d-block mb-3" style="color: var(--bamusi-red, #cc0000); letter-spacing: 2px; font-size: 0.8rem;">
+                    <?= esc($texts['home.writing_label'] ?? 'Kolom Tulisan'); ?>
+                </span>
+                <h2 class="fw-bolder text-dark" style="font-size: clamp(2.5rem, 4vw, 3.5rem); letter-spacing: -1.5px; line-height: 1.1;">
+                    <?= nl2br(esc($texts['home.writing_title'] ?? "Gagasan untuk Islam,\ndemokrasi, dan Indonesia.")); ?>
+                </h2>
+            </div>
+
+            <div class="col-lg-5 offset-lg-1">
+                <p class="fs-6 text-dark lh-base mb-4 pe-lg-4" style="font-weight: 400;">
+                    <?= esc($texts['home.writing_body'] ?? 'Ruang ini disiapkan bagi ulama, akademisi, kader, aktivis, dan generasi muda untuk menulis dengan jernih, bernas, serta berpihak pada kemanusiaan.'); ?>
+                </p>
+                <!-- Tombol Kirim Gagasan -->
+                <a href="#bergabung" class="btn rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-2"
+                    style="border: 1px solid var(--bamusi-red, #cc0000); color: var(--bamusi-red, #cc0000); font-size: 0.85rem; padding: 0.6rem 1.5rem; transition: all 0.3s;"
+                    onmouseover="this.style.backgroundColor='var(--bamusi-red, #cc0000)'; this.style.color='#ffffff';"
+                    onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--bamusi-red, #cc0000)';">
+                    <?= esc($texts['home.writing_cta'] ?? 'Kirim Gagasan'); ?>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Bagian Bawah: Grid 4 Kolom Interaktif (Link) -->
+        <div class="row g-0 pt-4" style="border-top: 1px solid #212529;">
+            <?php for ($i = 1; $i <= 4; $i++):
+                $topic = $texts['home.writing_topic_' . $i] ?? '';
                 if ($topic !== ''): ?>
-                    <div class="col-lg-3 col-6 p-4 text-center" style="border-right: 2px solid var(--bamusi-black);">
-                        <span class="fw-bolder fs-3 d-block mb-2" style="color: var(--bamusi-red);"><?= str_pad((string)$i, 2, '0', STR_PAD_LEFT); ?></span>
-                        <strong class="fs-6 text-dark text-uppercase"><?= esc($topic); ?></strong>
+
+                    <!-- Kolom Grid -->
+                    <div class="col-lg-3 col-6 <?= $i < 4 ? 'border-end' : ''; ?>" style="border-color: #e0e0e0 !important;">
+
+                        <!-- Area Link yang Bisa Diklik -->
+                        <a href="#" class="d-block h-100 p-4 text-decoration-none" style="transition: background-color 0.2s ease;"
+                            onmouseover="this.style.backgroundColor='#fdf0f0';"
+                            onmouseout="this.style.backgroundColor='transparent';">
+
+                            <!-- Nomor -->
+                            <span class="fw-bold d-block mb-4" style="color: var(--bamusi-red, #cc0000); font-size: 0.9rem;">
+                                <?= str_pad((string)$i, 2, '0', STR_PAD_LEFT); ?>
+                            </span>
+
+                            <!-- Topik -->
+                            <h3 class="fs-6 fw-bold text-dark lh-base pe-lg-3 mb-0">
+                                <?= esc($topic); ?>
+                            </h3>
+
+                        </a>
                     </div>
+
             <?php endif;
             endfor; ?>
         </div>
+
     </div>
 </section>
 
-<!-- 11. MEDIA SOSIAL -->
-<section class="py-5 text-center text-white" style="background-color: var(--bamusi-black);">
-    <div class="container-fluid px-4 px-lg-5 py-5">
-        <h2 class="fw-bolder mb-5" style="font-size: clamp(2.5rem, 4vw, 4rem); letter-spacing:-1px; line-height: 1.1;">Ikuti gerak BAMUSI<br>dari kanal resminya.</h2>
-        <div class="d-flex justify-content-center gap-4 flex-wrap">
-            <a href="<?= esc($settings['instagram_url'] ?? '#'); ?>" target="_blank" class="p-4 text-decoration-none text-white flex-grow-1" style="max-width:400px; border: 2px solid white;">
-                <small class="d-block text-uppercase fw-bold mb-2 opacity-75" style="letter-spacing: 2px;">Instagram</small>
-                <h3 class="fw-bold m-0 text-break" style="color: var(--bamusi-red);">@baitul.muslimin.id</h3>
-            </a>
-            <a href="<?= esc($settings['tiktok_url'] ?? '#'); ?>" target="_blank" class="p-4 text-decoration-none text-white flex-grow-1" style="max-width:400px; border: 2px solid white;">
-                <small class="d-block text-uppercase fw-bold mb-2 opacity-75" style="letter-spacing: 2px;">TikTok</small>
-                <h3 class="fw-bold m-0 text-break" style="color: var(--bamusi-red);">@bamusi_indonesia</h3>
-            </a>
-        </div>
-    </div>
-</section>
+<!-- 11. MEDIA SOSIAL (REDESAIN ELEGAN GAYA KARTU BESAR) -->
+<section class="py-5 position-relative overflow-hidden" id="sosial-media" style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
 
-<!-- 12. MITRA KERJA SAMA -->
-<section class="py-5 bg-white">
-    <div class="container-fluid px-4 px-lg-5 py-5">
-        <div class="row align-items-center mb-5">
-            <div class="col-lg-4">
-                <span class="eyebrow-text mb-0" style="color: var(--bamusi-red);">Mitra Kerja Sama</span>
-            </div>
-            <div class="col-lg-8">
-                <h2 class="fw-bolder m-0" style="font-size: clamp(2rem, 3vw, 2.5rem); letter-spacing:-1px; color: var(--bamusi-dark);">Bertumbuh melalui jejaring<br>dan kolaborasi.</h2>
-            </div>
-        </div>
-        <div class="d-flex flex-wrap gap-5 justify-content-center justify-content-lg-between border-thick-top pt-5">
-            <?php foreach ($partners as $partner): if (!(int)($partner['published'] ?? 0)) continue; ?>
-                <a href="<?= esc($partner['website_url'] ?? '#'); ?>" target="_blank" class="text-center text-dark text-decoration-none" style="width: 140px;">
-                    <img src="<?= esc($partner['logo_url'] ?? ''); ?>" alt="<?= esc($partner['name']); ?>" class="img-fluid mb-3" style="max-height: 70px; object-fit: contain; filter: grayscale(100%); transition: 0.3s;" onmouseover="this.style.filter='grayscale(0%)'" onmouseout="this.style.filter='grayscale(100%)'">
-                    <span class="d-block fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing:1px;"><?= esc($partner['name']); ?></span>
-                </a>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
+    <!-- Dekorasi Latar Belakang (Efek Cahaya/Glow seperti di Lima Nilai Utama) -->
+    <div class="position-absolute" style="top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(204,0,0,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
+    <div class="position-absolute" style="bottom: -20%; left: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(204,0,0,0.1) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
 
-<!-- 13. CARA BERGABUNG -->
-<section class="py-5" style="background-color: var(--bamusi-red);" id="bergabung">
-    <div class="container-fluid px-4 px-lg-5 py-5">
-        <div class="row">
-            <div class="col-lg-5 pe-lg-5 mb-5 mb-lg-0 text-white">
-                <span class="eyebrow-text" style="color: var(--bamusi-dark);">Cara Bergabung</span>
-                <h2 class="fw-bolder mb-4" style="font-size: clamp(3rem, 5vw, 4.5rem); letter-spacing:-1.5px; line-height: 1.1;">Ambil bagian<br>dalam kerja<br>khidmah.</h2>
-                <p class="fs-5 opacity-75 pe-lg-4">Isi data singkat berikut. Informasi akan dirangkai menjadi pesan WhatsApp kepada admin.</p>
+    <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
+
+        <!-- Baris Atas: Label Eyebrow -->
+        <div class="border-bottom pb-3 mb-5" style="border-color: rgba(255,255,255,0.2) !important;">
+            <span class="text-uppercase fw-bold text-white opacity-75" style="letter-spacing: 2px; font-size: 0.75rem;">
+                <?= esc($texts['home.social_intro'] ?? ''); ?>
+            </span>
+        </div>
+
+        <!-- Judul & Deskripsi Kanan -->
+        <div class="row align-items-end mb-5">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="fw-bolder text-white mb-0" style="font-size: clamp(2.5rem, 4vw, 4rem); letter-spacing: -1.5px; line-height: 1.1;">
+                    <?= nl2br(esc($texts['home.social_title'] ?? "Ikuti gerak BAMUSI\ndari kanal resminya.")); ?>
+                </h2>
             </div>
-            <div class="col-lg-7">
-                <form class="bg-white text-dark p-4 p-lg-5 h-100 border-thick-dark">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <label class="eyebrow-text mb-1" style="color: var(--bamusi-red);">Nama Lengkap</label>
-                            <input type="text" name="name" class="join-input" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="eyebrow-text mb-1" style="color: var(--bamusi-red);">Domisili</label>
-                            <input type="text" name="domicile" class="join-input" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="eyebrow-text mb-1" style="color: var(--bamusi-red);">Alamat Email</label>
-                            <input type="email" name="email" class="join-input" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="eyebrow-text mb-1" style="color: var(--bamusi-red);">Nomor WhatsApp</label>
-                            <input type="tel" name="phone" class="join-input" required>
-                        </div>
-                        <div class="col-12 mt-4">
-                            <label class="eyebrow-text mb-1" style="color: var(--bamusi-red);">Minat Kontribusi</label>
-                            <select name="interest" class="join-input text-uppercase fw-bold" style="cursor: pointer;">
-                                <option>Pilih Minat</option>
-                                <option>Keanggotaan Umum</option>
-                                <option>Relawan Program</option>
-                            </select>
-                        </div>
-                        <div class="col-12 mt-5">
-                            <button type="submit" class="btn w-100 fs-5 fw-bold text-uppercase py-3 rounded-0 border-thick-dark" style="background: transparent; color: var(--bamusi-black);" onmouseover="this.style.backgroundColor='var(--bamusi-black)'; this.style.color='white';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--bamusi-black)';">
-                                KIRIM MELALUI WHATSAPP ↗
-                            </button>
+            <div class="col-lg-5 offset-lg-1">
+                <p class="text-white opacity-75 mb-0 fs-6 lh-base pe-lg-5">
+                    <?= esc($texts['home.social_intro'] ?? ''); ?>
+                </p>
+            </div>
+        </div>
+
+        <!-- Grid 3 Kolom (Instagram, TikTok, YouTube) -->
+        <div class="row g-4 mt-2">
+
+            <!-- KARTU INSTAGRAM (Merah) -->
+            <div class="col-lg-4 col-md-6">
+                <a href="<?= esc($settings['instagram_url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
+                    style="background-color: var(--bamusi-red, #cc0000); transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
+                    onmouseover="this.style.transform='translateY(-10px)';" onmouseout="this.style.transform='translateY(0)';">
+
+                    <!-- Ornamen Watermark Kartu -->
+                    <div class="position-absolute" style="bottom: -20px; right: -20px; width: 150px; height: 150px; border-radius: 50%; background: rgba(0,0,0,0.1);"></div>
+
+                    <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
+                        <span class="text-white fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;">Instagram</span>
+                        <h3 class="text-white fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
+                            <?= esc($texts['home.social_instagram_handle'] ?? '@baitul.muslimin.indonesia'); ?>
+                        </h3>
+
+                        <div class="mt-auto d-flex align-items-center gap-3">
+                            <!-- Ikon Lingkaran -->
+                            <div class="rounded-circle border border-2 border-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                </svg>
+                            </div>
+                            <span class="text-white fw-bold fs-6">Buka profil ↘</span>
                         </div>
                     </div>
-                </form>
+                </a>
             </div>
+
+            <!-- KARTU TIKTOK (Putih) -->
+            <div class="col-lg-4 col-md-6">
+                <a href="<?= esc($settings['tiktok_url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
+                    style="background-color: #ffffff; transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
+                    onmouseover="this.style.transform='translateY(-10px)';" onmouseout="this.style.transform='translateY(0)';">
+
+                    <!-- Ornamen Watermark Kartu -->
+                    <div class="position-absolute" style="bottom: 0; right: 0; width: 200px; height: 200px; border-top-left-radius: 200px; background: rgba(0,0,0,0.03);"></div>
+
+                    <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
+                        <span class="text-secondary fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;">TikTok</span>
+                        <h3 class="text-dark fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
+                            <?= esc($texts['home.social_tiktok_handle'] ?? '@baitulmusliminindonesia'); ?>
+                        </h3>
+
+                        <div class="mt-auto d-flex align-items-center gap-3">
+                            <!-- Ikon Lingkaran -->
+                            <div class="rounded-circle border border-2 border-dark d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#212529" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+                                </svg>
+                            </div>
+                            <span class="text-dark fw-bold fs-6">Buka profil ↘</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- KARTU YOUTUBE (Gelap / Hitam Transparan) -->
+            <div class="col-lg-4 col-md-12">
+                <a href="<?= esc($settings['youtube_url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
+                    style="background-color: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
+                    onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--bamusi-red, #cc0000)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.1)';">
+
+                    <!-- Ornamen Watermark Kartu -->
+                    <div class="position-absolute" style="top: -20px; right: -20px; width: 120px; height: 120px; border: 20px solid rgba(255,255,255,0.02); border-radius: 20px; transform: rotate(15deg);"></div>
+
+                    <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
+                        <span class="text-white opacity-75 fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;">YouTube</span>
+                        <h3 class="text-white fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
+                            @bamusitv
+                        </h3>
+
+                        <div class="mt-auto d-flex align-items-center gap-3">
+                            <!-- Ikon Lingkaran -->
+                            <div class="rounded-circle border border-2 border-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; opacity: 0.8;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path>
+                                    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                                </svg>
+                            </div>
+                            <span class="text-white opacity-75 fw-bold fs-6">Buka profil ↘</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 12. MITRA KERJA SAMA (REDESAIN GAYA GRID BERBINGKAI & ORNAMEN ELEGAN) -->
+<section class="py-5 position-relative" style="background-color: #fdfdfd; overflow: hidden;" id="mitra">
+
+    <!-- Ornamen Bintang Transparan (Kiri Atas) -->
+    <div class="position-absolute d-none d-lg-block" style="top: 3rem; left: 2rem; opacity: 0.05; color: var(--bamusi-red, #cc0000);">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+        </svg>
+    </div>
+
+    <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
+
+        <!-- Header Section -->
+        <div class="row align-items-end mb-5 pb-3">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+                <span class="text-uppercase fw-bold d-block mb-3" style="color: var(--bamusi-red, #cc0000); letter-spacing: 2px; font-size: 0.8rem;">
+                    Mitra Kerja Sama
+                </span>
+                <h2 class="fw-bolder m-0" style="color: #8b0000; font-size: clamp(2.5rem, 4vw, 3.5rem); letter-spacing: -1.5px; line-height: 1.1;">
+                    Bertumbuh melalui<br>jejaring dan kolaborasi.
+                </h2>
+            </div>
+            <div class="col-lg-5 text-lg-end pb-lg-2">
+                <p class="text-secondary mb-0 fs-6" style="font-weight: 400;">
+                    Klik logo untuk mengunjungi situs resmi masing-masing lembaga.
+                </p>
+            </div>
+        </div>
+
+        <!-- Grid Mitra (5 Kolom) -->
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-0 border-top border-start" style="border-color: #eaeaea !important;">
+            <?php if (!empty($partners)): ?>
+                <?php foreach ($partners as $partner):
+                    if (!(int)($partner['published'] ?? 0)) continue;
+                ?>
+                    <div class="col border-end border-bottom position-relative overflow-hidden bg-white" style="border-color: #eaeaea !important;">
+
+                        <!-- Ornamen Lengkungan Merah Transparan (Di bawah kartu) -->
+                        <div class="position-absolute" style="bottom: -40px; left: 50%; transform: translateX(-50%); width: 120px; height: 120px; border: 15px solid rgba(204,0,0,0.04); border-radius: 50%; pointer-events: none;"></div>
+
+                        <!-- Area Link Logo -->
+                        <a href="<?= esc($partner['website_url'] ?? '#'); ?>" target="_blank" class="d-flex flex-column align-items-center justify-content-between p-4 h-100 text-decoration-none text-dark position-relative z-1"
+                            style="transition: background-color 0.3s ease, transform 0.3s ease;"
+                            onmouseover="this.style.backgroundColor='#fff5f5'; this.querySelector('.arrow-icon').style.transform='translate(3px, -3px)';"
+                            onmouseout="this.style.backgroundColor='transparent'; this.querySelector('.arrow-icon').style.transform='translate(0, 0)';">
+
+                            <!-- Logo -->
+                            <div class="d-flex align-items-center justify-content-center mb-4" style="height: 120px;">
+                                <img src="<?= esc($partner['logo_url'] ?? ''); ?>" alt="<?= esc($partner['name']); ?>" class="img-fluid" style="max-height: 90px; object-fit: contain;">
+                            </div>
+
+                            <!-- Nama Mitra -->
+                            <span class="d-block fw-bold text-center mb-4 text-dark" style="font-size: 0.85rem; line-height: 1.4;">
+                                <?= esc($partner['name']); ?>
+                            </span>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+    </div>
+</section>
+
+<!-- 13. CARA BERGABUNG (GAYA MINIMALIS SPLIT LAYOUT SEPERTI VIDEO) -->
+<section id="bergabung">
+    <div class="container-fluid p-0">
+        <div class="row g-0 align-items-stretch">
+
+            <!-- Kolom Kiri: Informasi (Merah) -->
+            <div class="col-lg-5 p-4 p-lg-5 d-flex flex-column justify-content-center text-white" style="background-color: #8b0000;">
+                <div class="p-lg-4">
+
+                    <!-- Ikon Buku & Label -->
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        <span class="text-uppercase fw-bold" style="letter-spacing: 2px; font-size: 0.85rem;">
+                            Cara Bergabung
+                        </span>
+                    </div>
+
+                    <!-- Judul Utama -->
+                    <h2 class="fw-bolder mb-4" style="font-size: clamp(2.5rem, 4vw, 3.5rem); letter-spacing: -1.5px; line-height: 1.1;">
+                        Ambil bagian<br>dalam kerja<br>khidmah.
+                    </h2>
+
+                    <!-- Deskripsi -->
+                    <p class="fs-5 opacity-75 lh-base pe-lg-4 mb-0" style="font-weight: 300;">
+                        Isi data singkat berikut. Informasi akan dirangkai menjadi pesan WhatsApp kepada admin.
+                    </p>
+
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Form Minimalis (Putih) -->
+            <div class="col-lg-7 p-4 p-lg-5 bg-white d-flex flex-column justify-content-center">
+                <div class="p-lg-5 w-100" style="max-width: 700px;">
+
+                    <form>
+                        <!-- Input Pesan Singkat (Gaya Underline) -->
+                        <div class="mb-5">
+                            <label class="text-uppercase fw-bold mb-3" style="color: #666666; letter-spacing: 1.5px; font-size: 0.8rem;">
+                                Pesan Singkat
+                            </label>
+                            <!-- Textarea diset transparan dengan border bawah saja -->
+                            <textarea name="message" class="form-control shadow-none px-0 rounded-0" rows="3" placeholder="Ketik pesan, gagasan, atau perkenalan Anda di sini..."
+                                style="border: none; border-bottom: 2px solid #e0e0e0; background: transparent; resize: none; font-size: 1.25rem; color: #212529;"
+                                onfocus="this.style.borderBottomColor='#cc0000'"
+                                onblur="this.style.borderBottomColor='#e0e0e0'"></textarea>
+                        </div>
+
+                        <!-- Tombol Kirim -->
+                        <button type="submit" class="btn rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-2 mb-4"
+                            style="border: 1px solid var(--bamusi-red, #cc0000); color: var(--bamusi-red, #cc0000); padding: 0.75rem 2rem; font-size: 0.85rem; transition: all 0.3s;"
+                            onmouseover="this.style.backgroundColor='var(--bamusi-red, #cc0000)'; this.style.color='#ffffff';"
+                            onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--bamusi-red, #cc0000)';">
+                            Kirim Melalui WhatsApp
+                            <!-- Ikon Pesawat Kertas -->
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+
+                        <!-- Teks Privasi Data (Checkmark) -->
+                        <div class="d-flex align-items-center gap-2 text-secondary mt-2" style="font-size: 0.85rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>Data tidak disimpan di situs ini.</span>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
