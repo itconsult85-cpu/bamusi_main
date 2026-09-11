@@ -103,7 +103,7 @@
                             <a href="<?= base_url('admin/cms-items'); ?>"
                                 class="nav-link <?= (strpos(current_url(), 'admin/cms-items') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-newspaper"></i>
-                                <p>Berita & Agenda</p>
+                                <p>Konten & Artikel</p>
                             </a>
                         </li>
 
