@@ -138,7 +138,8 @@ class CmsItem extends BaseController
         $oldData = !empty($id) ? $this->model->find($id) : null;
 
         $data = [
-            'kind'        => $this->request->getPost('kind') ?: 'news',
+            'kind'        => in_array($this->request->getPost('kind'), ['news', 'agenda', 'gallery', 'article', 'program'], true)
+                ? $this->request->getPost('kind') : 'news',
             'title'       => $titleId,
             'title_en'    => $titleEn,
             'summary'     => $summaryId,

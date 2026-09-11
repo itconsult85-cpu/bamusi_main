@@ -5,7 +5,7 @@
 
 <div class="app-content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-        <h3 class="mb-0">Kelola Berita & Agenda</h3>
+        <h3 class="mb-0">Kelola Konten & Artikel</h3>
         <a href="<?= base_url('admin/cms-items/create'); ?>" class="btn btn-primary">
             <i class="fas fa-plus me-1"></i> Tambah Konten
         </a>
@@ -28,6 +28,7 @@
                     <button class="btn btn-sm btn-outline-primary filter-kind active" data-kind="">Semua</button>
                     <button class="btn btn-sm btn-outline-primary filter-kind" data-kind="news">Berita</button>
                     <button class="btn btn-sm btn-outline-primary filter-kind" data-kind="agenda">Agenda</button>
+                    <button class="btn btn-sm btn-outline-primary filter-kind" data-kind="article">Artikel</button>
                 </div>
             </div>
             <div class="card-body">

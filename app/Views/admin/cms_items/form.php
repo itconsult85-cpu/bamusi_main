@@ -17,7 +17,10 @@ $chk = function ($key, $default = 1) use ($item) {
 
 <div class="app-content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-        <h3 class="mb-0"><?= $isEdit ? 'Edit Konten' : 'Tambah Konten Baru'; ?></h3>
+        <div>
+            <h3 class="mb-0"><?= $isEdit ? 'Edit Konten' : 'Tambah Konten Baru'; ?></h3>
+            <small class="text-muted">Artikel memakai tabel <code>cms_items</code> yang sama dengan Berita dan Agenda.</small>
+        </div>
         <a href="<?= base_url('admin/cms-items'); ?>" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left me-1"></i> Kembali
         </a>
@@ -45,6 +48,7 @@ $chk = function ($key, $default = 1) use ($item) {
                                     <select name="kind" class="form-select" required>
                                         <option value="news" <?= ($isEdit && $item['kind'] === 'news')   ? 'selected' : ''; ?>>Berita</option>
                                         <option value="agenda" <?= ($isEdit && $item['kind'] === 'agenda') ? 'selected' : ''; ?>>Agenda</option>
+                                        <option value="article" <?= ($isEdit && $item['kind'] === 'article') ? 'selected' : ''; ?>>Artikel</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">

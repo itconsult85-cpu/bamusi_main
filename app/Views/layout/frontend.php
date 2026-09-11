@@ -499,6 +499,11 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                             <?= esc($s('nav.home_label', 'Beranda')); ?>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('artikel'); ?>">
+                            <?= esc($locale === 'en' ? 'Articles' : 'Artikel'); ?>
+                        </a>
+                    </li>
 
                     <?php foreach ($navMenu ?? [] as $item):
                         $hasChildren = !empty($item['children']);
