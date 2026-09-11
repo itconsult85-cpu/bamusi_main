@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <?php
-// Auto-build navMenu jika belum dikirim controller
+// =========================================================
+// AUTO-BUILD NAV MENU
+// =========================================================
 if (!isset($navMenu)) {
     $dbAuto = \Config\Database::connect();
     $all = $dbAuto->table('pages')
@@ -24,7 +26,48 @@ if (!isset($navMenu)) {
     }
     $navMenu = array_values($parents);
 }
+
+// =========================================================
+// AUTO-LOAD SETTINGS
+// =========================================================
+if (!isset($settings)) {
+    $db = \Config\Database::connect();
+    $settings = array_column(
+        $db->table('site_settings')->get()->getResultArray(),
+        'setting_value',
+        'setting_key'
+    );
+}
+
+// Locale
+$locale = session()->get('lang') ?? 'id';
+$isHome = (current_url() === base_url('/') || current_url() === base_url());
+
+// =========================================================
+// HELPER: ambil setting dengan fallback EN/ID
+// =========================================================
+$s = function ($key, $default = '') use ($settings, $locale) {
+    $keyEn = $key . '_en';
+    if ($locale === 'en' && !empty($settings[$keyEn])) return $settings[$keyEn];
+    return $settings[$key] ?? $default;
+};
+
+// =========================================================
+// HELPER: bangun URL gambar dari setting
+// =========================================================
+$imgUrl = function ($key, $fallback = '') use ($settings) {
+    $val = trim((string)($settings[$key] ?? ''));
+    if ($val === '') $val = $fallback;
+    if ($val === '') return '';
+    if (preg_match('#^https?://#i', $val)) return $val;
+    return base_url(ltrim($val, '/'));
+};
+
+// Logo brand & partner (dipakai di navbar + footer)
+$brandLogoUrl   = $imgUrl('brand_logo_url', 'assets/images/bamusi-logo-transparent.png');
+$partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
 ?>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -73,7 +116,6 @@ if (!isset($navMenu)) {
             transition: transform 0.25s;
         }
 
-        /* Dropdown kecil */
         .dropdown-small {
             position: relative;
         }
@@ -133,7 +175,7 @@ if (!isset($navMenu)) {
         }
 
         /* =========================================================
-           MEGA MENU — FULL-WIDTH PANEL
+           MEGA MENU
            ========================================================= */
         .nav-has-mega {
             position: static;
@@ -235,7 +277,6 @@ if (!isset($navMenu)) {
             transform: rotate(90deg);
         }
 
-        /* Kolom 1 — Deskripsi */
         .indeks-hero h2 {
             font-size: 2rem;
             font-weight: 800;
@@ -243,6 +284,10 @@ if (!isset($navMenu)) {
             letter-spacing: -1px;
             line-height: 1.15;
             margin-bottom: 16px;
+        }
+
+        .indeks-hero h2 span {
+            color: #cc0000;
         }
 
         .indeks-hero p {
@@ -269,7 +314,6 @@ if (!isset($navMenu)) {
             border-bottom-color: #cc0000;
         }
 
-        /* Kolom 2 — List */
         .indeks-main-list {
             display: flex;
             flex-direction: column;
@@ -311,7 +355,6 @@ if (!isset($navMenu)) {
             transform: translateX(3px);
         }
 
-        /* Kolom 3 — Preview */
         .indeks-preview-title {
             font-size: 0.7rem;
             font-weight: 800;
@@ -394,9 +437,6 @@ if (!isset($navMenu)) {
             font-style: italic;
         }
 
-        /* =========================================================
-           RESPONSIVE
-           ========================================================= */
         @media (max-width: 992px) {
             .indeks-wrap {
                 grid-template-columns: 1fr;
@@ -426,27 +466,24 @@ if (!isset($navMenu)) {
     </style>
 </head>
 
-<body class="<?= (current_url() === base_url('/') || current_url() === base_url()) ? 'is-home' : 'is-inner' ?>">
-    <?php
-    $locale = session()->get('lang') ?? 'id';
-    $isHome = (current_url() === base_url('/') || current_url() === base_url());
-    ?>
+<body class="<?= $isHome ? 'is-home' : 'is-inner' ?>">
 
-    <!-- =========================================================
-         NAVBAR
-         ========================================================= -->
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="mainNavbar">
         <div class="container-fluid px-4 px-lg-5">
 
             <a class="navbar-brand" href="<?= base_url(); ?>">
-                <img src="<?= base_url('assets/images/bamusi-logo-transparent.png'); ?>"
+                <img src="<?= esc($brandLogoUrl); ?>"
                     onerror="this.src='https://placehold.co/50x50/111111/ffffff?text=B'"
-                    alt="Logo BAMUSI" class="rounded-circle"
-                    style="width: 50px; height: 50px; object-fit: cover;">
+                    alt="Logo"
+                    style="width: 50px; height: 50px; object-fit: contain;">
                 <div class="brand-text-container">
-                    <span class="brand-title"><?= esc($texts['global.brand_short'] ?? 'BAMUSI'); ?></span>
+                    <span class="brand-title">
+                        <?= esc($texts['global.brand_short'] ?? $settings['global.brand_short'] ?? 'BAMUSI'); ?>
+                    </span>
                     <div class="brand-line"></div>
-                    <span class="brand-subtitle"><?= esc($texts['global.brand_name'] ?? 'Baitul Muslimin Indonesia'); ?></span>
+                    <span class="brand-subtitle">
+                        <?= esc($texts['global.brand_subtitle'] ?? $settings['global.brand_subtitle'] ?? 'Baitul Muslimin Indonesia'); ?>
+                    </span>
                 </div>
             </a>
 
@@ -459,7 +496,7 @@ if (!isset($navMenu)) {
                 <ul class="navbar-nav gap-2">
                     <li class="nav-item">
                         <a class="nav-link" href="<?= base_url('/'); ?>">
-                            <?= $locale === 'en' ? 'Home' : 'Beranda'; ?>
+                            <?= esc($s('nav.home_label', 'Beranda')); ?>
                         </a>
                     </li>
 
@@ -529,16 +566,13 @@ if (!isset($navMenu)) {
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
                     </svg>
-                    <?= $locale === 'en' ? 'CHANNEL INDEX' : 'INDEKS KANAL'; ?>
+                    <?= esc($s('index_panel.kicker', 'Indeks Kanal')); ?>
                 </button>
             </div>
 
         </div>
     </nav>
 
-    <!-- =========================================================
-         MEGA MENU PANELS
-         ========================================================= -->
     <?php foreach ($navMenu ?? [] as $item):
         if (empty($item['is_mega']) || empty($item['children'])) continue;
 
@@ -559,7 +593,6 @@ if (!isset($navMenu)) {
             <div class="container-fluid px-4 px-lg-5">
                 <div class="indeks-wrap">
 
-                    <!-- Kolom 1 -->
                     <div class="indeks-col indeks-hero">
                         <h2><?= esc($parentLabel); ?></h2>
                         <p>
@@ -568,14 +601,13 @@ if (!isset($navMenu)) {
                                 : ($item['menu_desc'] ?? 'Jelajahi bagian ini untuk informasi lebih lanjut.')); ?>
                         </p>
                         <a href="<?= base_url($item['slug']); ?>" class="home-link">
-                            <?= $locale === 'en' ? 'View All' : 'Lihat Semua'; ?>
+                            <?= esc($s('mega.view_all', 'Lihat Semua')); ?>
                         </a>
                     </div>
 
-                    <!-- Kolom 2 -->
                     <div class="indeks-col">
                         <div class="indeks-preview-title">
-                            <?= $locale === 'en' ? 'Sub Pages' : 'Sub Halaman'; ?>
+                            <?= esc($s('mega.sub_pages', 'Sub Halaman')); ?>
                         </div>
                         <div class="indeks-main-list">
                             <?php foreach ($item['children'] as $child):
@@ -592,10 +624,9 @@ if (!isset($navMenu)) {
                         </div>
                     </div>
 
-                    <!-- Kolom 3 -->
                     <div class="indeks-col">
                         <div class="indeks-preview-title">
-                            <?= $locale === 'en' ? 'Quick Access' : 'Akses Cepat'; ?>
+                            <?= esc($s('mega.quick_access', 'Akses Cepat')); ?>
                         </div>
                         <div class="indeks-preview-grid">
                             <?php foreach (array_slice($item['children'], 0, 4) as $child):
@@ -629,9 +660,6 @@ if (!isset($navMenu)) {
         </div>
     <?php endforeach; ?>
 
-    <!-- =========================================================
-         INDEKS KANAL PANEL
-         ========================================================= -->
     <div class="indeks-panel" id="indeksPanel">
         <button class="indeks-panel-close" id="indeksClose" type="button" aria-label="Close">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -656,22 +684,14 @@ if (!isset($navMenu)) {
 
             <div class="indeks-wrap">
 
-                <!-- Kolom 1 -->
                 <div class="indeks-col indeks-hero">
-                    <h2>
-                        <?= $locale === 'en' ? 'Channel Index' : 'Indeks Kanal'; ?>
-                    </h2>
-                    <p>
-                        <?= $locale === 'en'
-                            ? 'Explore the full story of BAMUSI — our history, our people, and our ongoing commitment to the nation.'
-                            : 'Jelajahi kisah lengkap BAMUSI — sejarah, para pengurus, dan komitmen kami untuk bangsa.'; ?>
-                    </p>
+                    <h2><?= $s('index_panel.title', 'Jelajahi setiap <span>halaman.</span>'); ?></h2>
+                    <p><?= esc($s('index_panel.desc', 'Temukan kisah lengkap BAMUSI — sejarah, para pengurus, dan komitmen kami untuk bangsa.')); ?></p>
                     <a href="<?= base_url('/'); ?>" class="home-link">
-                        <?= $locale === 'en' ? 'Learn More' : 'Selengkapnya'; ?>
+                        <?= esc($s('index_panel.button', 'Selengkapnya')); ?> ↗
                     </a>
                 </div>
 
-                <!-- Kolom 2 -->
                 <div class="indeks-col">
                     <div class="indeks-main-list">
                         <?php foreach ($mainLinks as $item):
@@ -689,10 +709,9 @@ if (!isset($navMenu)) {
                     </div>
                 </div>
 
-                <!-- Kolom 3 -->
                 <div class="indeks-col">
                     <div class="indeks-preview-title">
-                        <span><?= $locale === 'en' ? 'Quick Access' : 'Akses Cepat'; ?></span>
+                        <span><?= esc($s('mega.quick_access', 'Akses Cepat')); ?></span>
                     </div>
 
                     <?php if (!empty($previewLinks)): ?>
@@ -733,16 +752,10 @@ if (!isset($navMenu)) {
         </div>
     </div>
 
-    <!-- =========================================================
-         MAIN CONTENT
-         ========================================================= -->
     <main>
         <?= $this->renderSection('content'); ?>
     </main>
 
-    <!-- =========================================================
-         FOOTER
-         ========================================================= -->
     <footer class="pt-5 pb-4 position-relative text-white"
         style="background: radial-gradient(ellipse at 100% 0%, #2b0000 0%, #0a0a0a 50%, #000000 100%); overflow: hidden;">
 
@@ -754,23 +767,27 @@ if (!isset($navMenu)) {
             <div class="row g-5 mb-4">
                 <div class="col-lg-5 pe-lg-5">
                     <div class="d-flex align-items-center gap-4 mb-4">
-                        <a href="https://pdiperjuangan.id/" target="_blank" rel="noopener noreferrer"
-                            title="PDI Perjuangan" style="display: inline-block; transition: opacity 0.25s;"
+                        <?php
+                        $partnerLink = trim((string)($settings['partner_url'] ?? '')) ?: 'https://pdiperjuangan.id/';
+                        $partnerName = trim((string)($settings['partner_name'] ?? '')) ?: 'PDI Perjuangan';
+                        ?>
+                        <a href="<?= esc($partnerLink); ?>" target="_blank" rel="noopener noreferrer"
+                            title="<?= esc($partnerName); ?>" style="display: inline-block; transition: opacity 0.25s;"
                             onmouseover="this.style.opacity='0.8';" onmouseout="this.style.opacity='1';">
-                            <img src="<?= base_url('assets/images/pdi.png'); ?>" alt="Logo PDI Perjuangan"
+                            <img src="<?= esc($partnerLogoUrl); ?>" alt="<?= esc($partnerName); ?>"
                                 style="height: 65px; object-fit: contain;">
                         </a>
                         <div style="width: 1px; height: 50px; background-color: rgba(255,255,255,0.2);"></div>
-                        <img src="<?= base_url('assets/images/bamusi-logo-transparent.png'); ?>" alt="Logo BAMUSI"
+                        <img src="<?= esc($brandLogoUrl); ?>" alt="Logo"
                             style="height: 65px; object-fit: contain;">
                     </div>
 
                     <h3 class="fw-bolder mb-3 text-white"
                         style="font-size: clamp(2rem, 3vw, 2.5rem); letter-spacing: -1px; line-height: 1.1;">
-                        Kantor Pengurus<br>Pusat BAMUSI
+                        <?= $settings['footer.heading'] ?? 'Kantor Pengurus<br>Pusat BAMUSI'; ?>
                     </h3>
                     <p class="fs-6 opacity-75 mb-0" style="max-width: 400px; font-weight: 300; line-height: 1.6;">
-                        Islam Nusantara yang berkemajuan untuk Indonesia Raya.
+                        <?= esc($s('footer.tagline', 'Islam Nusantara yang berkemajuan untuk Indonesia Raya.')); ?>
                     </p>
                 </div>
 
@@ -779,45 +796,45 @@ if (!isset($navMenu)) {
                         <div class="col-md-6">
                             <strong class="d-block text-uppercase mb-3"
                                 style="color: var(--bamusi-red, #cc0000); letter-spacing: 2px; font-size: 0.85rem;">
-                                Alamat
+                                <?= $locale === 'en' ? 'Address' : 'Alamat'; ?>
                             </strong>
                             <p class="opacity-75 lh-base mb-3" style="font-size: 0.95rem; font-weight: 300;">
-                                Jl. Kalibata Tengah, Kalibata, Kec. Pancoran,<br>Kota Jakarta Selatan, DKI Jakarta 12740
+                                <?= $settings['contact_address_short'] ?? 'Jl. Kalibata Tengah, Kalibata, Kec. Pancoran,<br>Kota Jakarta Selatan, DKI Jakarta 12740'; ?>
                             </p>
 
-                            <!-- TOMBOL BUKA MAPS -->
-                            <a href="https://maps.app.goo.gl/J7Vd3gwiRQM2ozVBA"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="d-inline-flex align-items-center gap-2 text-decoration-none"
-                                style="color: #ffffff; font-weight: 700; font-size: 0.8rem;
-              letter-spacing: 1px; text-transform: uppercase;
-              border-bottom: 2px solid rgba(255,255,255,0.4);
-              padding-bottom: 4px;
-              transition: all 0.25s ease;"
-                                onmouseover="this.style.color='#cc0000'; this.style.borderBottomColor='#cc0000';"
-                                onmouseout="this.style.color='#ffffff'; this.style.borderBottomColor='rgba(255,255,255,0.4)';">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2.5"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                Buka di Google Maps
-                            </a>
+                            <?php if (!empty($settings['contact_maps_url'])): ?>
+                                <a href="<?= esc($settings['contact_maps_url']); ?>"
+                                    target="_blank" rel="noopener noreferrer"
+                                    class="d-inline-flex align-items-center gap-2 text-decoration-none"
+                                    style="color: #ffffff; font-weight: 700; font-size: 0.8rem;
+                                           letter-spacing: 1px; text-transform: uppercase;
+                                           border-bottom: 2px solid rgba(255,255,255,0.4);
+                                           padding-bottom: 4px; transition: all 0.25s ease;"
+                                    onmouseover="this.style.color='#cc0000'; this.style.borderBottomColor='#cc0000';"
+                                    onmouseout="this.style.color='#ffffff'; this.style.borderBottomColor='rgba(255,255,255,0.4)';">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2.5"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    <?= esc($settings['contact_maps_label'] ?? 'Buka di Google Maps'); ?>
+                                </a>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-6">
                             <strong class="d-block text-uppercase mb-3"
                                 style="color: var(--bamusi-red, #cc0000); letter-spacing: 2px; font-size: 0.85rem;">
-                                Kontak Kami
+                                <?= $locale === 'en' ? 'Contact Us' : 'Kontak Kami'; ?>
                             </strong>
                             <p class="opacity-75 lh-base mb-0" style="font-size: 0.95rem; font-weight: 300;">
                                 WhatsApp Admin<br>
-                                <a href="https://wa.me/6287892627144" class="text-white text-decoration-none fw-bold"
+                                <a href="<?= esc($settings['whatsapp_url'] ?? '#'); ?>"
+                                    class="text-white text-decoration-none fw-bold"
                                     style="transition: color 0.3s;"
                                     onmouseover="this.style.color='var(--bamusi-red, #cc0000)';"
                                     onmouseout="this.style.color='white';">
-                                    +62 878 9262 7144
+                                    <?= esc($settings['whatsapp_label'] ?? '+62 878 9262 7144'); ?>
                                 </a>
                             </p>
                         </div>
@@ -845,14 +862,13 @@ if (!isset($navMenu)) {
 
             <div class="text-center mt-5 pt-4 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
                 <span class="opacity-50" style="font-size: 0.85rem; font-weight: 300;">
-                    &copy; <?= date('Y'); ?> Baitul Muslimin Indonesia. Hak cipta dilindungi.
+                    &copy; <?= date('Y'); ?> <?= esc($s('footer.copyright', 'Baitul Muslimin Indonesia. Hak cipta dilindungi.')); ?>
                 </span>
             </div>
 
         </div>
     </footer>
 
-    <!-- Back to top -->
     <a href="#" id="backToTopBtn"
         class="rounded-circle d-flex align-items-center justify-content-center text-white text-decoration-none shadow"
         onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;"
@@ -867,13 +883,9 @@ if (!isset($navMenu)) {
         </svg>
     </a>
 
-    <!-- =========================================================
-         JS — SEMUA INTERAKSI
-         ========================================================= -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            /* ===== 1. MEGA MENU (hover trigger) ===== */
             document.querySelectorAll('.nav-has-mega').forEach(function(li) {
                 const link = li.querySelector('.nav-link');
                 const panelId = link?.getAttribute('data-mega-id');
@@ -884,7 +896,6 @@ if (!isset($navMenu)) {
 
                 function open() {
                     clearTimeout(timer);
-                    // Tutup panel lain dulu
                     document.querySelectorAll('.mega-panel.open').forEach(p => p.classList.remove('open'));
                     document.querySelectorAll('.indeks-panel.open').forEach(p => p.classList.remove('open'));
                     panel.classList.add('open');
@@ -905,14 +916,12 @@ if (!isset($navMenu)) {
                 panel.addEventListener('mouseenter', () => clearTimeout(timer));
                 panel.addEventListener('mouseleave', close);
 
-                // Tombol close
                 panel.querySelector('.indeks-panel-close')?.addEventListener('click', function() {
                     panel.classList.remove('open');
                     document.body.classList.remove('mega-open');
                 });
             });
 
-            /* ===== 2. INDEKS KANAL (hover + klik) ===== */
             const toggle = document.getElementById('indeksToggle');
             const panel = document.getElementById('indeksPanel');
             const closeBtn = document.getElementById('indeksClose');
@@ -921,7 +930,6 @@ if (!isset($navMenu)) {
                 let hoverTimer = null;
 
                 function openPanel() {
-                    // Tutup mega panel dulu
                     document.querySelectorAll('.mega-panel.open').forEach(p => p.classList.remove('open'));
                     panel.classList.add('open');
                     document.body.classList.add('indeks-open');
@@ -961,7 +969,6 @@ if (!isset($navMenu)) {
                 });
             }
 
-            /* ===== 3. BACK TO TOP ===== */
             const backToTopBtn = document.getElementById('backToTopBtn');
             if (backToTopBtn) {
                 window.addEventListener('scroll', function() {
@@ -986,7 +993,6 @@ if (!isset($navMenu)) {
                 });
             }
 
-            /* ===== 4. NAVBAR SCROLL ===== */
             const navbar = document.getElementById('mainNavbar');
             if (navbar) {
                 window.addEventListener('scroll', function() {
@@ -995,7 +1001,6 @@ if (!isset($navMenu)) {
                 });
             }
 
-            /* ===== 5. BOARD SLIDER AUTO-SCROLL ===== */
             const slider = document.querySelector('.board-slider-container');
             if (slider) {
                 const cardWidth = 260 + 24;

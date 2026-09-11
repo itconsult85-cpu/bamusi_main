@@ -17,7 +17,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('programs', 'Program::index');
     $routes->post('programs/save', 'Program::save');
 
-    $routes->get('texts/', 'WebsiteText::index');
+    $routes->get('settings', 'SettingCMS::index');
+    $routes->get('settings/ajaxData', 'SettingCMS::ajaxData');
+    $routes->get('settings/create', 'SettingCMS::create');
+    $routes->get('settings/edit/(:num)', 'SettingCMS::edit/$1');
+    $routes->post('settings/save', 'SettingCMS::save');
+    $routes->get('settings/delete/(:num)', 'SettingCMS::delete/$1');
+
+    $routes->get('texts', 'WebsiteText::index');
     $routes->get('texts/ajaxData', 'WebsiteText::ajaxData');
     $routes->get('texts/create', 'WebsiteText::create');
     $routes->get('texts/edit/(:num)', 'WebsiteText::edit/$1');
