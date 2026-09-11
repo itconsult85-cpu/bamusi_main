@@ -17,8 +17,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('programs', 'Program::index');
     $routes->post('programs/save', 'Program::save');
 
-    $routes->get('texts', 'WebsiteText::index');
-    $routes->post('texts/save', 'WebsiteText::save');
+    $routes->get('', 'WebsiteText::index');
+    $routes->get('ajaxData', 'WebsiteText::ajaxData');
+    $routes->get('create', 'WebsiteText::create');
+    $routes->get('edit/(:num)', 'WebsiteText::edit/$1');
+    $routes->post('save', 'WebsiteText::save');
+    $routes->get('delete/(:num)', 'WebsiteText::delete/$1');
+    $routes->get('bulkTranslate', 'WebsiteText::bulkTranslate');
 
     $routes->get('board', 'BoardMember::index');
     $routes->post('board/save', 'BoardMember::save');

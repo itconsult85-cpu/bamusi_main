@@ -1,108 +1,166 @@
 <?= $this->extend('admin/layout/template'); ?>
-
 <?= $this->section('content'); ?>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
 <div class="app-content-header">
-    <div class="container-fluid">
-        <h3 class="mb-0">Kelola Teks Website Global</h3>
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Kelola Teks Website</h3>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-danger" id="btnBulkTranslate">
+                <i class="fas fa-language me-1"></i> Bulk Translate (EN Kosong)
+            </button>
+            <a href="<?= base_url('admin/texts/create'); ?>" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Tambah Teks
+            </a>
+        </div>
     </div>
 </div>
 
 <div class="app-content">
     <div class="container-fluid">
+
         <?php if (session()->getFlashdata('success')): ?>
-            <div class="alert alert-success"><?= session()->getFlashdata('success'); ?></div>
+            <div class="alert alert-success alert-dismissible fade show">
+                <?= session()->getFlashdata('success'); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger alert-dismissible fade show">
+                <?= session()->getFlashdata('error'); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         <?php endif; ?>
 
-        <div class="row">
-            <div class="col-lg-4 mb-4">
-                <div class="card card-primary card-outline" id="form-card">
-                    <div class="card-header">
-                        <h5 class="card-title m-0" id="form-title-text">Edit Teks</h5>
-                    </div>
-                    <form action="<?= base_url('admin/texts/save'); ?>" method="post" id="text-form">
-                        <input type="hidden" name="id" id="input-id">
-                            <?= csrf_field() ?>
-                        <input type="hidden" name="text_key" id="input-text_key">
-                        <input type="hidden" name="location" id="input-location">
-                        <input type="hidden" name="label" id="input-label">
-                        <input type="hidden" name="sort_order" id="input-sort_order">
-
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label text-muted" id="display-label">Pilih teks di tabel kanan</label>
-                                <textarea name="value" id="input-value" class="form-control" rows="5" required placeholder="Nilai teks (Bahasa Indonesia)"></textarea>
-                            </div>
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" name="published" value="1" id="publishCheck" checked>
-                                <label class="form-check-label" for="publishCheck">Aktif</label>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex gap-2">
-                            <button type="submit" class="btn btn-primary flex-grow-1">Simpan & Terjemahkan</button>
-                        </div>
-                    </form>
+        <div class="card card-outline card-secondary">
+            <div class="card-header">
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="mb-0 small fw-bold">Filter Lokasi:</label>
+                    <select id="filterLocation" class="form-select form-select-sm" style="width: 200px;">
+                        <option value="">Semua Lokasi</option>
+                        <?php
+                        $db = \Config\Database::connect();
+                        $locations = $db->table('website_texts')
+                            ->select('location')
+                            ->distinct()
+                            ->orderBy('location', 'ASC')
+                            ->get()->getResultArray();
+                        foreach ($locations as $loc):
+                            if (empty($loc['location'])) continue;
+                        ?>
+                            <option value="<?= esc($loc['location']); ?>"><?= esc($loc['location']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
-
-            <div class="col-lg-8">
-                <div class="card card-secondary card-outline">
-                    <div class="card-body p-0 table-responsive">
-                        <table class="table table-striped align-middle mb-0 text-sm">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Kunci (Key) / Label</th>
-                                    <th>Teks Indonesia</th>
-                                    <th>Teks Inggris</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($items as $item): ?>
-                                    <tr>
-                                        <td>
-                                            <span class="badge text-bg-dark"><?= esc($item['text_key']); ?></span><br>
-                                            <small class="text-muted"><?= esc($item['label']); ?></small>
-                                        </td>
-                                        <td><?= esc(substr($item['value'], 0, 50)) . '...'; ?></td>
-                                        <td>
-                                            <?php if (!empty($item['value_en'])): ?>
-                                                <span class="text-success"><i class="fas fa-check"></i></span>
-                                            <?php else: ?>
-                                                <span class="text-danger"><i class="fas fa-times"></i></span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="text-center">
-                                            <button class="btn btn-sm btn-warning text-white" onclick='editItem(<?= htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8'); ?>)'>
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="card-body table-responsive">
+                <table id="textsTable" class="table table-striped table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Key / Label</th>
+                            <th style="width:130px;">Lokasi</th>
+                            <th>Teks (ID)</th>
+                            <th style="width:90px;" class="text-center">EN</th>
+                            <th style="width:90px;">Status</th>
+                            <th style="width:80px;" class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script>
-    function editItem(item) {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
+    $(function() {
+        let currentLocation = '';
+        const table = $('#textsTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<?= base_url('admin/texts/ajaxData'); ?>',
+                data: function(d) {
+                    d.location = currentLocation;
+                }
+            },
+            columns: [{
+                    data: 0
+                },
+                {
+                    data: 1
+                },
+                {
+                    data: 2,
+                    orderable: false
+                },
+                {
+                    data: 3,
+                    orderable: false,
+                    className: 'text-center'
+                },
+                {
+                    data: 4,
+                    orderable: false
+                },
+                {
+                    data: 5,
+                    orderable: false,
+                    className: 'text-center'
+                }
+            ],
+            order: [],
+            pageLength: 25,
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data",
+                zeroRecords: "Data tidak ditemukan",
+                paginate: {
+                    first: "Awal",
+                    last: "Akhir",
+                    next: "→",
+                    previous: "←"
+                }
+            }
         });
-        document.getElementById('form-card').classList.replace('card-primary', 'card-warning');
-        document.getElementById('display-label').innerText = item.label + ' (' + item.text_key + ')';
 
-        document.getElementById('input-id').value = item.id;
-        document.getElementById('input-text_key').value = item.text_key;
-        document.getElementById('input-location').value = item.location;
-        document.getElementById('input-label').value = item.label;
-        document.getElementById('input-sort_order').value = item.sort_order;
-        document.getElementById('input-value').value = item.value;
-        document.getElementById('publishCheck').checked = item.published == 1;
-    }
+        // Filter lokasi
+        $('#filterLocation').on('change', function() {
+            currentLocation = $(this).val();
+            table.ajax.reload();
+        });
+
+        // Bulk translate
+        $('#btnBulkTranslate').on('click', function() {
+            const btn = $(this);
+            const total = <?= (int) \Config\Database::connect()->table('website_texts')
+                                ->groupStart()
+                                ->where('value_en', null)
+                                ->orWhere('value_en', '')
+                                ->groupEnd()
+                                ->countAllResults(); ?>;
+
+            if (total === 0) {
+                alert('Tidak ada teks yang perlu diterjemahkan. Semua sudah punya versi EN.');
+                return;
+            }
+
+            if (!confirm('Akan menerjemahkan ' + total + ' teks yang belum punya versi EN. Proses ini membutuhkan waktu. Lanjutkan?')) {
+                return;
+            }
+
+            btn.prop('disabled', true).html(
+                '<span class="spinner-border spinner-border-sm me-2"></span> Menerjemahkan...'
+            );
+
+            window.location.href = '<?= base_url('admin/texts/bulkTranslate'); ?>';
+        });
+    });
 </script>
+
 <?= $this->endSection(); ?>
