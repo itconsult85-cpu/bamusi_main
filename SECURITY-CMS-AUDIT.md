@@ -19,6 +19,7 @@ Perbaikan baseline telah diterapkan pada checkout lokal. Perubahan tersebut mena
 | Delete action | Beberapa operasi hapus menggunakan GET | Crawler atau tautan pihak ketiga dapat memicu penghapusan | Route delete diubah menjadi POST ber-CSRF |
 | Upload | Beberapa controller memindahkan file tanpa validasi MIME dan ukuran | Upload file berbahaya atau file terlalu besar | Validasi image/MP4 dan batas ukuran ditambahkan |
 | Hardcode UI | Banyak label, footer, dan navigasi masih ditulis langsung di view | Perubahan konten membutuhkan edit source code | Sebagian sudah tersedia di `website_texts`; migrasi penuh masih diperlukan |
+| Login abuse | Belum ada pembatasan percobaan login atau event log | Brute force sulit dideteksi dan dikendalikan | Rate limit email+IP dan audit log ditambahkan |
 
 ## Implementasi yang Telah Dibuat
 
@@ -32,6 +33,8 @@ File utama yang ditambahkan atau diubah adalah sebagai berikut:
 - `app/Config/Cookie.php`, `app/Config/Session.php`, dan `app/Config/Security.php` memperketat atribut cookie, rotasi session, dan randomisasi token CSRF.
 - Form CMS mendapatkan token CSRF. Layout CMS menampilkan administrator aktif dan menyediakan logout POST.
 - Upload pada hero, page, header logo, dan section divalidasi berdasarkan tipe MIME dan ukuran.
+- `2026-09-11-071500_CreateAuthAuditLogs.php` menambahkan tabel audit login/logout tanpa menyimpan password atau alamat IP mentah.
+- `Auth.php` membatasi percobaan login menjadi lima kali per 15 menit berdasarkan email dan IP, serta mencatat `login_failed`, `rate_limited`, `login_success`, dan `logout`.
 
 ## Status CMS dan Hardcode
 
@@ -59,7 +62,7 @@ Password admin dari dump harus segera diganti dengan password unik minimal 12 ka
 
 ### Fase 2: Penguatan autentikasi
 
-Tambahkan rate limiting login berbasis IP dan email, pencatatan login gagal, notifikasi login, reset password berbasis token sekali pakai, serta opsi 2FA untuk administrator. Sistem juga perlu memisahkan permission granular dari role tunggal apabila akan ada editor, translator, reviewer, dan super administrator.
+Rate limiting login dan pencatatan audit dasar sudah ditambahkan. Tahap berikutnya adalah notifikasi login, reset password berbasis token sekali pakai, serta opsi 2FA untuk administrator. Sistem juga perlu memisahkan permission granular dari role tunggal apabila akan ada editor, translator, reviewer, dan super administrator.
 
 ### Fase 3: CMS tanpa hardcode
 
@@ -71,7 +74,7 @@ Tambahkan test untuk login valid, password salah, role user, session fixation, C
 
 ## Catatan Verifikasi
 
-Pemeriksaan otomatis token CSRF pada form POST admin berhasil dan seluruh file baru dapat ditemukan. Pemeriksaan `php -l` belum dapat dijalankan di sandbox ini karena binary PHP CLI tidak tersedia; validasi sintaks wajib dijalankan di server CI atau mesin deployment sebelum perubahan dipublikasikan.
+Pemeriksaan otomatis token CSRF pada form POST admin berhasil. Lint `php -l` terhadap seluruh file PHP yang berubah berhasil tanpa error. Migration audit log belum dijalankan terhadap database production; jalankan migration melalui proses deployment resmi setelah backup database.
 
 ## Referensi
 

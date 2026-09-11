@@ -3,14 +3,20 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\AuthAuditLogModel;
 
 class Auth extends BaseController
 {
     private UserModel $users;
+    private AuthAuditLogModel $auditLogs;
+
+    private const MAX_LOGIN_ATTEMPTS = 5;
+    private const LOGIN_WINDOW_SECONDS = 900;
 
     public function __construct()
     {
         $this->users = new UserModel();
+        $this->auditLogs = new AuthAuditLogModel();
     }
 
     public function login()
@@ -37,9 +43,21 @@ class Auth extends BaseController
 
         $email = strtolower(trim((string) $this->request->getPost('email')));
         $password = (string) $this->request->getPost('password');
+        [$emailAttemptKey, $ipAttemptKey] = $this->loginAttemptKeys($email);
+        $emailAttempts = (int) (cache()->get($emailAttemptKey) ?? 0);
+        $ipAttempts = (int) (cache()->get($ipAttemptKey) ?? 0);
+
+        if ($emailAttempts >= self::MAX_LOGIN_ATTEMPTS || $ipAttempts >= self::MAX_LOGIN_ATTEMPTS) {
+            $this->recordAuthEvent($email, 'rate_limited');
+            return redirect()->back()->withInput()->with('error', 'Terlalu banyak percobaan masuk. Silakan coba lagi dalam 15 menit.');
+        }
+
         $user = $this->users->findAdminByEmail($email);
 
         if (! $user || ! password_verify($password, $user['password_hash'])) {
+            cache()->save($emailAttemptKey, $emailAttempts + 1, self::LOGIN_WINDOW_SECONDS);
+            cache()->save($ipAttemptKey, $ipAttempts + 1, self::LOGIN_WINDOW_SECONDS);
+            $this->recordAuthEvent($email, 'login_failed', $user['id'] ?? null);
             return redirect()->back()->withInput()->with('error', 'Email atau password salah.');
         }
 
@@ -55,6 +73,9 @@ class Auth extends BaseController
             'user_email' => $user['email'],
             'user_role' => $user['role'],
         ]);
+        cache()->delete($emailAttemptKey);
+        cache()->delete($ipAttemptKey);
+        $this->recordAuthEvent($email, 'login_success', (int) $user['id']);
 
         $redirectTo = (string) $this->request->getPost('redirect_to');
         if (! str_starts_with($redirectTo, site_url())) {
@@ -66,7 +87,33 @@ class Auth extends BaseController
 
     public function logout()
     {
+        $this->recordAuthEvent((string) session()->get('user_email'), 'logout', (int) session()->get('user_id'));
         session()->destroy();
         return redirect()->to(site_url('login'))->with('success', 'Anda telah keluar dari CMS.');
+    }
+
+    private function loginAttemptKeys(string $email): array
+    {
+        $ip = (string) ($this->request->getIPAddress() ?? 'unknown');
+        return [
+            'auth_login_email_' . hash('sha256', $email),
+            'auth_login_ip_' . hash('sha256', $ip),
+        ];
+    }
+
+    private function recordAuthEvent(string $email, string $event, ?int $userId = null): void
+    {
+        try {
+            $this->auditLogs->insert([
+                'email' => $email !== '' ? $email : null,
+                'user_id' => $userId,
+                'event' => $event,
+                'ip_hash' => hash('sha256', (string) ($this->request->getIPAddress() ?? 'unknown')),
+                'user_agent' => substr((string) $this->request->getUserAgent(), 0, 512),
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+        } catch (\Throwable $exception) {
+            log_message('error', 'Auth audit logging failed: {message}', ['message' => $exception->getMessage()]);
+        }
     }
 }
