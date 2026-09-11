@@ -17,6 +17,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('programs', 'Program::index');
     $routes->post('programs/save', 'Program::save');
 
+    $routes->get('texts/', 'WebsiteText::index');
+    $routes->get('texts/ajaxData', 'WebsiteText::ajaxData');
+    $routes->get('texts/create', 'WebsiteText::create');
+    $routes->get('texts/edit/(:num)', 'WebsiteText::edit/$1');
+    $routes->post('texts/save', 'WebsiteText::save');
+    $routes->get('texts/delete/(:num)', 'WebsiteText::delete/$1');
+    $routes->get('texts/bulkTranslate', 'WebsiteText::bulkTranslate');
+
     $routes->get('board', 'BoardMember::index');
     $routes->post('board/save', 'BoardMember::save');
     $routes->post('board/delete-photo/(:num)', 'BoardMember::deletePhoto/$1');
@@ -44,15 +52,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('section-links/save', 'SectionLinkCMS::save');
     $routes->post('section-links/delete/(:num)', 'SectionLinkCMS::delete/$1');
 });
-$routes->group('admin/texts', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
-    $routes->get('', 'WebsiteText::index');
-    $routes->get('ajaxData', 'WebsiteText::ajaxData');
-    $routes->get('create', 'WebsiteText::create');
-    $routes->get('edit/(:num)', 'WebsiteText::edit/$1');
-    $routes->post('save', 'WebsiteText::save');
-    $routes->get('delete/(:num)', 'WebsiteText::delete/$1');
-    $routes->get('bulkTranslate', 'WebsiteText::bulkTranslate');
-});
+
 // Tambahkan di bagian definisi routes
 // $routes->get('struktur-pengurus', 'Home::struktur');
 $routes->get('halaman', 'Page::index');
