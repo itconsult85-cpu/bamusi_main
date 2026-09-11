@@ -19,6 +19,7 @@ class ProgramModel extends Model
         'description',
         'description_en',
         'image_url',
+        'sort_order',
         'division',
         'published'
     ];

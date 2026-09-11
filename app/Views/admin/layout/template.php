@@ -56,17 +56,28 @@
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
 
                         <li class="nav-item">
-                            <a href="<?= base_url('admin'); ?>" class="nav-link">
+                            <a href="<?= base_url('admin'); ?>"
+                                class="nav-link <?= (current_url() === base_url('admin')) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Dashboard</p>
                             </a>
                         </li>
 
+                        <li class="nav-header">KONTEN</li>
+
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/settings'); ?>"
-                                class="nav-link <?= (strpos(current_url(), 'admin/settings') !== false) ? 'active' : ''; ?>">
-                                <i class="nav-icon fas fa-cog"></i>
-                                <p>Pengaturan Website</p>
+                            <a href="<?= base_url('admin/hero-slides'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/hero-slides') !== false) ? 'active' : ''; ?>">
+                                <i class="nav-icon fas fa-images"></i>
+                                <p>Hero Slides</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="<?= base_url('admin/sections'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/sections') !== false) ? 'active' : ''; ?>">
+                                <i class="nav-icon fas fa-layer-group"></i>
+                                <p>Kelola Halaman (Sections)</p>
                             </a>
                         </li>
 
@@ -86,39 +97,47 @@
                             </a>
                         </li>
 
-                        <!-- Menu CMS yang tadi Anda siapkan -->
+                        <li class="nav-header">DATA</li>
+
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/cms'); ?>" class="nav-link">
+                            <a href="<?= base_url('admin/cms-items'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/cms-items') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-newspaper"></i>
                                 <p>Berita & Agenda</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/programs'); ?>" class="nav-link">
+                            <a href="<?= base_url('admin/programs'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/programs') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-project-diagram"></i>
                                 <p>Program</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/texts'); ?>" class="nav-link">
+                            <a href="<?= base_url('admin/board'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/board') !== false) ? 'active' : ''; ?>">
+                                <i class="nav-icon fas fa-user-tie"></i>
+                                <p>Susunan Pengurus</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-header">PENGATURAN</li>
+
+                        <li class="nav-item">
+                            <a href="<?= base_url('admin/texts'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/texts') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-language"></i>
                                 <p>Teks Website (Translasi)</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/board'); ?>" class="nav-link">
-                                <i class="nav-icon fas fa-user-tie"></i>
-                                <p>Susunan Pengurus</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="<?= base_url('admin/sections'); ?>" class="nav-link">
-                                <i class="nav-icon fas fa-layer-group"></i>
-                                <p>Kelola Halaman (Sections)</p>
+                            <a href="<?= base_url('admin/settings'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/settings') !== false) ? 'active' : ''; ?>">
+                                <i class="nav-icon fas fa-cog"></i>
+                                <p>Pengaturan Website</p>
                             </a>
                         </li>
 

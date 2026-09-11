@@ -7,6 +7,7 @@ use CodeIgniter\Model;
 class BoardMemberModel extends Model
 {
     protected $table = 'board_members';
+    protected $primaryKey = 'id';
     protected $allowedFields = [
         'role',
         'role_en',
@@ -21,4 +22,7 @@ class BoardMemberModel extends Model
         'sort_order',
         'published',
     ];
+    protected $useTimestamps = true;
+    protected $createdField  = 'created_at';
+    protected $updatedField  = 'updated_at';
 }

@@ -16,12 +16,97 @@ class HeroSlideCMS extends BaseController
         $this->model = new HeroSlideModel();
     }
 
+    /* ============ 1. INDEX ============ */
     public function index()
     {
-        $data['items'] = $this->model->orderBy('sort_order', 'ASC')->findAll();
-        return view('admin/hero_slides/index', $data);
+        return view('admin/hero_slides/index');
     }
 
+    /* ============ 2. AJAX DATATABLES ============ */
+    public function ajaxData()
+    {
+        $request = \Config\Services::request();
+
+        $start  = $request->getVar('start') ?? 0;
+        $length = $request->getVar('length') ?? 10;
+        $search = $request->getVar('search')['value'] ?? '';
+
+        $builder = $this->model->builder();
+
+        if (!empty($search)) {
+            $builder->groupStart()
+                ->like('kicker', $search)
+                ->orLike('title', $search)
+                ->orLike('lead', $search)
+                ->groupEnd();
+        }
+
+        $recordsFiltered = $builder->countAllResults(false);
+        $recordsTotal    = $this->model->countAllResults();
+
+        $builder->orderBy('sort_order', 'ASC')->limit($length, $start);
+        $data = $builder->get()->getResultArray();
+
+        $formatted = [];
+        foreach ($data as $row) {
+            $status = $row['published']
+                ? '<span class="badge text-bg-success">Aktif</span>'
+                : '<span class="badge text-bg-secondary">Draft</span>';
+
+            $trans = !empty($row['title_en'])
+                ? '<span class="text-success"><i class="fas fa-check"></i></span>'
+                : '<span class="text-danger"><i class="fas fa-times"></i></span>';
+
+            $img = !empty($row['image_url']) && file_exists(FCPATH . $row['image_url'])
+                ? '<img src="' . base_url($row['image_url']) . '" style="width:80px;height:50px;object-fit:cover;border-radius:6px;">'
+                : '<span class="badge text-bg-secondary">-</span>';
+
+            $action = '
+                <a href="' . base_url('admin/hero-slides/edit/' . $row['id']) . '" class="btn btn-sm btn-warning text-white">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="' . base_url('admin/hero-slides/delete/' . $row['id']) . '" class="btn btn-sm btn-danger"
+                   onclick="return confirm(\'Hapus slide ini?\')">
+                    <i class="fas fa-trash"></i>
+                </a>
+            ';
+
+            $formatted[] = [
+                $img,
+                '<div class="fw-bold small" style="color:' . esc($row['kicker_color']) . '">' . esc($row['kicker']) . '</div>'
+                    . '<div class="fw-bold">' . esc(mb_strimwidth($row['title'], 0, 60, '...')) . '</div>',
+                '<span class="fw-bold">' . (int)$row['sort_order'] . '</span>',
+                $trans,
+                $status,
+                $action,
+            ];
+        }
+
+        return $this->response->setJSON([
+            'draw'            => (int) $request->getVar('draw'),
+            'recordsTotal'    => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data'            => $formatted,
+        ]);
+    }
+
+    /* ============ 3. FORM CREATE ============ */
+    public function create()
+    {
+        return view('admin/hero_slides/form', ['item' => null]);
+    }
+
+    /* ============ 4. FORM EDIT ============ */
+    public function edit($id)
+    {
+        $item = $this->model->find($id);
+        if (!$item) {
+            return redirect()->to('/admin/hero-slides')->with('error', 'Slide tidak ditemukan.');
+        }
+        return view('admin/hero_slides/form', ['item' => $item]);
+    }
+
+    /* ============ 5. SAVE ============ */
     public function save()
     {
         $id = $this->request->getPost('id');
@@ -32,7 +117,6 @@ class HeroSlideCMS extends BaseController
         $quoteId  = $this->request->getPost('quote');
         $btnId    = $this->request->getPost('button_label');
 
-        // Auto translate ID → EN
         $tr = new GoogleTranslate('en');
         $tr->setSource('id');
         try {
@@ -67,20 +151,23 @@ class HeroSlideCMS extends BaseController
             'published'       => $this->request->getPost('published') ?? 1,
         ];
 
-        // Upload gambar + unlink gambar lama
+        // Upload image
         $file = $this->request->getFile('image_url');
         if ($file && $file->isValid() && !$file->hasMoved()) {
-            if (! $this->validate(['image_url' => 'is_image[image_url]|mime_in[image_url,image/jpg,image/jpeg,image/png,image/webp]|max_size[image_url,2048]'])) {
-                return redirect()->back()->withInput()->with('error', 'Gambar hero harus JPG, PNG, atau WEBP dengan ukuran maksimal 2 MB.');
+            if (!$this->validate([
+                'image_url' => 'is_image[image_url]|mime_in[image_url,image/jpg,image/jpeg,image/png,image/webp]|max_size[image_url,2048]'
+            ])) {
+                return redirect()->back()->withInput()
+                    ->with('error', 'Gambar hero harus JPG, PNG, atau WEBP dengan ukuran maksimal 2 MB.');
             }
-            // Pastikan folder ada
+
             $dir = FCPATH . $this->uploadPath;
             if (!is_dir($dir)) mkdir($dir, 0755, true);
 
             $newName = $file->getRandomName();
             $file->move($dir, $newName);
 
-            // Unlink file lama
+            // Unlink image lama
             if ($oldData && !empty($oldData['image_url'])) {
                 $oldPath = FCPATH . ltrim($oldData['image_url'], '/');
                 if (file_exists($oldPath) && is_file($oldPath)) @unlink($oldPath);
@@ -95,6 +182,7 @@ class HeroSlideCMS extends BaseController
         return redirect()->to('/admin/hero-slides')->with('success', 'Slide berhasil disimpan.');
     }
 
+    /* ============ 6. DELETE ============ */
     public function delete($id)
     {
         $item = $this->model->find($id);

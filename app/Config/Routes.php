@@ -11,11 +11,19 @@ $routes->post('logout', 'Auth::logout');
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'adminauth'], function ($routes) {
     $routes->get('/', 'Dashboard::index');
 
-    $routes->get('cms', 'CmsItem::index');
-    $routes->post('cms/save', 'CmsItem::save');
+    $routes->get('cms-items', 'CmsItem::index');
+    $routes->get('cms-items/ajaxData', 'CmsItem::ajaxData');
+    $routes->get('cms-items/create', 'CmsItem::create');
+    $routes->get('cms-items/edit/(:num)', 'CmsItem::edit/$1');
+    $routes->post('cms-items/save', 'CmsItem::save');
+    $routes->get('cms-items/delete/(:num)', 'CmsItem::delete/$1');
 
     $routes->get('programs', 'Program::index');
+    $routes->get('programs/ajaxData', 'Program::ajaxData');
+    $routes->get('programs/create', 'Program::create');
+    $routes->get('programs/edit/(:num)', 'Program::edit/$1');
     $routes->post('programs/save', 'Program::save');
+    $routes->get('programs/delete/(:num)', 'Program::delete/$1');
 
     $routes->get('settings', 'SettingCMS::index');
     $routes->get('settings/ajaxData', 'SettingCMS::ajaxData');
@@ -33,12 +41,18 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('texts/bulkTranslate', 'WebsiteText::bulkTranslate');
 
     $routes->get('board', 'BoardMember::index');
+    $routes->get('board/ajaxData', 'BoardMember::ajaxData');
+    $routes->get('board/create', 'BoardMember::create');
+    $routes->get('board/edit/(:num)', 'BoardMember::edit/$1');
     $routes->post('board/save', 'BoardMember::save');
-    $routes->post('board/delete-photo/(:num)', 'BoardMember::deletePhoto/$1');
+    $routes->get('board/delete/(:num)', 'BoardMember::delete/$1');
 
     $routes->get('hero-slides', 'HeroSlideCMS::index');
+    $routes->get('hero-slides/ajaxData', 'HeroSlideCMS::ajaxData');
+    $routes->get('hero-slides/create', 'HeroSlideCMS::create');
+    $routes->get('hero-slides/edit/(:num)', 'HeroSlideCMS::edit/$1');
     $routes->post('hero-slides/save', 'HeroSlideCMS::save');
-    $routes->post('hero-slides/delete/(:num)', 'HeroSlideCMS::delete/$1');
+    $routes->get('hero-slides/delete/(:num)', 'HeroSlideCMS::delete/$1');
 
     $routes->get('pages', 'PageCMS::index');
     $routes->get('pages/ajaxData', 'PageCMS::ajaxData');
