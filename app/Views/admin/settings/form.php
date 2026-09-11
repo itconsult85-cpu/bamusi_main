@@ -59,10 +59,21 @@ $currentValue = $isEdit ? ($item['setting_value'] ?? '') : '';
                                 </div>
 
                             <?php elseif ($type === 'textarea'): ?>
-                                <div class="mb-0">
-                                    <label class="form-label">Nilai <span class="text-danger">*</span></label>
+                                <div class="mb-3">
+                                    <label class="form-label">Nilai (Bahasa Indonesia) <span class="text-danger">*</span></label>
                                     <textarea name="setting_value" class="form-control" rows="6" required><?= esc($currentValue); ?></textarea>
                                 </div>
+
+                                <!-- Preview EN -->
+                                <?php if ($isEdit && !empty($item['setting_value_en'])): ?>
+                                    <div class="mb-0">
+                                        <label class="form-label small text-muted">Versi Inggris (saat ini)</label>
+                                        <div class="alert alert-light border small mb-0">
+                                            <?= nl2br(esc($item['setting_value_en'])); ?>
+                                        </div>
+                                        <small class="text-muted">Terjemahan otomatis akan diperbarui saat Anda menyimpan.</small>
+                                    </div>
+                                <?php endif; ?>
 
                             <?php elseif ($type === 'url'): ?>
                                 <div class="mb-0">
@@ -70,6 +81,7 @@ $currentValue = $isEdit ? ($item['setting_value'] ?? '') : '';
                                     <input type="url" name="setting_value" class="form-control" required
                                         value="<?= esc($currentValue); ?>"
                                         placeholder="https://...">
+                                    <small class="text-muted">URL tidak diterjemahkan.</small>
                                 </div>
 
                             <?php elseif ($type === 'email'): ?>
@@ -77,14 +89,28 @@ $currentValue = $isEdit ? ($item['setting_value'] ?? '') : '';
                                     <label class="form-label">Email <span class="text-danger">*</span></label>
                                     <input type="email" name="setting_value" class="form-control" required
                                         value="<?= esc($currentValue); ?>">
+                                    <small class="text-muted">Email tidak diterjemahkan.</small>
                                 </div>
 
                             <?php else: ?>
-                                <div class="mb-0">
-                                    <label class="form-label">Nilai <span class="text-danger">*</span></label>
+                                <!-- Type: TEXT (default) -->
+                                <div class="mb-3">
+                                    <label class="form-label">Nilai (Bahasa Indonesia) <span class="text-danger">*</span></label>
                                     <input type="text" name="setting_value" class="form-control" required
                                         value="<?= esc($currentValue); ?>">
                                 </div>
+
+                                <!-- Preview EN -->
+                                <?php if ($isEdit && !empty($item['setting_value_en'])): ?>
+                                    <div class="mb-0">
+                                        <label class="form-label small text-muted">Versi Inggris (saat ini)</label>
+                                        <div class="alert alert-light border small mb-0">
+                                            <?= esc($item['setting_value_en']); ?>
+                                        </div>
+                                        <small class="text-muted">Terjemahan otomatis akan diperbarui saat Anda menyimpan.</small>
+                                    </div>
+                                <?php endif; ?>
+
                             <?php endif; ?>
 
                         </div>

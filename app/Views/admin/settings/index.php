@@ -6,6 +6,9 @@
 <div class="app-content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <h3 class="mb-0">Pengaturan Website</h3>
+        <button type="button" class="btn btn-outline-danger" id="btnBulkTranslate">
+            <i class="fas fa-language me-1"></i> Bulk Translate
+        </button>
         <a href="<?= base_url('admin/settings/create'); ?>" class="btn btn-primary">
             <i class="fas fa-plus me-1"></i> Tambah Setting
         </a>
@@ -181,6 +184,13 @@
         table.on('xhr', function(e, settings, json) {
             console.log('DataTables response:', json);
         });
+    });
+
+    $('#btnBulkTranslate').on('click', function() {
+        if (!confirm('Terjemahkan semua setting yang belum punya versi EN?')) return;
+        const btn = $(this);
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Menerjemahkan...');
+        window.location.href = '<?= base_url('admin/settings/bulkTranslate'); ?>';
     });
 </script>
 

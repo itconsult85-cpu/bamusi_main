@@ -58,9 +58,14 @@ class CmsItem extends BaseController
                 ? '<span class="badge text-bg-success">Publik</span>'
                 : '<span class="badge text-bg-secondary">Draft</span>';
 
-            $kindBadge = $row['kind'] === 'news'
-                ? '<span class="badge text-bg-info">Berita</span>'
-                : '<span class="badge text-bg-warning">Agenda</span>';
+            $kindBadge = match ($row['kind']) {
+                'news'    => '<span class="badge text-bg-info">Berita</span>',
+                'agenda'  => '<span class="badge text-bg-warning">Agenda</span>',
+                'article' => '<span class="badge text-bg-primary">Artikel</span>',
+                'gallery' => '<span class="badge text-bg-success">Galeri</span>',
+                'program' => '<span class="badge text-bg-dark">Program</span>',
+                default   => '<span class="badge text-bg-secondary">' . esc($row['kind']) . '</span>',
+            };
 
             $trans = !empty($row['title_en'])
                 ? '<span class="text-success"><i class="fas fa-check"></i></span>'

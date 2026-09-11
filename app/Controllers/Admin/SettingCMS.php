@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\SiteSettingModel;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class SettingCMS extends BaseController
 {
@@ -106,17 +107,32 @@ class SettingCMS extends BaseController
         $type = $this->request->getPost('type') ?? 'text';
 
         $oldData = !empty($id) ? $this->model->find($id) : null;
+        $valueId = $this->request->getPost('setting_value');
+
+        // Auto translate ID → EN (hanya untuk text/textarea)
+        $valueEn = $oldData['setting_value_en'] ?? null;
+        if (in_array($type, ['text', 'textarea']) && !empty($valueId)) {
+            $tr = new \Stichoza\GoogleTranslate\GoogleTranslate('en');
+            $tr->setSource('id');
+            try {
+                $valueEn = $tr->translate($valueId);
+            } catch (\Exception $e) {
+                $valueEn = null;
+            }
+        }
 
         $data = [
-            'setting_key'   => $this->request->getPost('setting_key'),
-            'label'         => $this->request->getPost('label'),
-            'location'      => $this->request->getPost('location') ?? 'global',
-            'type'          => $type,
-            'sort_order'    => $this->request->getPost('sort_order') ?? 0,
-            'updated_at'    => date('Y-m-d H:i:s'),
+            'setting_key'       => $this->request->getPost('setting_key'),
+            'setting_value'     => $valueId,
+            'setting_value_en'  => $valueEn,
+            'label'             => $this->request->getPost('label'),
+            'location'          => $this->request->getPost('location') ?? 'global',
+            'type'              => $type,
+            'sort_order'        => $this->request->getPost('sort_order') ?? 0,
+            'updated_at'        => date('Y-m-d H:i:s'),
         ];
 
-        // Upload gambar jika type = image
+        // Upload image
         $file = $this->request->getFile('setting_image');
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $dir = FCPATH . $this->uploadPath;
@@ -125,19 +141,16 @@ class SettingCMS extends BaseController
             $newName = $file->getRandomName();
             $file->move($dir, $newName);
 
-            // Unlink file lama
             if ($oldData && !empty($oldData['setting_value'])) {
                 $oldPath = FCPATH . ltrim($oldData['setting_value'], '/');
                 if (file_exists($oldPath) && is_file($oldPath)) @unlink($oldPath);
             }
 
-            $data['setting_value'] = $this->uploadPath . $newName;
-        } else {
-            $data['setting_value'] = $this->request->getPost('setting_value');
+            $data['setting_value']    = $this->uploadPath . $newName;
+            $data['setting_value_en'] = null;
         }
 
         if (!empty($id)) $data['id'] = $id;
-
         $this->model->save($data);
 
         return redirect()->to('/admin/settings')->with('success', 'Setting berhasil disimpan.');
@@ -153,5 +166,47 @@ class SettingCMS extends BaseController
         }
         $this->model->delete($id);
         return redirect()->to('/admin/settings')->with('success', 'Setting dihapus.');
+    }
+
+    public function bulkTranslate()
+    {
+        // Ambil hanya tipe text/textarea yang value_en kosong
+        $items = $this->model
+            ->whereIn('type', ['text', 'textarea'])
+            ->groupStart()
+            ->where('setting_value_en', null)
+            ->orWhere('setting_value_en', '')
+            ->groupEnd()
+            ->findAll();
+
+        if (empty($items)) {
+            return redirect()->to('/admin/settings')
+                ->with('success', 'Tidak ada setting yang perlu diterjemahkan.');
+        }
+
+        $tr = new GoogleTranslate('en');
+        $tr->setSource('id');
+
+        $success = 0;
+        $fail = 0;
+        foreach ($items as $item) {
+            if (empty($item['setting_value'])) continue;
+            try {
+                $translated = $tr->translate($item['setting_value']);
+                if (!empty($translated)) {
+                    $this->model->update($item['id'], [
+                        'setting_value_en' => $translated,
+                        'updated_at'       => date('Y-m-d H:i:s'),
+                    ]);
+                    $success++;
+                }
+            } catch (\Exception $e) {
+                $fail++;
+                log_message('error', 'Translate setting ID ' . $item['id'] . ': ' . $e->getMessage());
+            }
+        }
+
+        return redirect()->to('/admin/settings')
+            ->with('success', "Berhasil menerjemahkan {$success} setting. Gagal: {$fail}.");
     }
 }

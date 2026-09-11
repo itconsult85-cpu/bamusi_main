@@ -11,6 +11,7 @@ class SiteSettingModel extends Model
     protected $allowedFields = [
         'setting_key',
         'setting_value',
+        'setting_value_en',
         'label',
         'label_en',
         'location',

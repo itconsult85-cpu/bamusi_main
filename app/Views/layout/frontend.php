@@ -30,13 +30,17 @@ if (!isset($navMenu)) {
 // =========================================================
 // AUTO-LOAD SETTINGS
 // =========================================================
+// Auto-load settings
 if (!isset($settings)) {
     $db = \Config\Database::connect();
-    $settings = array_column(
-        $db->table('site_settings')->get()->getResultArray(),
-        'setting_value',
-        'setting_key'
-    );
+    $settingsRaw = $db->table('site_settings')->get()->getResultArray();
+    $settings = [];
+    foreach ($settingsRaw as $row) {
+        $settings[$row['setting_key']] = $row['setting_value'];
+        if (!empty($row['setting_value_en'])) {
+            $settings[$row['setting_key'] . '_en'] = $row['setting_value_en'];
+        }
+    }
 }
 
 // Locale
@@ -789,7 +793,9 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
 
                     <h3 class="fw-bolder mb-3 text-white"
                         style="font-size: clamp(2rem, 3vw, 2.5rem); letter-spacing: -1px; line-height: 1.1;">
-                        <?= $settings['footer.heading'] ?? 'Kantor Pengurus<br>Pusat BAMUSI'; ?>
+                        <?= ($locale === 'en' && !empty($settings['footer.heading_en']))
+                            ? $settings['footer.heading_en']
+                            : ($settings['footer.heading'] ?? 'Kantor Pengurus<br>Pusat BAMUSI'); ?>
                     </h3>
                     <p class="fs-6 opacity-75 mb-0" style="max-width: 400px; font-weight: 300; line-height: 1.6;">
                         <?= esc($s('footer.tagline', 'Islam Nusantara yang berkemajuan untuk Indonesia Raya.')); ?>
@@ -823,7 +829,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                         <circle cx="12" cy="10" r="3"></circle>
                                     </svg>
-                                    <?= esc($settings['contact_maps_label'] ?? 'Buka di Google Maps'); ?>
+                                    <?= esc($s('contact_maps_label', 'Buka di Google Maps')); ?>
                                 </a>
                             <?php endif; ?>
                         </div>
@@ -867,7 +873,9 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
 
             <div class="text-center mt-5 pt-4 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
                 <span class="opacity-50" style="font-size: 0.85rem; font-weight: 300;">
-                    &copy; <?= date('Y'); ?> <?= esc($s('footer.copyright', 'Baitul Muslimin Indonesia. Hak cipta dilindungi.')); ?>
+                    &copy; <?= date('Y'); ?> <?= esc(($locale === 'en' && !empty($settings['footer.copyright_en']))
+                                                    ? $settings['footer.copyright_en']
+                                                    : ($settings['footer.copyright'] ?? 'Baitul Muslimin Indonesia. Hak cipta dilindungi.')); ?>
                 </span>
             </div>
 

@@ -265,6 +265,24 @@ $nilai = $sections['nilai'] ?? [];
     </div>
 </section>
 
+<?php
+$visi = $sections['visi'] ?? [];
+
+// Kicker: dari CMS, fallback ke hardcode
+$visiKicker = $t($visi, 'kicker');
+if (empty($visiKicker)) {
+    $visiKicker = $locale === 'en' ? 'VISION AND MISSION' : 'VISI DAN MISI';
+}
+
+// Judul: dari CMS, fallback ke hardcode
+$visiTitle = $t($visi, 'title');
+if (empty($visiTitle)) {
+    $visiTitle = $locale === 'en'
+        ? 'Becoming the national home of progressive Indonesian Muslims.'
+        : 'Menjadi rumah kebangsaan Muslim Indonesia yang progresif.';
+}
+?>
+
 <section class="pb-0 bg-white" id="visi">
     <div class="row g-0 align-items-stretch">
         <div class="col-lg-6 position-relative">
@@ -280,7 +298,8 @@ $nilai = $sections['nilai'] ?? [];
                 </div>
             <?php endif; ?>
             <div class="position-absolute" style="bottom: 40px; left: 40px; z-index: 2;">
-                <div class="d-flex align-items-center justify-content-center text-white shadow-sm" style="width: 55px; height: 55px; background-color: var(--bamusi-red, #c8102e);">
+                <div class="d-flex align-items-center justify-content-center text-white shadow-sm"
+                    style="width: 55px; height: 55px; background-color: var(--bamusi-red, #c8102e);">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
                     </svg>
@@ -290,28 +309,44 @@ $nilai = $sections['nilai'] ?? [];
 
         <div class="col-lg-6 ps-lg-5 pe-lg-5 px-4 d-flex flex-column justify-content-center py-5">
             <div class="pe-xl-5">
-                <span class="eyebrow-text text-danger text-uppercase fw-bold" style="letter-spacing: 1px; font-size: 0.85rem;">
-                    <?= $locale === 'en' ? 'VISION AND MISSION' : 'VISI DAN MISI'; ?>
+                <span class="eyebrow-text text-danger text-uppercase fw-bold"
+                    style="letter-spacing: 1px; font-size: 0.85rem;">
+                    <?= esc($visiKicker); ?>
                 </span>
 
-                <h2 class="fw-bolder mb-4 mt-2" style="font-size: clamp(2.5rem, 4vw, 4rem); letter-spacing: -1.5px; line-height: 1.1; color: var(--bamusi-dark, #212529);">
-                    <?= $locale === 'en' ? 'Becoming the national home of progressive Indonesian Muslims.' : 'Menjadi rumah kebangsaan Muslim Indonesia yang progresif.'; ?>
+                <h2 class="fw-bolder mb-4 mt-2"
+                    style="font-size: clamp(2.5rem, 4vw, 4rem); letter-spacing: -1.5px; line-height: 1.1; color: var(--bamusi-dark, #212529);">
+                    <?= esc($visiTitle); ?>
                 </h2>
 
+                <!-- VISI -->
                 <p class="fs-5 mb-5 text-secondary lh-base">
-                    <?= esc($settings['about_vision'] ?? ''); ?>
+                    <?php
+                    $visiText = ($locale === 'en' && !empty($settings['about_vision_en']))
+                        ? $settings['about_vision_en']
+                        : ($settings['about_vision'] ?? '');
+                    ?>
+                    <?= esc($visiText); ?>
                 </p>
 
+                <!-- MISI -->
                 <div class="mt-4">
                     <?php
-                    $raw_missions = $settings['about_mission'] ?? '';
+                    $raw_missions = ($locale === 'en' && !empty($settings['about_mission_en']))
+                        ? $settings['about_mission_en']
+                        : ($settings['about_mission'] ?? '');
+
                     $missions = explode("\n", trim($raw_missions));
-                    foreach ($missions as $index => $mission):
+                    $counter = 0;
+                    foreach ($missions as $mission):
                         if (trim($mission) == '') continue;
-                        $num = str_pad($index + 1, 2, '0', STR_PAD_LEFT);
+                        $counter++;
+                        $num = str_pad((string)$counter, 2, '0', STR_PAD_LEFT);
                     ?>
                         <div class="d-flex align-items-center mb-3 pb-3 border-bottom border-light">
-                            <span class="fw-bold me-4" style="color: var(--bamusi-red, #c8102e); font-size: 1rem;"><?= $num; ?></span>
+                            <span class="fw-bold me-4" style="color: var(--bamusi-red, #c8102e); font-size: 1rem;">
+                                <?= $num; ?>
+                            </span>
                             <p class="mb-0 fs-6 fw-semibold text-dark">
                                 <?= esc(trim($mission)); ?>
                             </p>

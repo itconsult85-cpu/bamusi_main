@@ -38,11 +38,14 @@ class Page extends BaseController
         $db = \Config\Database::connect();
 
         // Data umum (settings + menu)
-        $settings = array_column(
-            $db->table('site_settings')->get()->getResultArray(),
-            'setting_value',
-            'setting_key'
-        );
+        $settingsRaw = $db->table('site_settings')->get()->getResultArray();
+        $settings = [];
+        foreach ($settingsRaw as $row) {
+            $settings[$row['setting_key']] = $row['setting_value'];
+            if (!empty($row['setting_value_en'])) {
+                $settings[$row['setting_key'] . '_en'] = $row['setting_value_en'];
+            }
+        }
 
         // Menu navigasi (pages yang show_in_menu = 1)
         $navMenu = $this->pageModel
@@ -103,11 +106,14 @@ class Page extends BaseController
             ->findAll();
 
         $db = \Config\Database::connect();
-        $settings = array_column(
-            $db->table('site_settings')->get()->getResultArray(),
-            'setting_value',
-            'setting_key'
-        );
+        $settingsRaw = $db->table('site_settings')->get()->getResultArray();
+        $settings = [];
+        foreach ($settingsRaw as $row) {
+            $settings[$row['setting_key']] = $row['setting_value'];
+            if (!empty($row['setting_value_en'])) {
+                $settings[$row['setting_key'] . '_en'] = $row['setting_value_en'];
+            }
+        }
 
         return view('frontend/page_list', [
             'pages'    => $pages,

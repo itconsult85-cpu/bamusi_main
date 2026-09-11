@@ -34,8 +34,14 @@ class Home extends BaseController
         $locale = session()->get('lang') ?? 'id';
 
         // 1. Ambil Site Settings
-        $settingsData = $db->table('site_settings')->get()->getResultArray();
-        $settings = array_column($settingsData, 'setting_value', 'setting_key');
+        $settingsRaw = $db->table('site_settings')->get()->getResultArray();
+        $settings = [];
+        foreach ($settingsRaw as $row) {
+            $settings[$row['setting_key']] = $row['setting_value'];
+            if (!empty($row['setting_value_en'])) {
+                $settings[$row['setting_key'] . '_en'] = $row['setting_value_en'];
+            }
+        }
 
         // 2. Ambil Sections
         $sectionsData = $this->sectionModel->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();

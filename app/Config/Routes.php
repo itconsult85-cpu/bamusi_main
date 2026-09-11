@@ -33,6 +33,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('settings/edit/(:num)', 'SettingCMS::edit/$1');
     $routes->post('settings/save', 'SettingCMS::save');
     $routes->get('settings/delete/(:num)', 'SettingCMS::delete/$1');
+    $routes->get('settings/bulkTranslate', 'SettingCMS::bulkTranslate');
 
     $routes->get('texts', 'WebsiteText::index');
     $routes->get('texts/ajaxData', 'WebsiteText::ajaxData');
