@@ -502,7 +502,25 @@ $nilai = $sections['nilai'] ?? [];
 
             <div class="col-lg-6 py-5 px-4 px-lg-5 d-flex align-items-center">
                 <div class="ps-lg-5 w-100" style="max-width: 650px;">
-                    <p class="text-dark mb-5 lh-base" style="font-size: clamp(1.3rem, 2vw, 1.7rem); font-weight: 400;">
+
+                    <!-- Kicker (opsional) -->
+                    <?php if (!empty($t($sections['feature'] ?? [], 'kicker'))): ?>
+                        <span class="text-uppercase fw-bold d-block mb-3"
+                            style="color: var(--bamusi-red, #cc0000); letter-spacing: 2px; font-size: 0.8rem;">
+                            <?= esc($t($sections['feature'] ?? [], 'kicker')); ?>
+                        </span>
+                    <?php endif; ?>
+
+                    <!-- Judul -->
+                    <?php if (!empty($t($sections['feature'] ?? [], 'title'))): ?>
+                        <h2 class="fw-bolder mb-4"
+                            style="font-size: clamp(2rem, 3.5vw, 3rem); letter-spacing: -1.5px; line-height: 1.15; color: #8b0000;">
+                            <?= $t_br($sections['feature'] ?? [], 'title'); ?>
+                        </h2>
+                    <?php endif; ?>
+
+                    <!-- Paragraf pengantar -->
+                    <p class="text-dark mb-5 lh-base" style="font-size: clamp(1.1rem, 1.6vw, 1.4rem); font-weight: 400;">
                         <?= esc($t($sections['feature'] ?? [], 'subtitle')); ?>
                     </p>
 
