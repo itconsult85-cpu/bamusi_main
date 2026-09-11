@@ -59,11 +59,10 @@
                                             class="btn btn-sm btn-warning text-white">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="<?= base_url('admin/section-links/delete/' . $item['id']); ?>"
-                                            class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Hapus link ini?')">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        <form action="<?= site_url('admin/section-links/delete/' . $item['id']); ?>" method="post" class="d-inline" onsubmit="return confirm('Hapus link ini?')">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
                         <?php endforeach;

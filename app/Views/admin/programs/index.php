@@ -23,6 +23,7 @@
                     </div>
                     <form action="<?= base_url('admin/programs/save'); ?>" method="post" id="program-form">
                         <input type="hidden" name="id" id="input-id">
+                            <?= csrf_field() ?>
 
                         <div class="card-body">
                             <div class="mb-3">

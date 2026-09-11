@@ -26,6 +26,7 @@ $chk = function ($key, $default = 1) use ($link) {
     <div class="container-fluid">
         <form action="<?= base_url('admin/section-links/save'); ?>" method="post">
             <input type="hidden" name="id" value="<?= $isEdit ? $link['id'] : ''; ?>">
+                <?= csrf_field() ?>
 
             <div class="row">
                 <div class="col-lg-8">

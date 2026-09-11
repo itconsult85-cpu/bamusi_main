@@ -71,10 +71,10 @@ class PageCMS extends BaseController
                 <a href="' . base_url('admin/pages/edit/' . $row['id']) . '" class="btn btn-sm btn-warning text-white">
                     <i class="fas fa-edit"></i>
                 </a>
-                <a href="' . base_url('admin/pages/delete/' . $row['id']) . '" class="btn btn-sm btn-danger"
-                   onclick="return confirm(\'Hapus halaman ini?\')">
-                    <i class="fas fa-trash"></i>
-                </a>
+                <form action="' . site_url('admin/pages/delete/' . $row['id']) . '" method="post" class="d-inline" onsubmit="return confirm(\'Hapus halaman ini?\')">
+                    ' . csrf_field() . '
+                    <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                </form>
             ';
 
             $formatted[] = [
@@ -176,6 +176,9 @@ class PageCMS extends BaseController
         // Upload image utama (image_url)
         $file = $this->request->getFile('image_url');
         if ($file && $file->isValid() && !$file->hasMoved()) {
+            if (! $this->validate(['image_url' => 'is_image[image_url]|mime_in[image_url,image/jpg,image/jpeg,image/png,image/webp]|max_size[image_url,2048]'])) {
+                return redirect()->back()->withInput()->with('error', 'Gambar halaman harus JPG, PNG, atau WEBP dengan ukuran maksimal 2 MB.');
+            }
             $dir = FCPATH . $this->uploadPath;
             if (!is_dir($dir)) mkdir($dir, 0755, true);
 
@@ -194,6 +197,9 @@ class PageCMS extends BaseController
         // Upload header logo
         $logo = $this->request->getFile('header_logo_url');
         if ($logo && $logo->isValid() && !$logo->hasMoved()) {
+            if (! $this->validate(['header_logo_url' => 'is_image[header_logo_url]|mime_in[header_logo_url,image/jpg,image/jpeg,image/png,image/webp]|max_size[header_logo_url,2048]'])) {
+                return redirect()->back()->withInput()->with('error', 'Logo halaman harus JPG, PNG, atau WEBP dengan ukuran maksimal 2 MB.');
+            }
             $dir = FCPATH . $this->uploadPath;
             if (!is_dir($dir)) mkdir($dir, 0755, true);
 

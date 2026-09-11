@@ -31,6 +31,7 @@
                     <!-- Form Utama -->
                     <form action="<?= base_url('admin/cms/save'); ?>" method="post" id="cms-form">
                         <!-- Input Hidden untuk menyimpan ID saat Edit -->
+                            <?= csrf_field() ?>
                         <input type="hidden" name="id" id="input-id">
 
                         <div class="card-body">

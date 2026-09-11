@@ -26,10 +26,19 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item d-flex align-items-center px-2 text-secondary small">
+                        <?= esc((string) session()->get('user_name')) ?>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link text-danger" href="<?= base_url('/'); ?>" target="_blank">
                             <i class="fas fa-globe"></i> Lihat Website
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="<?= site_url('logout'); ?>" method="post" class="m-0">
+                            <?= csrf_field() ?>
+                            <button class="nav-link btn btn-link text-danger" type="submit"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+                        </form>
                     </li>
                 </ul>
             </div>

@@ -4,8 +4,11 @@ use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
 $routes->get('/', 'Home::index');
+$routes->get('login', 'Auth::login');
+$routes->post('login', 'Auth::attemptLogin');
+$routes->post('logout', 'Auth::logout');
 
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
+$routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'adminauth'], function ($routes) {
     $routes->get('/', 'Dashboard::index');
 
     $routes->get('cms', 'CmsItem::index');
@@ -19,18 +22,18 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($rou
 
     $routes->get('board', 'BoardMember::index');
     $routes->post('board/save', 'BoardMember::save');
-    $routes->get('board/delete-photo/(:num)', 'BoardMember::deletePhoto/$1');
+    $routes->post('board/delete-photo/(:num)', 'BoardMember::deletePhoto/$1');
 
     $routes->get('hero-slides', 'HeroSlideCMS::index');
     $routes->post('hero-slides/save', 'HeroSlideCMS::save');
-    $routes->get('hero-slides/delete/(:num)', 'HeroSlideCMS::delete/$1');
+    $routes->post('hero-slides/delete/(:num)', 'HeroSlideCMS::delete/$1');
 
     $routes->get('pages', 'PageCMS::index');
     $routes->get('pages/ajaxData', 'PageCMS::ajaxData');
     $routes->get('pages/create', 'PageCMS::create');
     $routes->get('pages/edit/(:num)', 'PageCMS::edit/$1');
     $routes->post('pages/save', 'PageCMS::save');
-    $routes->get('pages/delete/(:num)', 'PageCMS::delete/$1');
+    $routes->post('pages/delete/(:num)', 'PageCMS::delete/$1');
 
     $routes->get('sections', 'SectionCMS::index');
     $routes->get('sections/ajax', 'SectionCMS::ajaxData');
@@ -42,7 +45,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($rou
     $routes->get('section-links/create', 'SectionLinkCMS::create');
     $routes->get('section-links/edit/(:num)', 'SectionLinkCMS::edit/$1');
     $routes->post('section-links/save', 'SectionLinkCMS::save');
-    $routes->get('section-links/delete/(:num)', 'SectionLinkCMS::delete/$1');
+    $routes->post('section-links/delete/(:num)', 'SectionLinkCMS::delete/$1');
 });
 
 // Tambahkan di bagian definisi routes
