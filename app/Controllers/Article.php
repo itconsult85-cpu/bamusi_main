@@ -39,7 +39,17 @@ class Article extends BaseController
             return view('frontend/404');
         }
 
-        return view('frontend/articles/show', $this->sharedData(['article' => $article]));
+        $relatedArticles = $this->articleModel
+            ->where('kind', 'article')
+            ->where('published', 1)
+            ->where('id !=', $id)
+            ->orderBy('created_at', 'DESC')
+            ->findAll(4);
+
+        return view('frontend/articles/show', $this->sharedData([
+            'article' => $article,
+            'relatedArticles' => $relatedArticles,
+        ]));
     }
 
     protected function sharedData(array $data): array
