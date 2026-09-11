@@ -86,6 +86,7 @@ $ts = function ($row, $field) use ($locale) {
                                         <?= esc($ts($slide, 'quote')); ?>
                                     </h2>
                                 <?php endif; ?>
+                                <br>
 
                                 <?php if (!empty($slide['lead'])): ?>
                                     <p class="fs-5 mb-5 pe-lg-5"
