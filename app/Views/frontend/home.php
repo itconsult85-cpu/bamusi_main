@@ -735,6 +735,7 @@ $nilai = $sections['nilai'] ?? [];
                     $articleImage = base_url(ltrim($articleImage, '/'));
                 }
                 $articleCategory = trim((string)($article['category'] ?? '')) ?: ($topics[$index] ?? 'Kolom Tulisan');
+                $articleTitle = ($locale === 'en' && !empty($article['title_en'])) ? $article['title_en'] : $article['title'];
                 ?>
                 <div class="col-lg-3 col-6 <?= $index < 3 ? 'border-end' : ''; ?>" style="border-color: #e0e0e0 !important;">
                     <a href="<?= base_url('artikel/' . $article['id']); ?>" class="d-block h-100 p-4 text-decoration-none" style="transition: background-color 0.2s ease;"
@@ -747,7 +748,7 @@ $nilai = $sections['nilai'] ?? [];
                             <?= esc($articleCategory); ?>
                         </span>
                         <h3 class="fs-6 fw-bold text-dark lh-base pe-lg-3 mb-0">
-                            <?= esc($article['title']); ?>
+                            <?= esc($articleTitle); ?>
                         </h3>
                     </a>
                 </div>

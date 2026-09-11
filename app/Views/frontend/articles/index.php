@@ -2,28 +2,33 @@
 <?= $this->section('content'); ?>
 <section class="article-hero">
     <div class="container-fluid px-4 px-lg-5">
-        <span class="article-eyebrow">Ruang Gagasan BAMUSI</span>
-        <h1>Artikel</h1>
-        <p>Catatan, gagasan, dan perspektif untuk Indonesia yang berkeadaban.</p>
+        <span class="article-eyebrow"><?= $locale === 'en' ? 'BAMUSI Ideas' : 'Ruang Gagasan BAMUSI'; ?></span>
+        <h1><?= $locale === 'en' ? 'Articles' : 'Artikel'; ?></h1>
+        <p><?= $locale === 'en' ? 'Clear, thoughtful, and humane perspectives on Islam, democracy, and Indonesia.' : 'Catatan, gagasan, dan perspektif untuk Indonesia yang berkeadaban.'; ?></p>
     </div>
 </section>
 <section class="article-list-section">
     <div class="container-fluid px-4 px-lg-5">
         <?php if (empty($articles)): ?>
-            <div class="article-empty">Belum ada artikel yang diterbitkan.</div>
+            <div class="article-empty"><?= $locale === 'en' ? 'No articles have been published yet.' : 'Belum ada artikel yang diterbitkan.'; ?></div>
         <?php else: ?>
             <div class="article-grid">
                 <?php foreach ($articles as $article): ?>
-                    <?php $image = trim((string)($article['image_url'] ?? '')); if ($image && !preg_match('#^https?://#i', $image)) $image = base_url(ltrim($image, '/')); ?>
+                    <?php
+                    $image = trim((string)($article['image_url'] ?? ''));
+                    if ($image && !preg_match('#^https?://#i', $image)) $image = base_url(ltrim($image, '/'));
+                    $title = ($locale === 'en' && !empty($article['title_en'])) ? $article['title_en'] : $article['title'];
+                    $summary = ($locale === 'en' && !empty($article['summary_en'])) ? $article['summary_en'] : ($article['summary'] ?: mb_strimwidth(strip_tags($article['body'] ?? ''), 0, 160, '...'));
+                    ?>
                     <article class="article-card">
                         <a href="<?= base_url('artikel/' . $article['id']); ?>" class="article-card-image">
-                            <?php if ($image): ?><img src="<?= esc($image); ?>" alt="<?= esc($article['title']); ?>"><?php else: ?><span><?= esc(strtoupper(mb_substr($article['title'], 0, 1))); ?></span><?php endif; ?>
+                            <?php if ($image): ?><img src="<?= esc($image); ?>" alt="<?= esc($title); ?>"><?php else: ?><span><?= esc(strtoupper(mb_substr($title, 0, 1))); ?></span><?php endif; ?>
                         </a>
                         <div class="article-card-body">
-                            <div class="article-meta"><?= esc($article['category'] ?: 'Perspektif'); ?> · <?= esc(date('d M Y', strtotime($article['created_at'] ?? 'now'))); ?></div>
-                            <h2><a href="<?= base_url('artikel/' . $article['id']); ?>"><?= esc($article['title']); ?></a></h2>
-                            <p><?= esc($article['summary'] ?: mb_strimwidth(strip_tags($article['body'] ?? ''), 0, 160, '...')); ?></p>
-                            <a class="article-read-more" href="<?= base_url('artikel/' . $article['id']); ?>">Baca selengkapnya <span>↗</span></a>
+                            <div class="article-meta"><?= esc($article['category'] ?: ($locale === 'en' ? 'Perspective' : 'Perspektif')); ?> · <?= esc(date('d M Y', strtotime($article['created_at'] ?? 'now'))); ?></div>
+                            <h2><a href="<?= base_url('artikel/' . $article['id']); ?>"><?= esc($title); ?></a></h2>
+                            <p><?= esc($summary); ?></p>
+                            <a class="article-read-more" href="<?= base_url('artikel/' . $article['id']); ?>"><?= $locale === 'en' ? 'Read article' : 'Baca selengkapnya'; ?> <span>↗</span></a>
                         </div>
                     </article>
                 <?php endforeach; ?>

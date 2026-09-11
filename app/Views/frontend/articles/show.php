@@ -5,8 +5,11 @@ $locale = $locale ?? 'id';
 $image = trim((string)($article['image_url'] ?? ''));
 if ($image && !preg_match('#^https?://#i', $image)) $image = base_url(ltrim($image, '/'));
 $category = trim((string)($article['category'] ?? '')) ?: ($locale === 'en' ? 'Articles' : 'Kolom Tulisan');
+$title = ($locale === 'en' && !empty($article['title_en'])) ? $article['title_en'] : $article['title'];
+$summary = ($locale === 'en' && !empty($article['summary_en'])) ? $article['summary_en'] : ($article['summary'] ?? '');
+$body = ($locale === 'en' && !empty($article['body_en'])) ? $article['body_en'] : ($article['body'] ?? '');
 $publishedAt = !empty($article['created_at']) ? strtotime($article['created_at']) : time();
-$bodyText = trim(strip_tags((string)($article['body'] ?? '')));
+$bodyText = trim(strip_tags((string)$body));
 $readingMinutes = max(1, (int)ceil(str_word_count($bodyText) / 180));
 $shareUrl = current_url();
 ?>
@@ -22,8 +25,8 @@ $shareUrl = current_url();
             </nav>
             <div class="article-page-heading">
                 <span><?= $locale === 'en' ? 'Article detail' : 'Detail artikel'; ?></span>
-                <h1><?= esc($article['title']); ?></h1>
-                <?php if (!empty($article['summary'])): ?><p><?= esc($article['summary']); ?></p><?php endif; ?>
+                <h1><?= esc($title); ?></h1>
+                <?php if (!empty($summary)): ?><p><?= esc($summary); ?></p><?php endif; ?>
             </div>
         </div>
     </section>
@@ -35,7 +38,7 @@ $shareUrl = current_url();
                     <article class="article-card-detail">
                         <div class="article-hero-image">
                             <?php if ($image): ?>
-                                <img src="<?= esc($image); ?>" alt="<?= esc($article['title']); ?>" loading="lazy">
+                                <img src="<?= esc($image); ?>" alt="<?= esc($title); ?>" loading="lazy">
                             <?php else: ?>
                                 <div class="article-image-placeholder">BAMUSI</div>
                             <?php endif; ?>
@@ -48,7 +51,7 @@ $shareUrl = current_url();
 
                         <div class="article-content-detail">
                             <header class="article-content-header">
-                                <h2><?= esc($article['title']); ?></h2>
+                                <h2><?= esc($title); ?></h2>
                                 <div class="article-author-row">
                                     <div class="author-avatar">B</div>
                                     <div>
@@ -62,7 +65,7 @@ $shareUrl = current_url();
                             </header>
 
                             <div class="article-rich-text">
-                                <?= $article['body'] ?: '<p>Konten artikel belum diisi.</p>'; ?>
+                                <?= $body ?: '<p>Konten artikel belum diisi.</p>'; ?>
                             </div>
 
                             <div class="article-meta-bottom">
@@ -78,7 +81,7 @@ $shareUrl = current_url();
                                     <h3><?= $locale === 'en' ? 'Share article' : 'Bagikan artikel'; ?></h3>
                                     <div>
                                         <a href="https://www.facebook.com/sharer/sharer.php?u=<?= rawurlencode($shareUrl); ?>" target="_blank" rel="noopener" aria-label="Facebook">f</a>
-                                        <a href="https://twitter.com/intent/tweet?url=<?= rawurlencode($shareUrl); ?>&text=<?= rawurlencode($article['title']); ?>" target="_blank" rel="noopener" aria-label="X">𝕏</a>
+                                        <a href="https://twitter.com/intent/tweet?url=<?= rawurlencode($shareUrl); ?>&text=<?= rawurlencode($title); ?>" target="_blank" rel="noopener" aria-label="X">𝕏</a>
                                         <button type="button" class="copy-article-link" aria-label="Copy link">↗</button>
                                     </div>
                                 </div>
@@ -99,7 +102,7 @@ $shareUrl = current_url();
                             <?php foreach ($relatedArticles as $related): ?>
                                 <a class="related-article" href="<?= base_url('artikel/' . $related['id']); ?>">
                                     <span><?= esc($related['category'] ?: ($locale === 'en' ? 'Article' : 'Artikel')); ?></span>
-                                    <strong><?= esc($related['title']); ?></strong>
+                                    <strong><?= esc(($locale === 'en' && !empty($related['title_en'])) ? $related['title_en'] : $related['title']); ?></strong>
                                     <small><?= date($locale === 'en' ? 'M d, Y' : 'd M Y', strtotime($related['created_at'] ?? 'now')); ?> <b>↗</b></small>
                                 </a>
                             <?php endforeach; ?>
