@@ -501,6 +501,17 @@ $nilai = $sections['nilai'] ?? [];
 
             <div class="col-lg-6 py-5 px-4 px-lg-5 d-flex align-items-center">
                 <div class="ps-lg-5 w-100" style="max-width: 650px;">
+                    <?php if ($featureKicker = $t($sections['feature'] ?? [], 'kicker')): ?>
+                        <span class="text-uppercase fw-bold d-block mb-3" style="color: var(--bamusi-red, #cc0000); letter-spacing: 2px; font-size: .85rem;">
+                            <?= esc($featureKicker); ?>
+                        </span>
+                    <?php endif; ?>
+                    <?php $featureTitle = $t($sections['feature'] ?? [], 'title') ?: ($texts['home.feature_title'] ?? ''); ?>
+                    <?php if ($featureTitle): ?>
+                        <h2 class="fw-bolder mb-4 text-dark" style="font-size: clamp(2.25rem, 4vw, 4rem); line-height: 1.05; letter-spacing: -1px;">
+                            <?= nl2br(esc($featureTitle)); ?>
+                        </h2>
+                    <?php endif; ?>
                     <p class="text-dark mb-5 lh-base" style="font-size: clamp(1.3rem, 2vw, 1.7rem); font-weight: 400;">
                         <?= esc($t($sections['feature'] ?? [], 'subtitle')); ?>
                     </p>
@@ -509,16 +520,16 @@ $nilai = $sections['nilai'] ?? [];
                         <?php
                         $featureItems = [
                             [
-                                'title' => ($locale === 'en' ? 'Chairman\'s Language' : 'Bahasa Ketum'),
-                                'body' => ($locale === 'en' ? 'National ideas in speech that are close, reflective, and easy to understand.' : 'Gagasan kebangsaan dalam tutur yang dekat, reflektif, dan mudah dipahami.')
+                                'title' => $texts['home.feature_item_1_title'] ?? '',
+                                'body' => $texts['home.feature_item_1_body'] ?? ''
                             ],
                             [
-                                'title' => ($locale === 'en' ? 'Mega Dhikr' : 'Mega Dzikir'),
-                                'body' => ($locale === 'en' ? 'An assembly of prayer and togetherness that confirms spirituality and social care.' : 'Majelis doa dan kebersamaan yang meneguhkan spiritualitas, persatuan, serta kepedulian sosial.')
+                                'title' => $texts['home.feature_item_2_title'] ?? '',
+                                'body' => $texts['home.feature_item_2_body'] ?? ''
                             ],
                             [
-                                'title' => ($locale === 'en' ? 'Open Communication' : 'Komunikasi Terbuka'),
-                                'body' => ($locale === 'en' ? 'Delivery of public attitudes and agendas directly, responsibly, and based on facts.' : 'Penyampaian sikap dan agenda publik secara langsung, bertanggung jawab, dan berbasis fakta.')
+                                'title' => $texts['home.feature_item_3_title'] ?? '',
+                                'body' => $texts['home.feature_item_3_body'] ?? ''
                             ]
                         ];
 

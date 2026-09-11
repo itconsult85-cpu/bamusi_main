@@ -44,6 +44,13 @@ class Home extends BaseController
             $sections[$sec['section_key']] = $sec;
         }
 
+        $texts = [];
+        foreach ($db->table('website_texts')->where('published', 1)->get()->getResultArray() as $text) {
+            $texts[$text['text_key']] = ($locale === 'en' && !empty($text['value_en']))
+                ? $text['value_en']
+                : ($text['value'] ?? '');
+        }
+
         // 3. RSS Google News (tidak berubah)
         $rssUrl = $settings['news_rss_url'] ?? 'https://news.google.com/rss/search?q=BAMUSI%20Baitul%20Muslimin%20Indonesia&hl=id&gl=ID&ceid=ID:id';
         $newsFeed = [];
@@ -77,6 +84,7 @@ class Home extends BaseController
             'locale'      => $locale,
             'settings'    => $settings,
             'sections'    => $sections,
+            'texts'       => $texts,
             'heroSlides'  => (new HeroSlideModel())          // ← ✅ DI SINI
                 ->where('published', 1)
                 ->orderBy('sort_order', 'ASC')
