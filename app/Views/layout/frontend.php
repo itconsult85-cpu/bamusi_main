@@ -754,8 +754,12 @@ if (!isset($navMenu)) {
             <div class="row g-5 mb-4">
                 <div class="col-lg-5 pe-lg-5">
                     <div class="d-flex align-items-center gap-4 mb-4">
-                        <img src="<?= base_url('assets/images/pdi.png'); ?>" alt="Logo PDI Perjuangan"
-                            style="height: 65px; object-fit: contain;">
+                        <a href="https://pdiperjuangan.id/" target="_blank" rel="noopener noreferrer"
+                            title="PDI Perjuangan" style="display: inline-block; transition: opacity 0.25s;"
+                            onmouseover="this.style.opacity='0.8';" onmouseout="this.style.opacity='1';">
+                            <img src="<?= base_url('assets/images/pdi.png'); ?>" alt="Logo PDI Perjuangan"
+                                style="height: 65px; object-fit: contain;">
+                        </a>
                         <div style="width: 1px; height: 50px; background-color: rgba(255,255,255,0.2);"></div>
                         <img src="<?= base_url('assets/images/bamusi-logo-transparent.png'); ?>" alt="Logo BAMUSI"
                             style="height: 65px; object-fit: contain;">
