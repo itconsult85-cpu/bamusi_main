@@ -725,22 +725,36 @@ $nilai = $sections['nilai'] ?? [];
             ($locale === 'en' ? 'Education & Boarding' : 'Pesantren & pendidikan'),
             ($locale === 'en' ? 'Women, Family & Youth' : 'Perempuan, keluarga & generasi muda')
         ];
+        $writingArticles = array_slice($writingArticles ?? [], 0, 4);
         ?>
         <div class="row g-0 pt-4" style="border-top: 1px solid #212529;">
-            <?php foreach ($topics as $index => $topic): ?>
+            <?php foreach ($writingArticles as $index => $article): ?>
+                <?php
+                $articleImage = trim((string)($article['image_url'] ?? ''));
+                if ($articleImage && !preg_match('#^https?://#i', $articleImage)) {
+                    $articleImage = base_url(ltrim($articleImage, '/'));
+                }
+                $articleCategory = trim((string)($article['category'] ?? '')) ?: ($topics[$index] ?? 'Kolom Tulisan');
+                ?>
                 <div class="col-lg-3 col-6 <?= $index < 3 ? 'border-end' : ''; ?>" style="border-color: #e0e0e0 !important;">
-                    <a href="#" class="d-block h-100 p-4 text-decoration-none" style="transition: background-color 0.2s ease;"
+                    <a href="<?= base_url('artikel/' . $article['id']); ?>" class="d-block h-100 p-4 text-decoration-none" style="transition: background-color 0.2s ease;"
                         onmouseover="this.style.backgroundColor='#fdf0f0';"
                         onmouseout="this.style.backgroundColor='transparent';">
                         <span class="fw-bold d-block mb-4" style="color: var(--bamusi-red, #cc0000); font-size: 0.9rem;">
                             <?= str_pad((string)($index + 1), 2, '0', STR_PAD_LEFT); ?>
                         </span>
+                        <span class="text-uppercase d-block mb-2" style="color: #8b0000; letter-spacing: 1px; font-size: 0.68rem; font-weight: 800;">
+                            <?= esc($articleCategory); ?>
+                        </span>
                         <h3 class="fs-6 fw-bold text-dark lh-base pe-lg-3 mb-0">
-                            <?= esc($topic); ?>
+                            <?= esc($article['title']); ?>
                         </h3>
                     </a>
                 </div>
             <?php endforeach; ?>
+            <?php if (empty($writingArticles)): ?>
+                <div class="col-12 py-4 text-secondary">Belum ada artikel yang diterbitkan.</div>
+            <?php endif; ?>
         </div>
     </div>
 </section>

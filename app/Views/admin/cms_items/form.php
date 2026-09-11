@@ -55,7 +55,13 @@ $chk = function ($key, $default = 1) use ($item) {
                                     <label class="form-label">Kategori</label>
                                     <input type="text" name="category" class="form-control"
                                         value="<?= $val('category'); ?>"
-                                        placeholder="Contoh: Nasional, Program">
+                                        placeholder="Pilih atau tulis tema artikel" list="writing-topics">
+                                    <datalist id="writing-topics">
+                                        <option value="Islam Nusantara">
+                                        <option value="Demokrasi & kebangsaan">
+                                        <option value="Pesantren & pendidikan">
+                                        <option value="Perempuan, keluarga & generasi muda">
+                                    </datalist>
                                 </div>
                             </div>
 
