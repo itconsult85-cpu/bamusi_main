@@ -21,6 +21,7 @@
                     </div>
                     <form action="<?= base_url('admin/texts/save'); ?>" method="post" id="text-form">
                         <input type="hidden" name="id" id="input-id">
+                            <?= csrf_field() ?>
                         <input type="hidden" name="text_key" id="input-text_key">
                         <input type="hidden" name="location" id="input-location">
                         <input type="hidden" name="label" id="input-label">

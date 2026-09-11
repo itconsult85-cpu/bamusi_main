@@ -25,6 +25,7 @@
                     </div>
                     <form action="<?= base_url('admin/hero-slides/save'); ?>" method="post"
                         enctype="multipart/form-data" id="slide-form">
+                            <?= csrf_field() ?>
                         <input type="hidden" name="id" id="input-id">
 
                         <div class="card-body" style="max-height: 75vh; overflow-y: auto;">
@@ -166,11 +167,10 @@
                                                     data-item='<?= htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8'); ?>'>
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <a href="<?= base_url('admin/hero-slides/delete/' . $item['id']); ?>"
-                                                    class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Hapus slide ini?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                                <form action="<?= site_url('admin/hero-slides/delete/' . $item['id']); ?>" method="post" class="d-inline" onsubmit="return confirm('Hapus slide ini?')">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                                </form>
                                             </td>
                                         </tr>
                                 <?php endforeach;

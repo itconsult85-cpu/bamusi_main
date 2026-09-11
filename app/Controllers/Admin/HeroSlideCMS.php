@@ -70,6 +70,9 @@ class HeroSlideCMS extends BaseController
         // Upload gambar + unlink gambar lama
         $file = $this->request->getFile('image_url');
         if ($file && $file->isValid() && !$file->hasMoved()) {
+            if (! $this->validate(['image_url' => 'is_image[image_url]|mime_in[image_url,image/jpg,image/jpeg,image/png,image/webp]|max_size[image_url,2048]'])) {
+                return redirect()->back()->withInput()->with('error', 'Gambar hero harus JPG, PNG, atau WEBP dengan ukuran maksimal 2 MB.');
+            }
             // Pastikan folder ada
             $dir = FCPATH . $this->uploadPath;
             if (!is_dir($dir)) mkdir($dir, 0755, true);

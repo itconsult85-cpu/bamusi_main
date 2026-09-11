@@ -13,6 +13,7 @@
     <div class="container-fluid">
         <form action="<?= base_url('admin/sections/save'); ?>" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?= isset($section) ? $section['id'] : '' ?>">
+                <?= csrf_field() ?>
 
             <div class="row">
                 <!-- KOLOM KIRI (Teks & Konten) -->

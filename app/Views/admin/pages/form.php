@@ -30,6 +30,7 @@ $chk = function ($key, $default = 1) use ($page) {
     <div class="container-fluid">
         <form action="<?= base_url('admin/pages/save'); ?>" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?= $isEdit ? $page['id'] : ''; ?>">
+                <?= csrf_field() ?>
 
             <div class="row">
                 <!-- KOLOM KIRI -->

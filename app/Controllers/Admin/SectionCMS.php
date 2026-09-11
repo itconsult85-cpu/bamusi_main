@@ -144,6 +144,9 @@ class SectionCMS extends BaseController
         // LOGIKA UPLOAD GAMBAR/VIDEO
         $mediaFile = $this->request->getFile('media_url');
         if ($mediaFile && $mediaFile->isValid() && !$mediaFile->hasMoved()) {
+            if (! $this->validate(['media_url' => 'mime_in[media_url,image/jpg,image/jpeg,image/png,image/webp,video/mp4]|max_size[media_url,10240]'])) {
+                return redirect()->back()->withInput()->with('error', 'Media section harus JPG, PNG, WEBP, atau MP4 dengan ukuran maksimal 10 MB.');
+            }
             // Data lama (kalau edit)
             $oldData = !empty($id) ? $this->sectionModel->find($id) : null;
 

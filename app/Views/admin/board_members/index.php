@@ -31,6 +31,7 @@
                     </div>
                     <form action="<?= base_url('admin/board/save'); ?>" method="post"
                         id="board-form" enctype="multipart/form-data">
+                            <?= csrf_field() ?>
                         <input type="hidden" name="id" id="input-id">
 
                         <div class="card-body">
