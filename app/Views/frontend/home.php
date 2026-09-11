@@ -71,13 +71,6 @@ $ts = function ($row, $field) use ($locale) {
                                     </span>
                                 <?php endif; ?>
 
-                                <?php if (!empty($slide['quote'])): ?>
-                                    <h2 class="fs-5 mb-2"
-                                        style="color: <?= esc($slide['quote_color'] ?: '#e7aa6b'); ?>;">
-                                        <?= esc($ts($slide, 'quote')); ?>
-                                    </h2>
-                                <?php endif; ?>
-
                                 <h1 class="fw-bolder mb-4"
                                     style="font-size: clamp(3rem, 5vw, 5.5rem);
                                            letter-spacing:-2px;
@@ -86,6 +79,13 @@ $ts = function ($row, $field) use ($locale) {
                                            color: <?= esc($slide['title_color'] ?: '#ffffff'); ?>;">
                                     <?= str_replace('|', '<br>', esc($ts($slide, 'title'))); ?>
                                 </h1>
+
+                                <?php if (!empty($slide['quote'])): ?>
+                                    <h2 class="fs-5 mb-2"
+                                        style="color: <?= esc($slide['quote_color'] ?: '#e7aa6b'); ?>;">
+                                        <?= esc($ts($slide, 'quote')); ?>
+                                    </h2>
+                                <?php endif; ?>
 
                                 <?php if (!empty($slide['lead'])): ?>
                                     <p class="fs-5 mb-5 pe-lg-5"
