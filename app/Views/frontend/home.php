@@ -408,8 +408,20 @@ if (empty($visiTitle)) {
                 <h2 class="fw-bold text-dark mb-5" style="font-size: clamp(2rem, 3vw, 2.5rem); line-height: 1.3;">
                     <?= $t_br($sections['board'] ?? [], 'title'); ?>
                 </h2>
-                <a href="<?= esc($sections['board']['button_url'] ?? base_url('struktur-pengurus')); ?>" class="btn rounded-0 text-white fw-bold px-4 py-3 text-uppercase" style="background-color: #cc0000; letter-spacing: 1px; font-size: 0.9rem;">
-                    <?= $locale === 'en' ? 'View All' : 'Lihat Semua'; ?>
+                <?php
+                $boardUrl = trim((string)($sections['board']['button_url'] ?? ''));
+                if ($boardUrl === '' || $boardUrl === '#kontak' || $boardUrl === '#') {
+                    $boardUrl = base_url('struktur-pengurus');
+                } elseif (!preg_match('#^https?://#i', $boardUrl) && $boardUrl[0] !== '#') {
+                    $boardUrl = base_url(ltrim($boardUrl, '/'));
+                }
+                $boardButton = trim((string)($t($sections['board'] ?? [], 'button_label')));
+                if ($boardButton === '' || $boardButton === 'Informasi sekretariat ↗' || $boardButton === 'Secretariat information ↗') {
+                    $boardButton = $locale === 'en' ? 'View all management' : 'Lihat semua pengurus';
+                }
+                ?>
+                <a href="<?= esc($boardUrl); ?>" class="btn rounded-0 text-white fw-bold px-4 py-3 text-uppercase" style="background-color: #cc0000; letter-spacing: 1px; font-size: 0.9rem;">
+                    <?= esc($boardButton); ?>
                 </a>
             </div>
 
