@@ -84,16 +84,17 @@ class Page extends BaseController
                 }
                 $groups[$key]['members'][] = $row;
             }
-            // Jika CMS memisahkan grup "Wakil X" dari grup "X", satukan sebagai
-            // anak hierarki agar Ketua Umum menjadi induk Wakil Ketua Umum.
+            // Jika CMS memisahkan grup "Wakil X" dari grup "X", jadikan sebagai
+            // child group secara visual tanpa menggabungkan data keduanya.
+            foreach ($groups as &$group) {
+                $group['children'] = [];
+            }
+            unset($group);
             foreach (array_keys($groups) as $groupKey) {
                 if (!str_starts_with(strtolower($groupKey), 'wakil ')) continue;
                 $parentKey = trim(substr($groupKey, strlen('Wakil ')));
                 if (!isset($groups[$parentKey])) continue;
-                $groups[$parentKey]['members'] = array_merge(
-                    $groups[$parentKey]['members'],
-                    $groups[$groupKey]['members']
-                );
+                $groups[$parentKey]['children'][] = $groups[$groupKey];
                 unset($groups[$groupKey]);
             }
             $groups = array_values($groups);

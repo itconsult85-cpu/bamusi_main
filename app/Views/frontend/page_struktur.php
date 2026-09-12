@@ -96,6 +96,21 @@ $showIntro = (int)($page['header_show_intro'] ?? 1);
         margin-bottom: 14px;
     }
 
+    .child-groups-wrap {
+        margin: 8px 0 18px 34px;
+        padding: 18px 0 4px 24px;
+        border-left: 3px solid #e2b2b2;
+    }
+
+    .child-group-title {
+        color: #8b0000;
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin: 0 0 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e2b2b2;
+    }
+
     /* ===== CARD HORIZONTAL (seperti PDI) ===== */
     .member-card {
         background: #ffffff;
@@ -301,6 +316,41 @@ $showIntro = (int)($page['header_show_intro'] ?? 1);
                                 </div>
                             <?php endforeach; ?>
                         </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($group['children'])): ?>
+                    <div class="child-groups-wrap">
+                        <?php foreach ($group['children'] as $child): ?>
+                            <section class="child-group">
+                                <h3 class="child-group-title">
+                                    <?= esc($locale === 'en' ? $child['name_en'] : $child['name']); ?>
+                                </h3>
+                                <div class="member-row">
+                                    <?php foreach ($child['members'] as $m):
+                                        $photo = trim((string)($m['photo_url'] ?? ''));
+                                        if ($photo !== '' && !preg_match('#^https?://#i', $photo)) {
+                                            $photo = base_url(ltrim($photo, '/'));
+                                        }
+                                    ?>
+                                        <div class="member-card">
+                                            <div class="member-photo">
+                                                <?php if ($photo !== ''): ?>
+                                                    <img src="<?= esc($photo); ?>" alt="<?= esc($m['name']); ?>">
+                                                <?php else: ?>
+                                                    <span class="initial"><?= esc(strtoupper(substr($m['name'], 0, 1))); ?></span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="member-info">
+                                                <div class="member-name"><?= esc($m['name']); ?></div>
+                                                <div class="member-role"><?= esc($t($m, 'role')); ?></div>
+                                                <?php if (!empty($m['note'])): ?><div class="member-note"><?= esc($t($m, 'note')); ?></div><?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </section>
+                        <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>
