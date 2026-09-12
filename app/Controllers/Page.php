@@ -84,6 +84,33 @@ class Page extends BaseController
                 }
                 $groups[$key]['members'][] = $row;
             }
+            // Satu group CMS dapat berisi kepala dan wakil sekaligus.
+            // Pecah menjadi dua section visual tanpa mengubah data database.
+            $displayGroups = [];
+            foreach ($groups as $group) {
+                $mainMembers = [];
+                $deputyMembers = [];
+                foreach ($group['members'] as $member) {
+                    $role = strtolower(trim((string)($member['role'] ?? '')));
+                    if (str_starts_with($role, 'wakil')) $deputyMembers[] = $member;
+                    else $mainMembers[] = $member;
+                }
+
+                if ($mainMembers && $deputyMembers) {
+                    $group['members'] = $mainMembers;
+                    $displayGroups[] = $group;
+
+                    $deputyGroup = $group;
+                    $deputyGroup['name'] = 'Wakil ' . $group['name'];
+                    $deputyGroup['name_en'] = 'Deputy ' . $group['name_en'];
+                    $deputyGroup['members'] = $deputyMembers;
+                    $deputyGroup['order'] = (float)$group['order'] + 0.1;
+                    $displayGroups[] = $deputyGroup;
+                } else {
+                    $displayGroups[] = $group;
+                }
+            }
+            $groups = $displayGroups;
             usort($groups, fn($a, $b) => $a['order'] <=> $b['order']);
             foreach ($groups as &$group) {
                 usort($group['members'], fn($a, $b) => ((int)($a['member_order'] ?? 999)) <=> ((int)($b['member_order'] ?? 999)));
