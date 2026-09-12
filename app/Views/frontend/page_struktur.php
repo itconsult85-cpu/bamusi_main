@@ -254,23 +254,17 @@ $showIntro = (int)($page['header_show_intro'] ?? 1);
     <div class="container-fluid px-4 px-lg-5">
 
         <?php if (!empty($groups)): ?>
-            <?php foreach ($groups as $group):
-                $leader   = $group['leader'] ?? null;
-                $members  = $group['deputies'] ?? ($group['members'] ?? []);
-                $count    = count($members);
-            ?>
+            <?php foreach ($groups as $group): ?>
                 <h2 class="group-title">
                     <?= esc($locale === 'en' ? $group['name_en'] : $group['name']); ?>
                 </h2>
-
-                <?php if ($leader): ?>
-                    <div class="member-row leader-row">
-                        <?php $m = $leader;
+                <div class="member-row">
+                    <?php foreach ($group['members'] as $m):
                         $photo = trim((string)($m['photo_url'] ?? ''));
                         if ($photo !== '' && !preg_match('#^https?://#i', $photo)) {
                             $photo = base_url(ltrim($photo, '/'));
                         }
-                        ?>
+                    ?>
                         <div class="member-card">
                             <div class="member-photo">
                                 <?php if ($photo !== ''): ?>
@@ -282,77 +276,11 @@ $showIntro = (int)($page['header_show_intro'] ?? 1);
                             <div class="member-info">
                                 <div class="member-name"><?= esc($m['name']); ?></div>
                                 <div class="member-role"><?= esc($t($m, 'role')); ?></div>
-                                <?php if (!empty($m['note'])): ?>
-                                    <div class="member-note"><?= esc($t($m, 'note')); ?></div>
-                                <?php endif; ?>
+                                <?php if (!empty($m['note'])): ?><div class="member-note"><?= esc($t($m, 'note')); ?></div><?php endif; ?>
                             </div>
                         </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($count > 0): ?>
-                    <div class="<?= $leader ? 'deputies-wrap' : ''; ?>">
-                        <?php if ($leader): ?><div class="deputies-label"><?= $locale === 'en' ? 'Deputy positions' : 'Jabatan wakil'; ?></div><?php endif; ?>
-                        <div class="member-row">
-                            <?php foreach ($members as $m):
-                                $photo = trim((string)($m['photo_url'] ?? ''));
-                                if ($photo !== '' && !preg_match('#^https?://#i', $photo)) {
-                                    $photo = base_url(ltrim($photo, '/'));
-                                }
-                            ?>
-                                <div class="member-card">
-                                    <div class="member-photo">
-                                        <?php if ($photo !== ''): ?>
-                                            <img src="<?= esc($photo); ?>" alt="<?= esc($m['name']); ?>">
-                                        <?php else: ?>
-                                            <span class="initial"><?= esc(strtoupper(substr($m['name'], 0, 1))); ?></span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="member-info">
-                                        <div class="member-name"><?= esc($m['name']); ?></div>
-                                        <div class="member-role"><?= esc($t($m, 'role')); ?></div>
-                                        <?php if (!empty($m['note'])): ?><div class="member-note"><?= esc($t($m, 'note')); ?></div><?php endif; ?>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($group['children'])): ?>
-                    <div class="child-groups-wrap">
-                        <?php foreach ($group['children'] as $child): ?>
-                            <section class="child-group">
-                                <h3 class="child-group-title">
-                                    <?= esc($locale === 'en' ? $child['name_en'] : $child['name']); ?>
-                                </h3>
-                                <div class="member-row">
-                                    <?php foreach ($child['members'] as $m):
-                                        $photo = trim((string)($m['photo_url'] ?? ''));
-                                        if ($photo !== '' && !preg_match('#^https?://#i', $photo)) {
-                                            $photo = base_url(ltrim($photo, '/'));
-                                        }
-                                    ?>
-                                        <div class="member-card">
-                                            <div class="member-photo">
-                                                <?php if ($photo !== ''): ?>
-                                                    <img src="<?= esc($photo); ?>" alt="<?= esc($m['name']); ?>">
-                                                <?php else: ?>
-                                                    <span class="initial"><?= esc(strtoupper(substr($m['name'], 0, 1))); ?></span>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="member-info">
-                                                <div class="member-name"><?= esc($m['name']); ?></div>
-                                                <div class="member-role"><?= esc($t($m, 'role')); ?></div>
-                                                <?php if (!empty($m['note'])): ?><div class="member-note"><?= esc($t($m, 'note')); ?></div><?php endif; ?>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </section>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
             <?php endforeach; ?>
         <?php else: ?>
             <div class="alert alert-info">Belum ada data pengurus.</div>
