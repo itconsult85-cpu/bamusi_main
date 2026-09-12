@@ -255,6 +255,7 @@ $showIntro = (int)($page['header_show_intro'] ?? 1);
                         if ($photo !== '' && !preg_match('#^https?://#i', $photo)) {
                             $photo = base_url(ltrim($photo, '/'));
                         }
+                        ?>
                         <div class="member-card">
                             <div class="member-photo">
                                 <?php if ($photo !== ''): ?>
