@@ -85,6 +85,26 @@ class Page extends BaseController
                 $groups[$key]['members'][] = $row;
             }
             usort($groups, fn($a, $b) => $a['order'] <=> $b['order']);
+            foreach ($groups as &$group) {
+                usort($group['members'], fn($a, $b) => ((int)($a['member_order'] ?? 999)) <=> ((int)($b['member_order'] ?? 999)));
+                $leaders = [];
+                $deputies = [];
+                foreach ($group['members'] as $member) {
+                    $role = strtolower(trim((string)($member['role'] ?? '')));
+                    if (str_starts_with($role, 'wakil')) $deputies[] = $member;
+                    else $leaders[] = $member;
+                }
+
+                // Hanya grup yang memiliki kepala dan jabatan Wakil yang dibuat bertingkat.
+                if ($deputies && $leaders) {
+                    $group['leader'] = $leaders[0];
+                    $group['deputies'] = $deputies;
+                } else {
+                    $group['leader'] = null;
+                    $group['deputies'] = $group['members'];
+                }
+            }
+            unset($group);
 
             $data['groups'] = $groups;
             return view('frontend/page_struktur', $data);

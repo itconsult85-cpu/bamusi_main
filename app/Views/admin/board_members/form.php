@@ -83,7 +83,7 @@ $chk = function ($key, $default = 1) use ($item) {
                                     <option value="Ketua Bidang">
                                     <option value="Departemen">
                                 </datalist>
-                                <small class="text-muted">Anggota dengan grup sama akan dikelompokkan di frontend.</small>
+                                <small class="text-muted">Anggota dengan grup sama akan dikelompokkan di frontend. Agar jabatan wakil tampil di bawah kepala grup, gunakan grup yang sama dan awali jabatan dengan “Wakil”.</small>
                             </div>
 
                             <div class="row">
@@ -97,7 +97,7 @@ $chk = function ($key, $default = 1) use ($item) {
                                     <label class="form-label">Urutan Anggota</label>
                                     <input type="number" name="member_order" class="form-control"
                                         value="<?= $val('member_order', 0); ?>">
-                                    <small class="text-muted">Kecil = kiri</small>
+                                    <small class="text-muted">Kecil = urutan pertama; kepala grup memakai urutan terendah.</small>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Sort Order</label>
