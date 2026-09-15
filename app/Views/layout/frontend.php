@@ -839,7 +839,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                                 <?= $locale === 'en' ? 'Contact Us' : 'Kontak Kami'; ?>
                             </strong>
                             <p class="opacity-75 lh-base mb-0" style="font-size: 0.95rem; font-weight: 300;">
-                                WhatsApp Admin<br>
+                                WhatsApp Adminnnn<br>
                                 <a href="<?= esc($settings['whatsapp_url'] ?? '#'); ?>"
                                     class="text-white text-decoration-none fw-bold"
                                     style="transition: color 0.3s;"
