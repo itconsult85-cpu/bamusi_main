@@ -234,6 +234,15 @@ $chk = function ($key, $default = 1) use ($page) {
 
                 </div>
             </div>
+            <!-- BLOK KONTEN DINAMIS -->
+            <div class="card card-primary card-outline mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div><h5 class="m-0">Blok Konten Dinamis</h5><small class="text-muted">Susun teks, gambar, kartu, kutipan, tombol, atau jarak tanpa mengubah kode.</small></div>
+                    <div class="d-flex gap-2"><select id="blockType" class="form-select form-select-sm"><option value="rich_text">Teks</option><option value="image">Gambar</option><option value="cards">Kartu</option><option value="quote">Kutipan</option><option value="cta">Tombol CTA</option><option value="spacer">Jarak</option></select><button type="button" id="addBlock" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Tambah</button></div>
+                </div>
+                <div class="card-body"><div id="blockList"></div><div id="blockEmpty" class="text-center text-muted border rounded p-4">Belum ada blok. Tambahkan blok pertama untuk membangun layout halaman.</div></div>
+            </div>
+            <input type="hidden" name="blocks_json" id="blocksJson" value="<?= esc(json_encode($blocks ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)); ?>">
         </form>
     </div>
 </div>
@@ -253,6 +262,30 @@ $chk = function ($key, $default = 1) use ($page) {
             ]
         });
     });
+</script>
+<script>
+(() => {
+    const list = document.querySelector('#blockList'), empty = document.querySelector('#blockEmpty'), output = document.querySelector('#blocksJson');
+    let blocks = [];
+    try { blocks = JSON.parse(output.value || '[]').map(b => ({type:b.block_type || b.type, data:b.data || {}, published:Number(b.published ?? 1)})); } catch (e) { blocks = []; }
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    const val = (data, key) => esc(data[key] || '');
+    function fields(block, index) {
+        const d = block.data || {};
+        if (block.type === 'rich_text') return `<textarea class="form-control block-field" data-key="html" rows="5" placeholder="Tulis isi blok...">${val(d,'html')}</textarea>`;
+        if (block.type === 'image') return `<div class="row g-2"><div class="col-md-8"><input class="form-control block-field" data-key="url" value="${val(d,'url')}" placeholder="URL gambar atau /uploads/..." /></div><div class="col-md-4"><input class="form-control block-field" data-key="alt" value="${val(d,'alt')}" placeholder="Alt text" /></div><div class="col-md-8"><input class="form-control block-field" data-key="caption" value="${val(d,'caption')}" placeholder="Caption (opsional)" /></div><div class="col-md-4"><select class="form-select block-field" data-key="width"><option value="container" ${d.width==='container'?'selected':''}>Lebar normal</option><option value="wide" ${d.width==='wide'?'selected':''}>Lebar penuh</option></select></div></div>`;
+        if (block.type === 'cards') return `<div class="row g-2"><div class="col-md-6"><input class="form-control block-field" data-key="title" value="${val(d,'title')}" placeholder="Judul section kartu" /></div><div class="col-md-6"><input class="form-control block-field" data-key="columns" value="${val(d,'columns') || '3'}" type="number" min="1" max="4" placeholder="Kolom" /></div><div class="col-12"><textarea class="form-control block-field" data-key="items" rows="5" placeholder="Satu kartu per baris: Judul | Deskripsi | Link">${val(d,'items')}</textarea><small class="text-muted">Contoh: Program Kader | Deskripsi singkat | /program</small></div></div>`;
+        if (block.type === 'quote') return `<div class="row g-2"><div class="col-md-8"><textarea class="form-control block-field" data-key="text" rows="3" placeholder="Isi kutipan">${val(d,'text')}</textarea></div><div class="col-md-4"><input class="form-control block-field" data-key="author" value="${val(d,'author')}" placeholder="Sumber/nama" /></div></div>`;
+        if (block.type === 'cta') return `<div class="row g-2"><div class="col-md-6"><input class="form-control block-field" data-key="label" value="${val(d,'label')}" placeholder="Label tombol" /></div><div class="col-md-6"><input class="form-control block-field" data-key="url" value="${val(d,'url')}" placeholder="URL tombol" /></div><div class="col-12"><textarea class="form-control block-field" data-key="text" rows="2" placeholder="Pesan CTA (opsional)">${val(d,'text')}</textarea></div></div>`;
+        return `<select class="form-select block-field" data-key="height"><option value="40" ${d.height==='40'?'selected':''}>Kecil</option><option value="80" ${d.height==='80'?'selected':''}>Sedang</option><option value="140" ${d.height==='140'?'selected':''}>Besar</option></select>`;
+    }
+    function render() { empty.classList.toggle('d-none', blocks.length > 0); list.innerHTML = blocks.map((b,i) => `<div class="border rounded-3 p-3 mb-3 bg-light block-item" data-index="${i}"><div class="d-flex justify-content-between align-items-center mb-3"><strong><i class="fas fa-grip-vertical me-2 text-muted"></i>${b.type.replace('_',' ')}</strong><div><button type="button" class="btn btn-sm btn-outline-secondary move-up">↑</button><button type="button" class="btn btn-sm btn-outline-secondary move-down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-block">Hapus</button></div></div>${fields(b,i)}</div>`).join(''); output.value = JSON.stringify(blocks); }
+    function sync() { document.querySelectorAll('.block-item').forEach((item,i) => item.querySelectorAll('.block-field').forEach(field => blocks[i].data[field.dataset.key] = field.value)); output.value = JSON.stringify(blocks); }
+    document.querySelector('#addBlock').addEventListener('click', () => { sync(); blocks.push({type:document.querySelector('#blockType').value,data:{},published:1}); render(); });
+    list.addEventListener('input', sync);
+    list.addEventListener('click', e => { const item=e.target.closest('.block-item'); if(!item)return; const i=Number(item.dataset.index); if(e.target.closest('.remove-block')) blocks.splice(i,1); if(e.target.closest('.move-up')&&i>0) [blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]]; if(e.target.closest('.move-down')&&i<blocks.length-1) [blocks[i+1],blocks[i]]=[blocks[i],blocks[i+1]]; render(); });
+    document.querySelector('form').addEventListener('submit', sync); render();
+})();
 </script>
 
 <?= $this->endSection(); ?>

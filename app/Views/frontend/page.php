@@ -84,7 +84,23 @@ if ($image && !preg_match('#^https?://#i', $image)) $image = base_url(ltrim($ima
                     </figure>
                 <?php endif; ?>
 
-                <?php if (!empty($body)): ?>
+                <?php if (!empty($blocks)): ?>
+                    <?php foreach ($blocks as $block): $b = $block['data'] ?? []; $type = $block['block_type'] ?? ''; ?>
+                        <?php if ($type === 'rich_text'): ?>
+                            <article class="page-body fs-5 lh-lg text-dark mb-5"><?= $b['html'] ?? ''; ?></article>
+                        <?php elseif ($type === 'image' && !empty($b['url'])): $src = preg_match('#^https?://#i', $b['url']) ? $b['url'] : base_url(ltrim($b['url'], '/')); ?>
+                            <figure class="mb-5 <?= ($b['width'] ?? '') === 'wide' ? 'mx-lg-n5' : ''; ?>"><img src="<?= esc($src); ?>" alt="<?= esc($b['alt'] ?? $title); ?>" class="img-fluid rounded-3 w-100" style="max-height:560px;object-fit:cover;"><?php if (!empty($b['caption'])): ?><figcaption class="small text-muted mt-2 text-center"><?= esc($b['caption']); ?></figcaption><?php endif; ?></figure>
+                        <?php elseif ($type === 'cards'): ?>
+                            <section class="mb-5"><h2 class="h3 fw-bold text-danger mb-4"><?= esc($b['title'] ?? ''); ?></h2><div class="row g-4"><?php foreach (preg_split('/\r?\n/', trim((string)($b['items'] ?? ''))) as $card): $parts = array_map('trim', explode('|', $card, 3)); if (!$parts[0]) continue; ?><div class="col-md-<?= (int)(12 / max(1, min(4, (int)($b['columns'] ?? 3)))); ?>"><div class="card h-100 border-0 shadow-sm rounded-4 p-4"><h3 class="h5 fw-bold"><?= esc($parts[0]); ?></h3><p class="text-secondary mb-3"><?= esc($parts[1] ?? ''); ?></p><?php if (!empty($parts[2])): ?><a href="<?= esc($parts[2]); ?>" class="btn btn-outline-danger btn-sm rounded-pill mt-auto align-self-start">Selengkapnya ↗</a><?php endif; ?></div></div><?php endforeach; ?></div></section>
+                        <?php elseif ($type === 'quote'): ?>
+                            <figure class="border-start border-4 border-danger bg-light rounded-end p-4 my-5"><blockquote class="fs-4 fst-italic mb-2">“<?= esc($b['text'] ?? ''); ?>”</blockquote><?php if (!empty($b['author'])): ?><figcaption class="text-secondary">— <?= esc($b['author']); ?></figcaption><?php endif; ?></figure>
+                        <?php elseif ($type === 'cta'): ?>
+                            <div class="bg-danger text-white rounded-4 p-4 p-lg-5 my-5 d-flex flex-wrap align-items-center justify-content-between gap-3"><div class="fs-5 fw-semibold"><?= esc($b['text'] ?? ''); ?></div><?php if (!empty($b['url'])): ?><a href="<?= esc($b['url']); ?>" class="btn btn-warning rounded-pill px-4"><?= esc($b['label'] ?? 'Pelajari lebih lanjut'); ?> ↗</a><?php endif; ?></div>
+                        <?php elseif ($type === 'spacer'): ?>
+                            <div style="height:<?= max(20, min(240, (int)($b['height'] ?? 80))); ?>px"></div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php elseif (!empty($body)): ?>
                     <article class="page-body fs-5 lh-lg text-dark" style="line-height: 1.9;">
                         <?= $body ?>
                     </article>

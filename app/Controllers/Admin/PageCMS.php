@@ -4,16 +4,19 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\PageModel;
+use App\Models\PageBlockModel;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class PageCMS extends BaseController
 {
     protected $model;
+    protected $blockModel;
     protected $uploadPath = 'uploads/pages/';
 
     public function __construct()
     {
         $this->model = new PageModel();
+        $this->blockModel = new PageBlockModel();
     }
 
     /* ============ 1. INDEX (DataTables) ============ */
@@ -103,7 +106,7 @@ class PageCMS extends BaseController
     /* ============ 3. FORM CREATE ============ */
     public function create()
     {
-        return view('admin/pages/form', ['page' => null]);
+        return view('admin/pages/form', ['page' => null, 'blocks' => []]);
     }
 
     /* ============ 4. FORM EDIT ============ */
@@ -113,7 +116,12 @@ class PageCMS extends BaseController
         if (!$page) {
             return redirect()->to('/admin/pages')->with('error', 'Data tidak ditemukan.');
         }
-        return view('admin/pages/form', ['page' => $page]);
+        $blocks = $this->blockModel->where('page_id', $id)->orderBy('sort_order', 'ASC')->findAll();
+        foreach ($blocks as &$block) {
+            $block['data'] = json_decode($block['block_data'], true) ?: [];
+        }
+        unset($block);
+        return view('admin/pages/form', ['page' => $page, 'blocks' => $blocks]);
     }
 
     /* ============ 5. SAVE ============ */
@@ -223,7 +231,31 @@ class PageCMS extends BaseController
 
         $this->model->save($data);
 
+        $pageId = (int) ($id ?: $this->model->getInsertID());
+        $this->saveBlocks($pageId, (string) $this->request->getPost('blocks_json'));
+
         return redirect()->to('/admin/pages')->with('success', 'Halaman berhasil disimpan.');
+    }
+
+    private function saveBlocks(int $pageId, string $rawBlocks): void
+    {
+        if ($pageId < 1) return;
+        $blocks = json_decode($rawBlocks, true);
+        if (!is_array($blocks)) $blocks = [];
+        $allowed = ['rich_text', 'image', 'cards', 'quote', 'cta', 'spacer'];
+        $this->blockModel->where('page_id', $pageId)->delete();
+        foreach ($blocks as $order => $block) {
+            $type = (string) ($block['type'] ?? '');
+            if (!in_array($type, $allowed, true)) continue;
+            $data = is_array($block['data'] ?? null) ? $block['data'] : [];
+            $this->blockModel->insert([
+                'page_id' => $pageId,
+                'block_type' => $type,
+                'block_data' => json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'sort_order' => (int) $order,
+                'published' => !empty($block['published']) ? 1 : 0,
+            ]);
+        }
     }
 
     /* ============ 6. DELETE ============ */
@@ -237,6 +269,7 @@ class PageCMS extends BaseController
                     if (file_exists($path) && is_file($path)) @unlink($path);
                 }
             }
+            $this->blockModel->where('page_id', $id)->delete();
             $this->model->delete($id);
         }
         return redirect()->to('/admin/pages')->with('success', 'Halaman dihapus.');

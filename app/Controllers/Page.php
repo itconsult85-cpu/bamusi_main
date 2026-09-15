@@ -3,17 +3,20 @@
 namespace App\Controllers;
 
 use App\Models\PageModel;
+use App\Models\PageBlockModel;
 use App\Models\BoardMemberModel;
 
 class Page extends BaseController
 {
     protected $pageModel;
     protected $boardModel;
+    protected $blockModel;
 
     public function __construct()
     {
         $this->pageModel  = new PageModel();
         $this->boardModel = new BoardMemberModel();
+        $this->blockModel = new PageBlockModel();
     }
 
     /**
@@ -56,6 +59,7 @@ class Page extends BaseController
 
         $data = [
             'page'     => $page,
+            'blocks'   => $this->getBlocks($page['id']),
             'settings' => $settings,
             'navMenu'  => $navMenu,
             'locale'   => session()->get('lang') ?? 'id',
@@ -125,6 +129,14 @@ class Page extends BaseController
         return view('frontend/page', $data);
     }
 
+    private function getBlocks(int $pageId): array
+    {
+        $blocks = $this->blockModel->where('page_id', $pageId)->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
+        foreach ($blocks as &$block) $block['data'] = json_decode($block['block_data'], true) ?: [];
+        unset($block);
+        return $blocks;
+    }
+
     /**
      * Listing semua halaman statis (opsional).
      * URL: /halaman
@@ -153,31 +165,4 @@ class Page extends BaseController
         ]);
     }
 
-    protected function buildMenu()
-    {
-        $db = \Config\Database::connect();
-        $all = $db->table('pages')
-            ->where('published', 1)
-            ->where('show_in_menu', 1)
-            ->orderBy('sort_order', 'ASC')
-            ->get()->getResultArray();
-
-        $parents = [];
-        $children = [];
-
-        foreach ($all as $row) {
-            if (empty($row['parent_id'])) {
-                $parents[$row['id']] = $row;
-                $parents[$row['id']]['children'] = [];
-            } else {
-                $children[$row['parent_id']][] = $row;
-            }
-        }
-        foreach ($children as $parentId => $kids) {
-            if (isset($parents[$parentId])) {
-                $parents[$parentId]['children'] = $kids;
-            }
-        }
-        return array_values($parents);
-    }
 }
