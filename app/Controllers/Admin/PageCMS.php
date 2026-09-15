@@ -71,6 +71,9 @@ class PageCMS extends BaseController
                 <a href="' . base_url('admin/pages/edit/' . $row['id']) . '" class="btn btn-sm btn-warning text-white">
                     <i class="fas fa-edit"></i>
                 </a>
+                <a href="' . base_url($row['slug']) . '" target="_blank" class="btn btn-sm btn-info text-white" title="Lihat halaman">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
                 <form action="' . site_url('admin/pages/delete/' . $row['id']) . '" method="post" class="d-inline" onsubmit="return confirm(\'Hapus halaman ini?\')">
                     ' . csrf_field() . '
                     <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
@@ -79,7 +82,7 @@ class PageCMS extends BaseController
 
             $formatted[] = [
                 $cover,
-                '<div class="fw-bold">' . esc($row['title']) . '</div>
+                '<div class="fw-bold">' . esc($row['title']) . ($row['slug'] === 'berita' ? ' <span class="badge text-bg-primary">Halaman khusus</span>' : '') . '</div>
                  <small class="text-muted">/' . esc($row['slug']) . '</small>',
                 $menuBadge,
                 '<span class="fw-bold">' . (int)$row['sort_order'] . '</span>',
@@ -133,6 +136,7 @@ class PageCMS extends BaseController
         $excerptId = $this->request->getPost('excerpt');
         $bodyId    = $this->request->getPost('body');
         $menuId    = $this->request->getPost('menu_label');
+        $oldData   = !empty($id) ? $this->model->find($id) : null;
 
 
         try {
@@ -141,10 +145,11 @@ class PageCMS extends BaseController
             $bodyEn    = !empty($bodyId)    ? $tr->translate($bodyId)    : null;
             $menuEn    = !empty($menuId)    ? $tr->translate($menuId)    : null;
         } catch (\Exception $e) {
-            $titleEn = $excerptEn = $bodyEn = $menuEn = null;
+            $titleEn   = $oldData['title_en'] ?? null;
+            $excerptEn = $oldData['excerpt_en'] ?? null;
+            $bodyEn    = $oldData['body_en'] ?? null;
+            $menuEn    = $oldData['menu_label_en'] ?? null;
         }
-
-        $oldData = !empty($id) ? $this->model->find($id) : null;
 
         $data = [
             'slug'              => $slug,

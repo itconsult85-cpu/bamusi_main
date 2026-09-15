@@ -28,6 +28,9 @@
         <?php endif; ?>
 
         <div class="card card-outline card-secondary">
+            <div class="card-header bg-light border-0">
+                <small class="text-muted"><i class="fas fa-info-circle me-1"></i> Semua halaman publik, termasuk halaman khusus seperti Berita, dikelola dari menu ini. Gunakan tombol tautan untuk melihat halaman.</small>
+            </div>
             <div class="card-body table-responsive">
                 <table id="pagesTable" class="table table-striped table-hover align-middle">
                     <thead class="table-light">

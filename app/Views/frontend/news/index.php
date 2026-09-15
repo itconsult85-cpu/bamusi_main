@@ -9,14 +9,18 @@ $paginationUrl = static function (int $number) use ($baseQuery): string {
     $params['page'] = $number;
     return base_url('berita') . '?' . http_build_query($params);
 };
+$heroKicker = $page['header_kicker'] ?? '05 / 05 · Ruang Berita';
+$heroTitle = $page['header_title'] ?? 'Kabar BAMUSI untuk Indonesia.';
+$heroIntro = $page['header_intro'] ?? 'Kurasi pemberitaan publik tentang Baitul Muslimin Indonesia dari sumber nasional.';
+$heroTitleParts = preg_split('/\s+(?=untuk\s+Indonesia\.?$)/i', trim($heroTitle), 2);
 ?>
 <section class="py-5 text-white" style="background:linear-gradient(120deg,#640000 0%,#9f0000 55%,#d9a441 150%);padding-top:9rem!important;">
     <div class="container py-4">
         <div class="row align-items-end g-4">
             <div class="col-lg-8">
-                <span class="badge rounded-pill text-bg-warning text-uppercase px-3 py-2 mb-3">05 / 05 · Ruang Berita</span>
-                <h1 class="display-3 fw-bold mb-3">Kabar BAMUSI<br><span class="text-warning">untuk Indonesia.</span></h1>
-                <p class="lead mb-0 opacity-75">Kurasi pemberitaan publik tentang Baitul Muslimin Indonesia dari sumber nasional.</p>
+                <span class="badge rounded-pill text-bg-warning text-uppercase px-3 py-2 mb-3"><?= esc($heroKicker); ?></span>
+                <h1 class="display-3 fw-bold mb-3"><?= esc($heroTitleParts[0]); ?><?php if (isset($heroTitleParts[1])): ?><br><span class="text-warning"><?= esc($heroTitleParts[1]); ?></span><?php endif; ?></h1>
+                <p class="lead mb-0 opacity-75"><?= esc($heroIntro); ?></p>
             </div>
             <div class="col-lg-4 text-lg-end"><span class="fs-5 opacity-75"><?= esc($total); ?> berita ditemukan</span></div>
         </div>

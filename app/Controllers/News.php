@@ -16,6 +16,16 @@ class News extends BaseController
             'setting_value',
             'setting_key'
         );
+        $pageModel = new PageModel();
+        $pageRecord = $pageModel->where('slug', 'berita')->first();
+        if ($pageRecord && !(int) $pageRecord['published']) {
+            return view('frontend/404');
+        }
+        $page = $pageRecord ?: [
+            'header_kicker' => '05 / 05 · Ruang Berita',
+            'header_title'  => 'Kabar BAMUSI untuk Indonesia.',
+            'header_intro'  => 'Kurasi pemberitaan publik tentang Baitul Muslimin Indonesia dari sumber nasional.',
+        ];
 
         $items = $this->getRssItems($settings['news_rss_url'] ?? null);
         $cmsItems = (new CmsItemModel())
@@ -62,7 +72,8 @@ class News extends BaseController
         return view('frontend/news/index', [
             'locale'     => $locale,
             'settings'   => $settings,
-            'navMenu'    => (new PageModel())->where('published', 1)->where('show_in_menu', 1)->orderBy('sort_order', 'ASC')->findAll(),
+            'navMenu'    => $pageModel->where('published', 1)->where('show_in_menu', 1)->orderBy('sort_order', 'ASC')->findAll(),
+            'page'       => $page,
             'news'       => $news,
             'categories' => array_values($categories),
             'query'      => $query,
@@ -104,4 +115,3 @@ class News extends BaseController
         return $items;
     }
 }
-
