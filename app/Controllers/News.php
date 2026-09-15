@@ -62,7 +62,9 @@ class News extends BaseController
         }
         natcasesort($categories);
 
-        $perPage = 8;
+        // Menampilkan 9 data per pagination agar pas 3 kolom
+        $perPage = 9;
+
         $total = count($filtered);
         $page = max(1, (int) $this->request->getGet('page'));
         $totalPages = max(1, (int) ceil($total / $perPage));
@@ -102,13 +104,34 @@ class News extends BaseController
             $sourceFallback = count($parts) > 1 ? trim((string) array_pop($parts)) : 'Berita Nasional';
             $title = trim(implode(' - ', $parts));
             $source = trim((string) $item->source) ?: $sourceFallback;
+
+            // 1. Coba ambil dari tag <category> jika RSS menyediakannya
+            $category = isset($item->category) ? trim((string) $item->category) : '';
+
+            // 2. Auto-categorize berdasarkan keyword judul jika tag category dari RSS kosong
+            if (empty($category)) {
+                $titleLower = mb_strtolower($fullTitle);
+
+                if (preg_match('/(islam|agama|dakwah|ulama|masjid|pesantren|muslim|ramadhan|dzikir|doa|kiai|ustadz)/i', $titleLower)) {
+                    $category = 'Keislaman';
+                } elseif (preg_match('/(pancasila|negara|nasional|nkri|bangsa|kebangsaan|toleransi|keberagaman)/i', $titleLower)) {
+                    $category = 'Kebangsaan';
+                } elseif (preg_match('/(pdip|pdi perjuangan|partai|megawati|hasto|pengurus|raker|rapat|dpp|dpd|ketum|sekjen|kader)/i', $titleLower)) {
+                    $category = 'Organisasi';
+                } elseif (preg_match('/(sosial|bantuan|masyarakat|rakyat|donasi|peduli|kemanusiaan|warga)/i', $titleLower)) {
+                    $category = 'Sosial';
+                } else {
+                    $category = 'Umum'; // Fallback jika tidak ada kata kunci yang cocok
+                }
+            }
+
             $items[] = [
                 'title'      => $title ?: $fullTitle,
                 'summary'    => trim(strip_tags((string) ($item->description ?? ''))),
                 'url'        => trim((string) $item->link),
                 'event_date' => ($date = strtotime((string) $item->pubDate)) ? date('d M Y', $date) : '',
                 'source'     => $source,
-                'category'   => 'Nasional',
+                'category'   => $category,
                 'image_url'  => null,
             ];
         }

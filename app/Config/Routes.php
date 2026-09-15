@@ -85,6 +85,7 @@ $routes->get('(:segment)', 'Page::show/$1');
 
 $routes->get('lang/(:segment)', 'LanguageController::switchLanguage/$1');
 $routes->get('agenda/(:num)', 'Agenda::detail/$1');
+$routes->get('program/(:segment)', 'Program::detail/$1');
 
 
 $routes->set404Override(function () {
