@@ -116,7 +116,9 @@ class PageCMS extends BaseController
         if (!$page) {
             return redirect()->to('/admin/pages')->with('error', 'Data tidak ditemukan.');
         }
-        $blocks = $this->blockModel->where('page_id', $id)->orderBy('sort_order', 'ASC')->findAll();
+        $blocks = \Config\Database::connect()->tableExists('page_blocks')
+            ? $this->blockModel->where('page_id', $id)->orderBy('sort_order', 'ASC')->findAll()
+            : [];
         foreach ($blocks as &$block) {
             $block['data'] = json_decode($block['block_data'], true) ?: [];
         }
@@ -240,9 +242,10 @@ class PageCMS extends BaseController
     private function saveBlocks(int $pageId, string $rawBlocks): void
     {
         if ($pageId < 1) return;
+        if (!\Config\Database::connect()->tableExists('page_blocks')) return;
         $blocks = json_decode($rawBlocks, true);
         if (!is_array($blocks)) $blocks = [];
-        $allowed = ['rich_text', 'image', 'cards', 'quote', 'cta', 'spacer'];
+        $allowed = ['rich_text', 'image', 'cards', 'program_list', 'quote', 'cta', 'spacer'];
         $this->blockModel->where('page_id', $pageId)->delete();
         foreach ($blocks as $order => $block) {
             $type = (string) ($block['type'] ?? '');

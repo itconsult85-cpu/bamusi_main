@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\PageModel;
 use App\Models\PageBlockModel;
 use App\Models\BoardMemberModel;
+use App\Models\ProgramModel;
 
 class Page extends BaseController
 {
@@ -131,8 +132,19 @@ class Page extends BaseController
 
     private function getBlocks(int $pageId): array
     {
+        $db = \Config\Database::connect();
+        if (!$db->tableExists('page_blocks')) return [];
         $blocks = $this->blockModel->where('page_id', $pageId)->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
-        foreach ($blocks as &$block) $block['data'] = json_decode($block['block_data'], true) ?: [];
+        foreach ($blocks as &$block) {
+            $block['data'] = json_decode($block['block_data'], true) ?: [];
+            if ($block['block_type'] === 'program_list') {
+                $block['data']['programs'] = (new ProgramModel())
+                    ->where('published', 1)
+                    ->orderBy('sort_order', 'ASC')
+                    ->orderBy('id', 'ASC')
+                    ->findAll();
+            }
+        }
         unset($block);
         return $blocks;
     }
