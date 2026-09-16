@@ -42,8 +42,8 @@ if ($image && !preg_match('#^https?://#i', $image)) {
                 </div>
 
                 <div class="mt-5 border-top pt-4">
-                    <a href="<?= base_url(); ?>#program" class="btn btn-outline-danger rounded-pill px-4">
-                        &larr; <?= $isEn ? 'Back to Home' : 'Kembali ke Beranda'; ?>
+                    <a href="<?= base_url('program'); ?>" class="btn btn-outline-danger rounded-pill px-4">
+                        &larr; <?= $isEn ? 'Back to Programs' : 'Kembali ke Program'; ?>
                     </a>
                 </div>
 

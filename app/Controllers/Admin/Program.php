@@ -68,6 +68,9 @@ class Program extends BaseController
                 <a href="' . base_url('admin/programs/edit/' . $row['id']) . '" class="btn btn-sm btn-warning text-white">
                     <i class="fas fa-edit"></i>
                 </a>
+                <a href="' . base_url('program/' . rawurlencode($row['slug'])) . '" target="_blank" class="btn btn-sm btn-info text-white" title="Lihat publik">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
                 <a href="' . base_url('admin/programs/delete/' . $row['id']) . '" class="btn btn-sm btn-danger"
                    onclick="return confirm(\'Hapus program ini?\')">
                     <i class="fas fa-trash"></i>

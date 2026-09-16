@@ -480,7 +480,7 @@ if (empty($visiTitle)) {
                         <?= esc($t($sections['program'] ?? [], 'subtitle')); ?>
                     </p>
 
-                    <a href="#daftar-bidang" class="btn bg-white text-dark rounded-pill fw-bold px-4 py-3 mt-2 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.85rem;" onclick="document.getElementById('daftar-bidang').scrollIntoView({behavior: 'smooth'}); return false;">
+                    <a href="<?= base_url('program'); ?>" class="btn bg-white text-dark rounded-pill fw-bold px-4 py-3 mt-2 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.85rem;">
                         <?= $locale === 'en' ? 'Explore Fields' : 'Jelajahi Bidang'; ?>
                         <span class="fs-6">↘</span>
                     </a>

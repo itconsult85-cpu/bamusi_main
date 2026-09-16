@@ -78,14 +78,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('section-links/delete/(:num)', 'SectionLinkCMS::delete/$1');
 });
 
-// Tambahkan di bagian definisi routes
-// $routes->get('struktur-pengurus', 'Home::struktur');
-$routes->get('halaman', 'Page::index');
-$routes->get('(:segment)', 'Page::show/$1');
-
 $routes->get('lang/(:segment)', 'LanguageController::switchLanguage/$1');
 $routes->get('agenda/(:num)', 'Agenda::detail/$1');
+$routes->get('program', 'Program::index');
 $routes->get('program/(:segment)', 'Program::detail/$1');
+
+// Catch-all harus diletakkan paling akhir agar route dinamis di atas tidak tertangkap Page::show.
+$routes->get('halaman', 'Page::index');
+$routes->get('(:segment)', 'Page::show/$1');
 
 
 $routes->set404Override(function () {
