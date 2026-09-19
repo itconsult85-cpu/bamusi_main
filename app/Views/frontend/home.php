@@ -204,6 +204,13 @@ $ts = function ($row, $field) use ($locale) {
 
 <?php
 $nilai = $sections['nilai'] ?? [];
+$nilaiButtonPosition = in_array(($nilai['button_position'] ?? 'center'), ['left', 'center', 'right'], true) ? $nilai['button_position'] : 'center';
+$nilaiButtonLocation = ($nilai['button_location'] ?? 'bottom') === 'top' ? 'top' : 'bottom';
+$nilaiCardsVisible = !array_key_exists('cards_visible', $nilai) || !empty($nilai['cards_visible']);
+$nilaiCardsLimit = max(1, min(12, (int) ($nilai['cards_limit'] ?? 5)));
+$nilaiCardsColumns = max(2, min(6, (int) ($nilai['cards_columns'] ?? 5)));
+$nilaiColumnClass = [2 => 'col-lg-6', 3 => 'col-lg-4', 4 => 'col-lg-3', 5 => 'col-lg', 6 => 'col-lg-2'][$nilaiCardsColumns] ?? 'col-lg';
+$nilaiButtonClass = ['left' => 'text-start', 'center' => 'text-center', 'right' => 'text-end'][$nilaiButtonPosition];
 ?>
 <section class="py-5 text-white position-relative overflow-hidden" id="nilai"
     style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
@@ -234,12 +241,21 @@ $nilai = $sections['nilai'] ?? [];
                 style="letter-spacing: 2px; color: #ffffff;">05 / BAMUSI</span>
         </div>
 
+        <?php if ($nilaiButtonLocation === 'top'): ?>
+            <div class="<?= $nilaiButtonClass; ?> mt-4 pt-2">
+                <a href="<?= esc($nilai['button_url'] ?? base_url('lima-nilai-utama')); ?>" class="d-inline-flex align-items-center gap-2 fw-bold text-white text-decoration-none border-bottom border-2 border-white pb-2" style="letter-spacing: .3px;">
+                    <?= esc($t($nilai, 'button_label') ?: 'Baca Selengkapnya ↗'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+
         <!-- KARTU 5 NILAI (dari tabel about_values) -->
+        <?php if ($nilaiCardsVisible): ?>
         <div class="row g-3 g-lg-4 pt-4 mt-2 border-top"
             style="border-color: rgba(255,255,255,0.1) !important;">
             <?php if (!empty($aboutValues)): ?>
-                <?php foreach (array_slice($aboutValues, 0, 5) as $i => $value): ?>
-                    <div class="col-6 col-md-4 col-lg flex-grow-1">
+                <?php foreach (array_slice($aboutValues, 0, $nilaiCardsLimit) as $i => $value): ?>
+                    <div class="col-6 col-md-4 <?= $nilaiColumnClass; ?>">
                         <a href="<?= esc($nilai['button_url'] ?? base_url('lima-nilai-utama')); ?>"
                             class="text-decoration-none d-block h-100 p-4 rounded-4"
                             style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); transition: all 0.3s ease;"
@@ -261,14 +277,17 @@ $nilai = $sections['nilai'] ?? [];
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
+        <?php endif; ?>
 
-        <div class="text-center mt-5 pt-2">
+        <?php if ($nilaiButtonLocation === 'bottom'): ?>
+        <div class="<?= $nilaiButtonClass; ?> mt-5 pt-2">
             <a href="<?= esc($nilai['button_url'] ?? base_url('lima-nilai-utama')); ?>"
                 class="d-inline-flex align-items-center gap-2 fw-bold text-white text-decoration-none border-bottom border-2 border-white pb-2"
                 style="letter-spacing: .3px;">
                 <?= esc($t($nilai, 'button_label') ?: 'Baca Selengkapnya ↗'); ?>
             </a>
         </div>
+        <?php endif; ?>
 
     </div>
 </section>

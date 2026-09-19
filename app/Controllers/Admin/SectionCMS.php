@@ -106,6 +106,10 @@ class SectionCMS extends BaseController
         $quoteId    = $this->request->getPost('quote');
         $contentId  = $this->request->getPost('content');
         $btnLabelId = $this->request->getPost('button_label');
+        $buttonPosition = $this->request->getPost('button_position') ?: 'center';
+        $buttonLocation = $this->request->getPost('button_location') ?: 'bottom';
+        if (!in_array($buttonPosition, ['left', 'center', 'right'], true)) $buttonPosition = 'center';
+        if (!in_array($buttonLocation, ['top', 'bottom'], true)) $buttonLocation = 'bottom';
 
         // Auto Translate
         $tr = new \Stichoza\GoogleTranslate\GoogleTranslate('en');
@@ -138,6 +142,11 @@ class SectionCMS extends BaseController
             'button_label'    => $btnLabelId,
             'button_label_en' => $btnLabelEn,
             'button_url'      => $this->request->getPost('button_url'),
+            'button_position' => $buttonPosition,
+            'button_location' => $buttonLocation,
+            'cards_visible'   => $this->request->getPost('cards_visible') ?? 1,
+            'cards_limit'     => max(1, min(12, (int) ($this->request->getPost('cards_limit') ?: 5))),
+            'cards_columns'   => max(2, min(6, (int) ($this->request->getPost('cards_columns') ?: 5))),
             'published'       => $this->request->getPost('published') ?? 1
         ];
 

@@ -24,6 +24,11 @@ class PageSectionModel extends Model
         'button_label',
         'button_label_en',
         'button_url',
+        'button_position',
+        'button_location',
+        'cards_visible',
+        'cards_limit',
+        'cards_columns',
         'media_url',
         'published',
         'sort_order'

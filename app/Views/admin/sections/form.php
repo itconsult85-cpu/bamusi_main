@@ -93,6 +93,17 @@
                         </div>
                     </div>
 
+                    <?php if (($section['section_key'] ?? '') === 'nilai'): ?>
+                    <div class="card card-warning card-outline mb-4">
+                        <div class="card-header"><h5 class="card-title m-0">Tata Letak Section Nilai</h5></div>
+                        <div class="card-body">
+                            <div class="mb-3"><label>Posisi Tombol</label><select name="button_position" class="form-select"><option value="left" <?= ($section['button_position'] ?? 'center') === 'left' ? 'selected' : '' ?>>Kiri</option><option value="center" <?= ($section['button_position'] ?? 'center') === 'center' ? 'selected' : '' ?>>Tengah</option><option value="right" <?= ($section['button_position'] ?? 'center') === 'right' ? 'selected' : '' ?>>Kanan</option></select></div>
+                            <div class="mb-3"><label>Letak Tombol</label><select name="button_location" class="form-select"><option value="top" <?= ($section['button_location'] ?? 'bottom') === 'top' ? 'selected' : '' ?>>Di atas kartu</option><option value="bottom" <?= ($section['button_location'] ?? 'bottom') === 'bottom' ? 'selected' : '' ?>>Di bawah kartu</option></select></div>
+                            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" name="cards_visible" value="1" <?= !array_key_exists('cards_visible', $section) || !empty($section['cards_visible']) ? 'checked' : '' ?>><label class="form-check-label">Tampilkan kartu nilai</label></div>
+                            <div class="row"><div class="col-6"><label>Jumlah kartu</label><input type="number" min="1" max="12" name="cards_limit" class="form-control" value="<?= (int) ($section['cards_limit'] ?? 5) ?>"></div><div class="col-6"><label>Kolom desktop</label><select name="cards_columns" class="form-select"><option value="2" <?= (int) ($section['cards_columns'] ?? 5) === 2 ? 'selected' : '' ?>>2</option><option value="3" <?= (int) ($section['cards_columns'] ?? 5) === 3 ? 'selected' : '' ?>>3</option><option value="4" <?= (int) ($section['cards_columns'] ?? 5) === 4 ? 'selected' : '' ?>>4</option><option value="5" <?= (int) ($section['cards_columns'] ?? 5) === 5 ? 'selected' : '' ?>>5</option><option value="6" <?= (int) ($section['cards_columns'] ?? 5) === 6 ? 'selected' : '' ?>>6</option></select></div></div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                     <!-- Box: Upload Media -->
                     <div class="card card-success card-outline mb-4">
                         <div class="card-header">
