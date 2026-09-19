@@ -346,36 +346,26 @@ if (empty($visiTitle)) {
                     <?= esc($visiTitle); ?>
                 </h2>
 
-                <!-- VISI -->
-                <div class="mb-5">
-                    <h3 class="text-danger text-uppercase fw-bold mb-3" style="font-size: 1.05rem; letter-spacing: 1.5px;"><?= $locale === 'en' ? 'Vision' : 'Visi'; ?></h3>
-                    <?php
-                    $visiText = $t($visi, 'vision');
-                    if ($visiText === '') {
-                        $visiText = ($locale === 'en' && !empty($settings['about_vision_en']))
-                            ? $settings['about_vision_en']
-                            : ($settings['about_vision'] ?? '');
-                    }
-                    ?>
-                    <p class="mb-0 text-dark" style="font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.65; font-weight: 500;">
-                        <?= esc($visiText); ?>
+                <?php
+                $visiText = $t($visi, 'vision');
+                if ($visiText === '') {
+                    $visiText = ($locale === 'en' && !empty($settings['about_vision_en']))
+                        ? $settings['about_vision_en']
+                        : ($settings['about_vision'] ?? '');
+                }
+                $missionText = $t($visi, 'mission');
+                if ($missionText === '') {
+                    $missionText = ($locale === 'en' && !empty($settings['about_mission_en']))
+                        ? $settings['about_mission_en']
+                        : ($settings['about_mission'] ?? '');
+                }
+                ?>
+                <div class="mt-4">
+                    <p class="mb-4 text-dark" style="font-size: clamp(1.35rem, 2vw, 1.8rem); line-height: 1.6; font-weight: 600;">
+                        <?= esc(trim($missionText)); ?>
                     </p>
-                </div>
-
-                <!-- MISI -->
-                <div class="mt-4 pt-4 border-top" style="border-color: #e6e6e6 !important;">
-                    <h3 class="text-danger text-uppercase fw-bold mb-3" style="font-size: 1.05rem; letter-spacing: 1.5px;"><?= $locale === 'en' ? 'Mission' : 'Misi'; ?></h3>
-                    <?php
-                    $raw_missions = $t($visi, 'mission');
-                    if ($raw_missions === '') {
-                        $raw_missions = ($locale === 'en' && !empty($settings['about_mission_en']))
-                            ? $settings['about_mission_en']
-                            : ($settings['about_mission'] ?? '');
-                    }
-                    ?>
-
-                    <p class="mb-0 text-dark" style="font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.65; font-weight: 500;">
-                        <?= esc(trim($raw_missions)); ?>
+                    <p class="mb-0 text-dark" style="font-size: clamp(1.35rem, 2vw, 1.8rem); line-height: 1.6; font-weight: 600;">
+                        <?= esc(trim($visiText)); ?>
                     </p>
                 </div>
             </div>

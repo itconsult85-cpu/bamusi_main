@@ -68,16 +68,16 @@
                         </div>
                         <div class="card-body">
                             <div class="alert alert-light border mb-4">
-                                <strong>Sumber tampilan homepage:</strong> data di bawah ini dipakai pada section Visi &amp; Misi, dengan gaya teks merah, judul besar gelap, latar putih, serta isi Visi dan Misi berupa paragraf besar.
+                                <strong>Sumber tampilan homepage:</strong> data ditampilkan berurutan sebagai judul utama, paragraf pertama, lalu paragraf terakhir. Tidak ada label Visi/Misi atau numbering pada homepage.
                             </div>
                             <div class="mb-3">
-                                <label class="fw-bold">Visi</label>
-                                <textarea name="vision" class="form-control fs-5" rows="5" placeholder="Tuliskan visi BAMUSI..."><?= isset($section) ? esc($section['vision'] ?? '') : '' ?></textarea>
+                                <label class="fw-bold">Paragraf Terakhir</label>
+                                <textarea name="vision" class="form-control fs-5" rows="5" placeholder="Tuliskan paragraf terakhir..."><?= isset($section) ? esc($section['vision'] ?? '') : '' ?></textarea>
                             </div>
                             <div class="mb-4">
-                                <label class="fw-bold">Misi</label>
-                                <textarea name="mission" class="form-control fs-5" rows="7" placeholder="Tuliskan misi BAMUSI dalam satu paragraf..."><?= isset($section) ? esc($section['mission'] ?? '') : '' ?></textarea>
-                                <small class="text-muted">Isi Misi ditampilkan sebagai satu paragraf tanpa nomor.</small>
+                                <label class="fw-bold">Paragraf Utama</label>
+                                <textarea name="mission" class="form-control fs-5" rows="7" placeholder="Tuliskan paragraf utama..."><?= isset($section) ? esc($section['mission'] ?? '') : '' ?></textarea>
+                                <small class="text-muted">Urutan homepage: judul utama → Paragraf Utama → Paragraf Terakhir. Keduanya ditampilkan sebagai paragraf besar tanpa nomor.</small>
                             </div>
                             <div class="rounded-3 overflow-hidden border" style="background:#fff;">
                                 <div class="px-4 py-3" style="border-left:5px solid #c8102e;">
