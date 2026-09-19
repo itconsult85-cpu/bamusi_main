@@ -67,6 +67,29 @@ class Home extends BaseController
                 $homepageItems[$item['section_key']][] = $item;
             }
         }
+
+        // Builder bersifat opt-in. Section legacy tetap dirender seperti sebelumnya
+        // sampai admin mengaktifkan mode Builder dan menambahkan blok.
+        $builderSections = [];
+        if ($db->tableExists('homepage_section_blocks') && $db->fieldExists('layout_mode', 'page_sections')) {
+            $blockRows = $db->table('homepage_section_blocks')
+                ->where('published', 1)
+                ->orderBy('section_id', 'ASC')
+                ->orderBy('sort_order', 'ASC')
+                ->get()->getResultArray();
+            $blocksBySection = [];
+            foreach ($blockRows as $block) {
+                $block['data'] = json_decode($block['block_data'] ?? '', true) ?: [];
+                $block['data_en'] = json_decode($block['block_data_en'] ?? '', true) ?: [];
+                $blocksBySection[$block['section_id']][] = $block;
+            }
+            foreach ($sectionsData as $section) {
+                if (($section['layout_mode'] ?? 'legacy') !== 'builder' || empty($blocksBySection[$section['id']] ?? [])) continue;
+                $section['blocks'] = $blocksBySection[$section['id']];
+                $builderSections[] = $section;
+            }
+        }
+        $builderMode = !empty($builderSections);
         $homepagePartners = $db->table('partners')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray();
         if (!empty($homepageItems['partners'])) {
             $homepagePartners = array_map(static function (array $item): array {
@@ -116,6 +139,8 @@ class Home extends BaseController
             'texts'       => $texts,
             'sections'    => $sections,
             'homepageItems' => $homepageItems,
+            'builderSections' => $builderSections,
+            'builderMode' => $builderMode,
             'heroSlides'  => (new HeroSlideModel())          // ← ✅ DI SINI
                 ->where('published', 1)
                 ->orderBy('sort_order', 'ASC')

@@ -45,8 +45,12 @@ $heroSlides = $heroSlides ?? [];
 $ts = function ($row, $field) use ($locale) {
     if ($locale === 'en' && !empty($row[$field . '_en'])) return $row[$field . '_en'];
     return $row[$field] ?? '';
-};
+}
 ?>
+
+<?php if (!empty($builderMode)): ?>
+    <?= view('frontend/homepage_builder', get_defined_vars()); ?>
+<?php endif; ?>
 
 <section class="hero-split-wrapper">
     <div class="hero-split-bg-right d-none d-lg-block"></div>

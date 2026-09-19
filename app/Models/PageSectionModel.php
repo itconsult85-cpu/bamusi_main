@@ -34,6 +34,8 @@ class PageSectionModel extends Model
         'cards_limit',
         'cards_columns',
         'media_url',
+        'layout_mode',
+        'layout_options',
         'published',
         'sort_order'
     ];

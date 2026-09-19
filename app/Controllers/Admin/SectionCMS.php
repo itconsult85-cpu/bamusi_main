@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\PageSectionModel;
 use App\Models\HomepageSectionItemModel;
 use App\Models\WebsiteTextModel;
+use App\Models\HomepageSectionBlockModel;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class SectionCMS extends BaseController
@@ -13,12 +14,14 @@ class SectionCMS extends BaseController
     protected $sectionModel;
     protected $itemModel;
     protected $textModel;
+    protected $blockModel;
 
     public function __construct()
     {
         $this->sectionModel = new PageSectionModel();
         $this->itemModel = new HomepageSectionItemModel();
         $this->textModel = new WebsiteTextModel();
+        $this->blockModel = new HomepageSectionBlockModel();
     }
 
     // 1. Menampilkan Halaman Tabel (DataTables)
@@ -99,6 +102,13 @@ class SectionCMS extends BaseController
         }
         $data['sectionItems'] = $this->itemModel->where('section_key', $data['section']['section_key'])->orderBy('sort_order', 'ASC')->findAll();
         $data['sectionTexts'] = $this->textModel->where('section_key', $data['section']['section_key'])->orderBy('sort_order', 'ASC')->findAll();
+        $data['sectionBlocks'] = \Config\Database::connect()->tableExists('homepage_section_blocks')
+            ? $this->blockModel->where('section_id', $id)->orderBy('sort_order', 'ASC')->findAll()
+            : [];
+        foreach ($data['sectionBlocks'] as &$block) {
+            $block['data'] = json_decode($block['block_data'] ?? '', true) ?: [];
+        }
+        unset($block);
         return view('admin/sections/form', $data);
     }
 
@@ -130,6 +140,84 @@ class SectionCMS extends BaseController
         }
         $section = $this->sectionModel->where('section_key', $sectionKey)->first();
         return redirect()->to('/admin/sections/edit/' . ($section['id'] ?? ''))->with('success', 'Item section berhasil dihapus.');
+    }
+
+    public function blockCreate($sectionKey)
+    {
+        $section = $this->sectionModel->where('section_key', $sectionKey)->first();
+        if (!$section) return redirect()->to('/admin/sections')->with('error', 'Section tidak ditemukan.');
+        return view('admin/sections/block_form', ['block' => null, 'section' => $section]);
+    }
+
+    public function blockEdit($id)
+    {
+        $block = $this->blockModel->find($id);
+        if (!$block) return redirect()->to('/admin/sections')->with('error', 'Blok tidak ditemukan.');
+        $section = $this->sectionModel->find($block['section_id']);
+        if (!$section) return redirect()->to('/admin/sections')->with('error', 'Section tidak ditemukan.');
+        $block['data'] = json_decode($block['block_data'] ?? '', true) ?: [];
+        return view('admin/sections/block_form', ['block' => $block, 'section' => $section]);
+    }
+
+    public function blockSave()
+    {
+        if (!\Config\Database::connect()->tableExists('homepage_section_blocks')) {
+            return redirect()->to('/admin/sections')->with('error', 'Migration builder belum dijalankan.');
+        }
+        $id = (int) $this->request->getPost('id');
+        $sectionId = (int) $this->request->getPost('section_id');
+        $section = $this->sectionModel->find($sectionId);
+        if (!$section) return redirect()->to('/admin/sections')->with('error', 'Section tidak ditemukan.');
+
+        $allowed = ['rich_text', 'image_text', 'hero_slider', 'cards', 'horizontal_slider', 'logo_grid', 'media_tabs', 'collection', 'quote', 'cta', 'spacer', 'join_form'];
+        $type = trim((string) $this->request->getPost('block_type'));
+        if (!in_array($type, $allowed, true)) return redirect()->back()->withInput()->with('error', 'Jenis blok tidak valid.');
+
+        $old = $id ? $this->blockModel->find($id) : null;
+        if ($old && (int) $old['section_id'] !== $sectionId) return redirect()->back()->with('error', 'Blok tidak cocok dengan section.');
+        $rawItems = trim((string) $this->request->getPost('items_json'));
+        $items = [];
+        if ($rawItems !== '') {
+            $items = json_decode($rawItems, true);
+            if (!is_array($items)) return redirect()->back()->withInput()->with('error', 'Data item JSON tidak valid.');
+        }
+        $title = trim((string) $this->request->getPost('title'));
+        $body = trim((string) $this->request->getPost('body'));
+        $data = [
+            'variant' => trim((string) $this->request->getPost('variant')),
+            'source' => trim((string) $this->request->getPost('source')),
+            'limit' => max(1, min(24, (int) ($this->request->getPost('limit') ?: 4))),
+            'columns' => max(1, min(6, (int) ($this->request->getPost('columns') ?: 3))),
+            'image_url' => trim((string) $this->request->getPost('image_url')),
+            'image_position' => trim((string) $this->request->getPost('image_position')),
+            'title' => $title,
+            'title_en' => $this->translateText($title, null),
+            'body' => $body,
+            'body_en' => $this->translateText($body, null),
+            'button_label' => trim((string) $this->request->getPost('button_label')),
+            'button_url' => trim((string) $this->request->getPost('button_url')),
+            'items' => $items,
+        ];
+        $record = [
+            'section_id' => $sectionId,
+            'section_key' => $section['section_key'],
+            'block_type' => $type,
+            'block_data' => json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'block_data_en' => json_encode(['title' => $data['title_en'], 'body' => $data['body_en']], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'sort_order' => (int) $this->request->getPost('sort_order'),
+            'published' => $this->request->getPost('published') ? 1 : 0,
+        ];
+        if ($id) $record['id'] = $id;
+        $this->blockModel->save($record);
+        return redirect()->to(base_url('admin/sections/edit/' . $sectionId))->with('success', 'Blok layout berhasil disimpan.');
+    }
+
+    public function blockDelete($id)
+    {
+        $block = $this->blockModel->find($id);
+        if (!$block) return redirect()->to('/admin/sections')->with('error', 'Blok tidak ditemukan.');
+        $this->blockModel->delete($id);
+        return redirect()->to(base_url('admin/sections/edit/' . $block['section_id']))->with('success', 'Blok layout berhasil dihapus.');
     }
 
     public function textCreate($sectionKey)
@@ -254,6 +342,8 @@ class SectionCMS extends BaseController
             'cards_visible'   => $this->request->getPost('cards_visible') ?? 1,
             'cards_limit'     => max(1, min(12, (int) ($this->request->getPost('cards_limit') ?: 5))),
             'cards_columns'   => max(2, min(6, (int) ($this->request->getPost('cards_columns') ?: 5))),
+            'layout_mode'     => in_array($this->request->getPost('layout_mode'), ['legacy', 'builder'], true) ? $this->request->getPost('layout_mode') : 'legacy',
+            'layout_options'  => trim((string) $this->request->getPost('layout_options')) ?: null,
             'published'       => $this->request->getPost('published') ?? 1
         ];
 
@@ -264,6 +354,14 @@ class SectionCMS extends BaseController
             $data['vision_en'] = $this->translateText($visionId, $oldData['vision_en'] ?? null);
             $data['mission'] = $missionId;
             $data['mission_en'] = $this->translateText($missionId, $oldData['mission_en'] ?? null);
+        }
+
+        $layoutOptions = trim((string) $this->request->getPost('layout_options'));
+        if ($layoutOptions !== '') {
+            json_decode($layoutOptions, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return redirect()->back()->withInput()->with('error', 'Opsi Layout JSON tidak valid.');
+            }
         }
 
         // LOGIKA UPLOAD GAMBAR/VIDEO

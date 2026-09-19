@@ -35,6 +35,17 @@
                                 <input type="text" name="section_key" class="form-control" required placeholder="Contoh: hero_main" value="<?= isset($section) ? esc($section['section_key']) : '' ?>" <?= isset($section) ? 'readonly' : '' ?>>
                                 <small class="text-warning">Kunci ini dipakai template homepage. Jangan diubah saat edit agar section tetap muncul di lokasi yang benar.</small>
                             </div>
+                            <?php if (isset($section)): ?>
+                            <div class="col-md-6 mt-3">
+                                <label>Mode Layout Homepage</label>
+                                <select name="layout_mode" class="form-select">
+                                    <option value="legacy" <?= ($section['layout_mode'] ?? 'legacy') === 'legacy' ? 'selected' : ''; ?>>Legacy (layout existing)</option>
+                                    <option value="builder" <?= ($section['layout_mode'] ?? '') === 'builder' ? 'selected' : ''; ?>>Builder (blok modular)</option>
+                                </select>
+                                <small class="text-muted">Builder aktif setelah blok ditambahkan. Jika belum ada blok, layout lama tetap dipakai.</small>
+                            </div>
+                            <div class="col-md-6 mt-3"><label>Opsi Layout JSON <span class="text-muted">(opsional)</span></label><input name="layout_options" class="form-control font-monospace" value="<?= esc($section['layout_options'] ?? ''); ?>" placeholder='{"background":"light"}'><small class="text-muted">Pengaturan tambahan untuk tema section.</small></div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -88,6 +99,24 @@
                                     <div class="mt-3 text-secondary" style="font-size:1rem;line-height:1.6;">Preview layout homepage: latar putih, aksen merah BAMUSI, tipografi besar, dan isi Visi–Misi sebagai paragraf.</div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Box: Visual Section Builder -->
+                    <?php if (isset($section)): ?>
+                    <div class="card card-dark card-outline mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div><h5 class="card-title m-0"><i class="fas fa-layer-group me-2"></i>Visual Section Builder</h5><small class="text-muted">Susun beberapa layout dalam satu section seperti WordPress.</small></div>
+                            <a href="<?= base_url('admin/sections/block/create/' . $section['section_key']); ?>" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>Tambah Blok</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info small"><strong>Workflow:</strong> pilih mode <strong>Builder</strong> di atas, tambahkan blok, lalu atur urutan. Data lama tidak dihapus dan masih dapat dipulihkan dengan mode Legacy.</div>
+                            <?php if (!empty($sectionBlocks)): ?>
+                            <div class="table-responsive"><table class="table table-sm table-striped align-middle mb-0"><thead><tr><th>Urutan</th><th>Komponen</th><th>Judul</th><th>Sumber</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+                                <?php foreach ($sectionBlocks as $sectionBlock): ?><tr><td><?= (int) $sectionBlock['sort_order']; ?></td><td><span class="badge text-bg-dark"><?= esc($sectionBlock['block_type']); ?></span></td><td><?= esc($sectionBlock['data']['title'] ?? '-'); ?></td><td><?= esc($sectionBlock['data']['source'] ?? 'manual'); ?></td><td><?= !empty($sectionBlock['published']) ? '<span class="badge text-bg-success">Aktif</span>' : '<span class="badge text-bg-secondary">Draft</span>'; ?></td><td class="text-nowrap"><a href="<?= base_url('admin/sections/block/edit/' . $sectionBlock['id']); ?>" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a><form method="post" action="<?= base_url('admin/sections/block/delete/' . $sectionBlock['id']); ?>" class="d-inline" onsubmit="return confirm('Hapus blok layout ini?');"><?= csrf_field(); ?><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td></tr><?php endforeach; ?>
+                            </tbody></table></div>
+                            <?php else: ?><div class="text-muted small">Belum ada blok builder. Homepage masih menggunakan layout Legacy.</div><?php endif; ?>
                         </div>
                     </div>
                     <?php endif; ?>
