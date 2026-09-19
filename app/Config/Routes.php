@@ -81,6 +81,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('sections/item/create/(:segment)', 'SectionCMS::itemCreate/$1');
     $routes->get('sections/item/edit/(:num)', 'SectionCMS::itemEdit/$1');
     $routes->post('sections/item/delete/(:num)', 'SectionCMS::itemDelete/$1');
+    $routes->get('sections/text/create/(:segment)', 'SectionCMS::textCreate/$1');
+    $routes->get('sections/text/edit/(:num)', 'SectionCMS::textEdit/$1');
+    $routes->post('sections/text/save', 'SectionCMS::textSave');
+    $routes->post('sections/text/delete/(:num)', 'SectionCMS::textDelete/$1');
 
     $routes->get('homepage-content', 'HomepageContentCMS::index');
     $routes->get('homepage-content/(:segment)', 'HomepageContentCMS::index/$1');

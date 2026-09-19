@@ -92,6 +92,23 @@
                     </div>
                     <?php endif; ?>
 
+                    <!-- Box: Teks Section -->
+                    <?php if (isset($section)): ?>
+                    <div class="card card-warning card-outline mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div><h5 class="card-title m-0"><i class="fas fa-font me-2"></i>Teks Section</h5><small class="text-muted">Semua label, judul, dan teks pendukung yang sebelumnya tersebar di Teks Global.</small></div>
+                            <a href="<?= base_url('admin/sections/text/create/' . $section['section_key']); ?>" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>Tambah Teks</a>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">Kelola teks homepage di sini agar tidak tertukar dengan section lain. Data lama tetap aman dan dipakai oleh website.</p>
+                            <?php if (!empty($sectionTexts)): ?>
+                                <div class="table-responsive"><table class="table table-sm table-striped align-middle mb-0"><thead><tr><th>Urutan</th><th>Key / Label</th><th>Isi</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+                                <?php foreach ($sectionTexts as $sectionText): ?><tr><td><?= (int) $sectionText['sort_order']; ?></td><td><code><?= esc($sectionText['text_key']); ?></code><br><small><?= esc($sectionText['label']); ?></small></td><td><?= esc(mb_strimwidth(strip_tags((string) $sectionText['value']), 0, 90, '…')); ?></td><td><?= !empty($sectionText['published']) ? '<span class="badge text-bg-success">Aktif</span>' : '<span class="badge text-bg-secondary">Draft</span>'; ?></td><td class="text-nowrap"><a href="<?= base_url('admin/sections/text/edit/' . $sectionText['id']); ?>" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a><form method="post" action="<?= base_url('admin/sections/text/delete/' . $sectionText['id']); ?>" class="d-inline" onsubmit="return confirm('Hapus teks section ini?');"><?= csrf_field(); ?><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td></tr><?php endforeach; ?></tbody></table></div>
+                            <?php else: ?><div class="text-muted small">Belum ada teks yang terhubung ke section ini.</div><?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- Box: Konten & Artikel -->
                     <?php if (isset($section)): ?>
                     <div class="card card-info card-outline mb-4">

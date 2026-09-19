@@ -36,6 +36,9 @@ class WebsiteText extends BaseController
         $location = $request->getVar('location') ?? '';
 
         $builder = $this->textModel->builder();
+        // Teks homepage dikelola dari Section Homepage. Menu ini hanya untuk
+        // teks global seperti navbar, footer, dan label sistem.
+        $builder->where('section_key', null);
 
         // Filter pencarian
         if (!empty($search)) {
@@ -52,7 +55,7 @@ class WebsiteText extends BaseController
         }
 
         $recordsFiltered = $builder->countAllResults(false);
-        $recordsTotal    = $this->textModel->countAllResults();
+        $recordsTotal    = $this->textModel->where('section_key', null)->countAllResults();
 
         $builder->orderBy('location', 'ASC')
             ->orderBy('sort_order', 'ASC')
@@ -133,6 +136,7 @@ class WebsiteText extends BaseController
             'text_key'   => $this->request->getPost('text_key'),
             'label'      => $this->request->getPost('label'),
             'location'   => $this->request->getPost('location'),
+            'section_key' => null,
             'value'      => $valueId,
             'value_en'   => $valueEn,
             'sort_order' => $this->request->getPost('sort_order') ?? 0,
@@ -162,6 +166,7 @@ class WebsiteText extends BaseController
     {
         // Ambil semua yang value_en kosong atau NULL
         $items = $this->textModel
+            ->where('section_key', null)
             ->groupStart()
             ->where('value_en', null)
             ->orWhere('value_en', '')
