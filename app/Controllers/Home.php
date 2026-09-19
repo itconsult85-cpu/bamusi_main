@@ -6,7 +6,6 @@ use App\Models\CmsItemModel;
 use App\Models\AboutValueModel;
 use App\Models\SiteSettingModel;
 use App\Models\PageSectionModel;
-use App\Models\HeroSlideModel;
 use App\Models\SectionLinkModel;
 
 class Home extends BaseController
@@ -79,19 +78,18 @@ class Home extends BaseController
             }
         }
         $builderMode = !empty($builderSections);
-        $homepagePartners = $db->table('partners')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray();
-        if (!empty($homepageItems['partners'])) {
-            $homepagePartners = array_map(static function (array $item): array {
-                return [
-                    'name' => $item['title'] ?: $item['label'],
-                    'name_en' => $item['title_en'] ?: $item['label_en'],
-                    'website_url' => $item['url'],
-                    'logo_url' => $item['media_url'],
-                    'published' => $item['published'],
-                    'sort_order' => $item['sort_order'],
-                ];
-            }, $homepageItems['partners']);
-        }
+        // Mitra homepage sepenuhnya dikelola sebagai item pada Menu Section Mitra.
+        // Data dari tabel partners tidak lagi menjadi fallback tersembunyi.
+        $homepagePartners = array_map(static function (array $item): array {
+            return [
+                'name' => $item['title'] ?: $item['label'],
+                'name_en' => $item['title_en'] ?: $item['label_en'],
+                'website_url' => $item['url'],
+                'logo_url' => $item['media_url'],
+                'published' => $item['published'],
+                'sort_order' => $item['sort_order'],
+            ];
+        }, $homepageItems['partners'] ?? []);
 
         // 3. RSS Google News (tidak berubah)
         $rssUrl = $settings['news_rss_url'] ?? 'https://news.google.com/rss/search?q=BAMUSI%20Baitul%20Muslimin%20Indonesia&hl=id&gl=ID&ceid=ID:id';
@@ -129,10 +127,27 @@ class Home extends BaseController
             'homepageItems' => $homepageItems,
             'builderSections' => $builderSections,
             'builderMode' => $builderMode,
-            'heroSlides'  => (new HeroSlideModel())          // ← ✅ DI SINI
-                ->where('published', 1)
-                ->orderBy('sort_order', 'ASC')
-                ->findAll(),
+            // Hero hanya membaca section key "hero". Dengan begitu Quote, judul,
+            // media, dan CTA yang kosong di form tidak dapat muncul dari hero_slides.
+            'heroSlides'  => array_values(array_filter(array_map(static function (array $section): array {
+                return [
+                    'kicker' => $section['kicker'] ?? '',
+                    'kicker_en' => $section['kicker_en'] ?? '',
+                    'title' => $section['title'] ?? '',
+                    'title_en' => $section['title_en'] ?? '',
+                    'lead' => $section['subtitle'] ?? '',
+                    'lead_en' => $section['subtitle_en'] ?? '',
+                    'quote' => $section['quote'] ?? '',
+                    'quote_en' => $section['quote_en'] ?? '',
+                    'image_url' => $section['media_url'] ?? '',
+                    'button_label' => $section['button_label'] ?? '',
+                    'button_label_en' => $section['button_label_en'] ?? '',
+                    'button_url' => $section['button_url'] ?? '',
+                    'sort_order' => $section['sort_order'] ?? 0,
+                ];
+            }, array_values(array_filter($sectionsData, static fn (array $section): bool => ($section['section_key'] ?? '') === 'hero'))), static function (array $slide): bool {
+                return trim((string) ($slide['title'] ?? '')) !== '' || trim((string) ($slide['image_url'] ?? '')) !== '';
+            })),
             'aboutValues' => $db->table('about_values')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray(),
             'agenda'      => $db->table('cms_items')->where('kind', 'agenda')->where('published', 1)->orderBy('created_at', 'DESC')->limit(4)->get()->getResultArray(),
             'writingArticles' => $db->table('cms_items')->where('kind', 'article')->where('published', 1)->orderBy('created_at', 'DESC')->limit(4)->get()->getResultArray(),
@@ -229,11 +244,4 @@ class Home extends BaseController
         return array_values($parents);
     }
 
-    private function getHeroSlides()
-    {
-        return (new HeroSlideModel())
-            ->where('published', 1)
-            ->orderBy('sort_order', 'ASC')
-            ->findAll();
-    }
 }

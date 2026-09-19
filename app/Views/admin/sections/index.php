@@ -30,6 +30,7 @@
                 <table id="sectionsTable" class="table table-striped table-hover align-middle w-100">
                     <thead class="table-light">
                         <tr>
+                            <th>Urutan Homepage</th>
                             <th>Kunci Sistem</th>
                             <th>Nama Section</th>
                             <th>Judul ID</th>
@@ -61,7 +62,11 @@
                 "url": "<?= base_url('admin/sections/ajax') ?>",
                 "type": "GET"
             },
+            "order": [[0, "asc"]],
             "columns": [{
+                    "orderable": true
+                }, // Urutan homepage
+                {
                     "orderable": false
                 }, // Kunci
                 {

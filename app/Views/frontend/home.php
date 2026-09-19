@@ -249,8 +249,8 @@ $nilaiButtonClass = ['left' => 'text-start', 'center' => 'text-center', 'right' 
 
         <?php if ($nilaiButtonLocation === 'top'): ?>
             <div class="<?= $nilaiButtonClass; ?> mt-4 pt-2">
-                <a href="<?= esc($nilai['button_url'] ?? base_url('lima-nilai-utama')); ?>" class="d-inline-flex align-items-center gap-2 fw-bold text-white text-decoration-none border-bottom border-2 border-white pb-2" style="letter-spacing: .3px;">
-                    <?= esc($t($nilai, 'button_label') ?: 'Baca Selengkapnya ↗'); ?>
+                <a href="<?= esc($nilai['button_url'] ?? '#'); ?>" class="d-inline-flex align-items-center gap-2 fw-bold text-white text-decoration-none border-bottom border-2 border-white pb-2" style="letter-spacing: .3px;">
+                    <?= esc($t($nilai, 'button_label')); ?>
                 </a>
             </div>
         <?php endif; ?>
@@ -262,7 +262,7 @@ $nilaiButtonClass = ['left' => 'text-start', 'center' => 'text-center', 'right' 
             <?php if (!empty($aboutValues)): ?>
                 <?php foreach (array_slice($aboutValues, 0, $nilaiCardsLimit) as $i => $value): ?>
                     <div class="col-6 col-md-4 <?= $nilaiColumnClass; ?>">
-                        <a href="<?= esc($nilai['button_url'] ?? base_url('lima-nilai-utama')); ?>"
+                        <a href="<?= esc($nilai['button_url'] ?? '#'); ?>"
                             class="text-decoration-none d-block h-100 p-4 rounded-4"
                             style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); transition: all 0.3s ease;"
                             onmouseover="this.style.background='rgba(204,0,0,0.9)'; this.style.transform='translateY(-8px)'; this.style.borderColor='#cc0000';"
@@ -287,10 +287,10 @@ $nilaiButtonClass = ['left' => 'text-start', 'center' => 'text-center', 'right' 
 
         <?php if ($nilaiButtonLocation === 'bottom'): ?>
         <div class="<?= $nilaiButtonClass; ?> mt-5 pt-2">
-            <a href="<?= esc($nilai['button_url'] ?? base_url('lima-nilai-utama')); ?>"
+            <a href="<?= esc($nilai['button_url'] ?? '#'); ?>"
                 class="d-inline-flex align-items-center gap-2 fw-bold text-white text-decoration-none border-bottom border-2 border-white pb-2"
                 style="letter-spacing: .3px;">
-                <?= esc($t($nilai, 'button_label') ?: 'Baca Selengkapnya ↗'); ?>
+                <?= esc($t($nilai, 'button_label')); ?>
             </a>
         </div>
         <?php endif; ?>
@@ -301,19 +301,9 @@ $nilaiButtonClass = ['left' => 'text-start', 'center' => 'text-center', 'right' 
 <?php
 $visi = $sections['visi'] ?? [];
 
-// Kicker: dari CMS, fallback ke hardcode
+// Kicker dan judul sepenuhnya berasal dari Menu Section Visi Misi.
 $visiKicker = $t($visi, 'kicker');
-if (empty($visiKicker)) {
-    $visiKicker = $locale === 'en' ? 'VISION AND MISSION' : 'VISI DAN MISI';
-}
-
-// Judul: dari CMS, fallback ke hardcode
 $visiTitle = $t($visi, 'title');
-if (empty($visiTitle)) {
-    $visiTitle = $locale === 'en'
-        ? 'Becoming the national home of progressive Indonesian Muslims.'
-        : 'Menjadi rumah kebangsaan Muslim Indonesia yang progresif.';
-}
 ?>
 
 <section class="pb-0 bg-white" id="visi">
@@ -354,17 +344,7 @@ if (empty($visiTitle)) {
 
                 <?php
                 $visiText = $t($visi, 'vision');
-                if ($visiText === '') {
-                    $visiText = ($locale === 'en' && !empty($settings['about_vision_en']))
-                        ? $settings['about_vision_en']
-                        : ($settings['about_vision'] ?? '');
-                }
                 $missionText = $t($visi, 'mission');
-                if ($missionText === '') {
-                    $missionText = ($locale === 'en' && !empty($settings['about_mission_en']))
-                        ? $settings['about_mission_en']
-                        : ($settings['about_mission'] ?? '');
-                }
                 ?>
                 <div class="mt-4">
                     <p class="mb-4 text-dark" style="font-size: clamp(1.35rem, 2vw, 1.8rem); line-height: 1.6; font-weight: 600;">
@@ -408,7 +388,7 @@ if (empty($visiTitle)) {
                     <?= esc($t($sections['history'] ?? [], 'subtitle')); ?>
                 </p>
                 <div>
-                    <a class="fw-bold text-white text-decoration-none border-bottom border-2 border-white pb-1 fs-6" href="<?= esc($sections['history']['button_url'] ?? base_url('sejarah')); ?>" style="transition: all 0.3s ease;" onmouseover="this.style.opacity='0.7'; this.style.borderColor='rgba(255,255,255,0.5)';" onmouseout="this.style.opacity='1'; this.style.borderColor='white';">
+                    <a class="fw-bold text-white text-decoration-none border-bottom border-2 border-white pb-1 fs-6" href="<?= esc($sections['history']['button_url'] ?? '#'); ?>" style="transition: all 0.3s ease;" onmouseover="this.style.opacity='0.7'; this.style.borderColor='rgba(255,255,255,0.5)';" onmouseout="this.style.opacity='1'; this.style.borderColor='white';">
                         <?= esc($t($sections['history'] ?? [], 'button_label')); ?>
                     </a>
                 </div>
@@ -431,15 +411,10 @@ if (empty($visiTitle)) {
                 </h2>
                 <?php
                 $boardUrl = trim((string)($sections['board']['button_url'] ?? ''));
-                if ($boardUrl === '' || $boardUrl === '#kontak' || $boardUrl === '#') {
-                    $boardUrl = base_url('struktur-pengurus');
-                } elseif (!preg_match('#^https?://#i', $boardUrl) && $boardUrl[0] !== '#') {
+                if ($boardUrl !== '' && !preg_match('#^https?://#i', $boardUrl) && $boardUrl[0] !== '#') {
                     $boardUrl = base_url(ltrim($boardUrl, '/'));
                 }
                 $boardButton = trim((string)($t($sections['board'] ?? [], 'button_label')));
-                if ($boardButton === '' || $boardButton === 'Informasi sekretariat ↗' || $boardButton === 'Secretariat information ↗') {
-                    $boardButton = $locale === 'en' ? 'View all management' : 'Lihat semua pengurus';
-                }
                 ?>
                 <a href="<?= esc($boardUrl); ?>" class="btn rounded-0 text-white fw-bold px-4 py-3 text-uppercase" style="background-color: #cc0000; letter-spacing: 1px; font-size: 0.9rem;">
                     <?= esc($boardButton); ?>
@@ -501,8 +476,8 @@ if (empty($visiTitle)) {
                         <?= esc($t($sections['program'] ?? [], 'subtitle')); ?>
                     </p>
 
-                    <a href="<?= base_url('program'); ?>" class="btn bg-white text-dark rounded-pill fw-bold px-4 py-3 mt-2 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.85rem;">
-                        <?= $locale === 'en' ? 'Explore Fields' : 'Jelajahi Bidang'; ?>
+                    <a href="<?= esc($sections['program']['button_url'] ?? '#'); ?>" class="btn bg-white text-dark rounded-pill fw-bold px-4 py-3 mt-2 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.85rem;">
+                        <?= esc($t($sections['program'] ?? [], 'button_label')); ?>
                         <span class="fs-6">↘</span>
                     </a>
                 </div>
@@ -844,13 +819,13 @@ if (empty($visiTitle)) {
         foreach (($homepageItems['social'] ?? []) as $socialItem) {
             $socialItems[$socialItem['item_key']] = $socialItem;
         }
-        $instagramItem = $socialItems['instagram'] ?? ['label' => 'Instagram', 'title' => '@baitul.muslimin.indonesia'];
-        $tiktokItem = $socialItems['tiktok'] ?? ['label' => 'TikTok', 'title' => '@baitulmusliminindonesia'];
-        $youtubeItem = $socialItems['youtube'] ?? ['label' => 'YouTube', 'title' => '@bamusitv'];
+        $instagramItem = $socialItems['instagram'] ?? [];
+        $tiktokItem = $socialItems['tiktok'] ?? [];
+        $youtubeItem = $socialItems['youtube'] ?? [];
         ?>
         <div class="row g-4 mt-2">
             <div class="col-lg-4 col-md-6">
-                <a href="<?= esc($settings['instagram_url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
+                <a href="<?= esc($instagramItem['url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
                     style="background-color: var(--bamusi-red, #cc0000); transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
                     onmouseover="this.style.transform='translateY(-10px)';" onmouseout="this.style.transform='translateY(0)';">
                     <div class="position-absolute" style="bottom: -20px; right: -20px; width: 150px; height: 150px; border-radius: 50%; background: rgba(0,0,0,0.1);"></div>
@@ -874,7 +849,7 @@ if (empty($visiTitle)) {
             </div>
 
             <div class="col-lg-4 col-md-6">
-                <a href="<?= esc($settings['tiktok_url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
+                <a href="<?= esc($tiktokItem['url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
                     style="background-color: #ffffff; transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
                     onmouseover="this.style.transform='translateY(-10px)';" onmouseout="this.style.transform='translateY(0)';">
                     <div class="position-absolute" style="bottom: 0; right: 0; width: 200px; height: 200px; border-top-left-radius: 200px; background: rgba(0,0,0,0.03);"></div>
@@ -896,7 +871,7 @@ if (empty($visiTitle)) {
             </div>
 
             <div class="col-lg-4 col-md-12">
-                <a href="<?= esc($settings['youtube_url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
+                <a href="<?= esc($youtubeItem['url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
                     style="background-color: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
                     onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--bamusi-red, #cc0000)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.1)';">
                     <div class="position-absolute" style="top: -20px; right: -20px; width: 120px; height: 120px; border: 20px solid rgba(255,255,255,0.02); border-radius: 20px; transform: rotate(15deg);"></div>
@@ -932,15 +907,15 @@ if (empty($visiTitle)) {
         <div class="row align-items-end mb-5 pb-3">
             <div class="col-lg-7 mb-4 mb-lg-0">
                 <span class="text-uppercase fw-bold d-block mb-3" style="color: var(--bamusi-red, #cc0000); letter-spacing: 2px; font-size: 0.8rem;">
-                    <?= esc($t($sections['partners'] ?? [], 'kicker') ?: ($locale === 'en' ? 'Working Partners' : 'Mitra Kerja Sama')); ?>
+                    <?= esc($t($sections['partners'] ?? [], 'kicker')); ?>
                 </span>
                 <h2 class="fw-bolder m-0" style="color: #8b0000; font-size: clamp(2.5rem, 4vw, 3.5rem); letter-spacing: -1.5px; line-height: 1.1;">
-                    <?= $t_br($sections['partners'] ?? [], 'title') ?: ($locale === 'en' ? 'Growing through<br>networks and collaboration.' : 'Bertumbuh melalui<br>jejaring dan kolaborasi.'); ?>
+                    <?= $t_br($sections['partners'] ?? [], 'title'); ?>
                 </h2>
             </div>
             <div class="col-lg-5 text-lg-end pb-lg-2">
                 <p class="text-secondary mb-0 fs-6" style="font-weight: 400;">
-                    <?= esc($t($sections['partners'] ?? [], 'subtitle') ?: ($locale === 'en' ? 'Click on the logo to visit the official website of each institution.' : 'Klik logo untuk mengunjungi situs resmi masing-masing lembaga.')); ?>
+                    <?= esc($t($sections['partners'] ?? [], 'subtitle')); ?>
                 </p>
             </div>
         </div>

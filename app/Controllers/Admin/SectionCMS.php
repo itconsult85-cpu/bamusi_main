@@ -73,6 +73,7 @@ class SectionCMS extends BaseController
             ';
 
             $formattedData[] = [
+                '<span class="badge text-bg-light border">' . (int) $row['sort_order'] . '</span>',
                 '<span class="badge text-bg-dark">' . esc($row['section_key']) . '</span>',
                 esc($row['section_name']),
                 esc($row['title']),
