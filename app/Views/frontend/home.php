@@ -228,6 +228,11 @@ $nilai = $sections['nilai'] ?? [];
                         <?= esc($t($nilai, 'subtitle')); ?>
                     </p>
                 <?php endif; ?>
+                <a href="<?= esc($nilai['button_url'] ?? base_url('lima-nilai-utama')); ?>"
+                    class="d-inline-flex align-items-center gap-2 mt-4 fw-bold text-white text-decoration-none border-bottom border-2 border-white pb-2"
+                    style="letter-spacing: .3px;">
+                    <?= esc($t($nilai, 'button_label') ?: 'Baca Selengkapnya ↗'); ?>
+                </a>
             </div>
 
             <span class="fw-bolder fs-5 opacity-25 d-none d-md-block"
