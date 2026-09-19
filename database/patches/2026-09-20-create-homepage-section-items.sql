@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS `homepage_section_items` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `section_key` varchar(80) NOT NULL,
+  `item_key` varchar(120) DEFAULT NULL,
+  `label` varchar(255) DEFAULT NULL,
+  `label_en` varchar(255) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `title_en` varchar(255) DEFAULT NULL,
+  `body` text DEFAULT NULL,
+  `body_en` text DEFAULT NULL,
+  `url` text DEFAULT NULL,
+  `media_url` text DEFAULT NULL,
+  `options_json` longtext DEFAULT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `published` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `homepage_section_items_section_order` (`section_key`,`sort_order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

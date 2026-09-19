@@ -1,0 +1,18 @@
+INSERT INTO `homepage_section_items` (`section_key`,`item_key`,`label`,`label_en`,`title`,`title_en`,`body`,`body_en`,`sort_order`,`published`,`created_at`,`updated_at`)
+SELECT 'feature','chairman-language','Bahasa Ketum','Chairman''s Language','Bahasa Ketum','Chairman''s Language','Gagasan kebangsaan dalam tutur yang dekat, reflektif, dan mudah dipahami.','National ideas in speech that are close, reflective, and easy to understand.',10,1,NOW(),NOW()
+WHERE NOT EXISTS (SELECT 1 FROM `homepage_section_items` WHERE `section_key`='feature' AND `item_key`='chairman-language');
+
+INSERT INTO `homepage_section_items` (`section_key`,`item_key`,`label`,`label_en`,`title`,`title_en`,`body`,`body_en`,`sort_order`,`published`,`created_at`,`updated_at`)
+SELECT 'feature','mega-dzikir','Mega Dzikir','Mega Dhikr','Mega Dzikir','Mega Dhikr','Majelis doa dan kebersamaan yang meneguhkan spiritualitas, persatuan, serta kepedulian sosial.','An assembly of prayer and togetherness that confirms spirituality and social care.',20,1,NOW(),NOW()
+WHERE NOT EXISTS (SELECT 1 FROM `homepage_section_items` WHERE `section_key`='feature' AND `item_key`='mega-dzikir');
+
+INSERT INTO `homepage_section_items` (`section_key`,`item_key`,`label`,`label_en`,`title`,`title_en`,`body`,`body_en`,`sort_order`,`published`,`created_at`,`updated_at`)
+SELECT 'feature','komunikasi-terbuka','Komunikasi Terbuka','Open Communication','Komunikasi Terbuka','Open Communication','Penyampaian sikap dan agenda publik secara langsung, bertanggung jawab, dan berbasis fakta.','Delivery of public attitudes and agendas directly, responsibly, and based on facts.',30,1,NOW(),NOW()
+WHERE NOT EXISTS (SELECT 1 FROM `homepage_section_items` WHERE `section_key`='feature' AND `item_key`='komunikasi-terbuka');
+
+INSERT INTO `homepage_section_items` (`section_key`,`item_key`,`label`,`label_en`,`title`,`title_en`,`sort_order`,`published`,`created_at`,`updated_at`) SELECT 'social','instagram','Instagram','Instagram','@baitul.muslimin.indonesia','@baitul.muslimin.indonesia',10,1,NOW(),NOW() WHERE NOT EXISTS (SELECT 1 FROM `homepage_section_items` WHERE `section_key`='social' AND `item_key`='instagram');
+INSERT INTO `homepage_section_items` (`section_key`,`item_key`,`label`,`label_en`,`title`,`title_en`,`sort_order`,`published`,`created_at`,`updated_at`) SELECT 'social','tiktok','TikTok','TikTok','@baitulmusliminindonesia','@baitulmusliminindonesia',20,1,NOW(),NOW() WHERE NOT EXISTS (SELECT 1 FROM `homepage_section_items` WHERE `section_key`='social' AND `item_key`='tiktok');
+INSERT INTO `homepage_section_items` (`section_key`,`item_key`,`label`,`label_en`,`title`,`title_en`,`sort_order`,`published`,`created_at`,`updated_at`) SELECT 'social','youtube','YouTube','YouTube','@bamusitv','@bamusitv',30,1,NOW(),NOW() WHERE NOT EXISTS (SELECT 1 FROM `homepage_section_items` WHERE `section_key`='social' AND `item_key`='youtube');
+
+INSERT INTO `homepage_section_items` (`section_key`,`item_key`,`label`,`label_en`,`title`,`title_en`,`sort_order`,`published`,`created_at`,`updated_at`) SELECT 'join_interest','membership','Keanggotaan Umum','General Membership','Keanggotaan Umum','General Membership',10,1,NOW(),NOW() WHERE NOT EXISTS (SELECT 1 FROM `homepage_section_items` WHERE `section_key`='join_interest' AND `item_key`='membership');
+INSERT INTO `homepage_section_items` (`section_key`,`item_key`,`label`,`label_en`,`title`,`title_en`,`sort_order`,`published`,`created_at`,`updated_at`) SELECT 'join_interest','volunteer','Relawan Program','Program Volunteer','Relawan Program','Program Volunteer',20,1,NOW(),NOW() WHERE NOT EXISTS (SELECT 1 FROM `homepage_section_items` WHERE `section_key`='join_interest' AND `item_key`='volunteer');

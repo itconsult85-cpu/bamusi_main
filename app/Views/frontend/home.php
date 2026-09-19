@@ -389,7 +389,7 @@ if (empty($visiTitle)) {
             <div class="position-absolute w-100 h-100 d-lg-none" style="bottom: 0; left: 0; background: linear-gradient(to bottom, rgba(17,17,17,0) 60%, rgba(17,17,17,1) 100%); z-index: -1;"></div>
 
             <h1 class="m-0 lh-1 position-relative" style="font-size: clamp(4rem, 8vw, 8rem); font-weight: 900; letter-spacing: -3px; color: #e60000; text-shadow: 3px 3px 0px #660000, 6px 6px 0px #330000, 12px 12px 25px rgba(0,0,0,0.9), -2px -2px 15px rgba(204,0,0,0.3); transform: translateY(-5px);">
-                <?= $locale === 'en' ? 'HISTORY' : 'SEJARAH'; ?>
+                <?= esc($t($sections['history'] ?? [], 'kicker') ?: ($locale === 'en' ? 'HISTORY' : 'SEJARAH')); ?>
             </h1>
         </div>
 
@@ -588,20 +588,7 @@ if (empty($visiTitle)) {
 
                     <div class="d-flex flex-column">
                         <?php
-                        $featureItems = [
-                            [
-                                'title' => ($locale === 'en' ? 'Chairman\'s Language' : 'Bahasa Ketum'),
-                                'body' => ($locale === 'en' ? 'National ideas in speech that are close, reflective, and easy to understand.' : 'Gagasan kebangsaan dalam tutur yang dekat, reflektif, dan mudah dipahami.')
-                            ],
-                            [
-                                'title' => ($locale === 'en' ? 'Mega Dhikr' : 'Mega Dzikir'),
-                                'body' => ($locale === 'en' ? 'An assembly of prayer and togetherness that confirms spirituality and social care.' : 'Majelis doa dan kebersamaan yang meneguhkan spiritualitas, persatuan, serta kepedulian sosial.')
-                            ],
-                            [
-                                'title' => ($locale === 'en' ? 'Open Communication' : 'Komunikasi Terbuka'),
-                                'body' => ($locale === 'en' ? 'Delivery of public attitudes and agendas directly, responsibly, and based on facts.' : 'Penyampaian sikap dan agenda publik secara langsung, bertanggung jawab, dan berbasis fakta.')
-                            ]
-                        ];
+                        $featureItems = $homepageItems['feature'] ?? [];
 
                         foreach ($featureItems as $index => $item): ?>
                             <div class="d-flex align-items-start py-4 border-top" style="border-color: #dcdcdc !important;">
@@ -612,10 +599,10 @@ if (empty($visiTitle)) {
                                 </div>
                                 <div>
                                     <h3 class="fw-bold fs-5 mb-2 text-dark">
-                                        <?= esc($item['title']); ?>
+                                        <?= esc($t($item, 'title') ?: $t($item, 'label')); ?>
                                     </h3>
                                     <p class="text-secondary mb-0" style="font-size: 0.95rem; line-height: 1.6;">
-                                        <?= esc($item['body']); ?>
+                                        <?= esc($t($item, 'body')); ?>
                                     </p>
                                 </div>
                             </div>
@@ -846,6 +833,15 @@ if (empty($visiTitle)) {
             </div>
         </div>
 
+        <?php
+        $socialItems = [];
+        foreach (($homepageItems['social'] ?? []) as $socialItem) {
+            $socialItems[$socialItem['item_key']] = $socialItem;
+        }
+        $instagramItem = $socialItems['instagram'] ?? ['label' => 'Instagram', 'title' => '@baitul.muslimin.indonesia'];
+        $tiktokItem = $socialItems['tiktok'] ?? ['label' => 'TikTok', 'title' => '@baitulmusliminindonesia'];
+        $youtubeItem = $socialItems['youtube'] ?? ['label' => 'YouTube', 'title' => '@bamusitv'];
+        ?>
         <div class="row g-4 mt-2">
             <div class="col-lg-4 col-md-6">
                 <a href="<?= esc($settings['instagram_url'] ?? '#'); ?>" target="_blank" class="text-decoration-none d-block h-100 position-relative overflow-hidden"
@@ -853,9 +849,9 @@ if (empty($visiTitle)) {
                     onmouseover="this.style.transform='translateY(-10px)';" onmouseout="this.style.transform='translateY(0)';">
                     <div class="position-absolute" style="bottom: -20px; right: -20px; width: 150px; height: 150px; border-radius: 50%; background: rgba(0,0,0,0.1);"></div>
                     <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
-                        <span class="text-white fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;">Instagram</span>
+                        <span class="text-white fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;"><?= esc($t($instagramItem, 'label')); ?></span>
                         <h3 class="text-white fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
-                            @baitul.muslimin.indonesia
+                            <?= esc($t($instagramItem, 'title')); ?>
                         </h3>
                         <div class="mt-auto d-flex align-items-center gap-3">
                             <div class="rounded-circle border border-2 border-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
@@ -877,9 +873,9 @@ if (empty($visiTitle)) {
                     onmouseover="this.style.transform='translateY(-10px)';" onmouseout="this.style.transform='translateY(0)';">
                     <div class="position-absolute" style="bottom: 0; right: 0; width: 200px; height: 200px; border-top-left-radius: 200px; background: rgba(0,0,0,0.03);"></div>
                     <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
-                        <span class="text-secondary fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;">TikTok</span>
+                        <span class="text-secondary fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;"><?= esc($t($tiktokItem, 'label')); ?></span>
                         <h3 class="text-dark fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
-                            @baitulmusliminindonesia
+                            <?= esc($t($tiktokItem, 'title')); ?>
                         </h3>
                         <div class="mt-auto d-flex align-items-center gap-3">
                             <div class="rounded-circle border border-2 border-dark d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
@@ -899,9 +895,9 @@ if (empty($visiTitle)) {
                     onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--bamusi-red, #cc0000)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.1)';">
                     <div class="position-absolute" style="top: -20px; right: -20px; width: 120px; height: 120px; border: 20px solid rgba(255,255,255,0.02); border-radius: 20px; transform: rotate(15deg);"></div>
                     <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
-                        <span class="text-white opacity-75 fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;">YouTube</span>
+                        <span class="text-white opacity-75 fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;"><?= esc($t($youtubeItem, 'label')); ?></span>
                         <h3 class="text-white fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
-                            @bamusitv
+                            <?= esc($t($youtubeItem, 'title')); ?>
                         </h3>
                         <div class="mt-auto d-flex align-items-center gap-3">
                             <div class="rounded-circle border border-2 border-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; opacity: 0.8;">
@@ -930,15 +926,15 @@ if (empty($visiTitle)) {
         <div class="row align-items-end mb-5 pb-3">
             <div class="col-lg-7 mb-4 mb-lg-0">
                 <span class="text-uppercase fw-bold d-block mb-3" style="color: var(--bamusi-red, #cc0000); letter-spacing: 2px; font-size: 0.8rem;">
-                    <?= $locale === 'en' ? 'Working Partners' : 'Mitra Kerja Sama'; ?>
+                    <?= esc($t($sections['partners'] ?? [], 'kicker') ?: ($locale === 'en' ? 'Working Partners' : 'Mitra Kerja Sama')); ?>
                 </span>
                 <h2 class="fw-bolder m-0" style="color: #8b0000; font-size: clamp(2.5rem, 4vw, 3.5rem); letter-spacing: -1.5px; line-height: 1.1;">
-                    <?= $locale === 'en' ? 'Growing through<br>networks and collaboration.' : 'Bertumbuh melalui<br>jejaring dan kolaborasi.'; ?>
+                    <?= $t_br($sections['partners'] ?? [], 'title') ?: ($locale === 'en' ? 'Growing through<br>networks and collaboration.' : 'Bertumbuh melalui<br>jejaring dan kolaborasi.'); ?>
                 </h2>
             </div>
             <div class="col-lg-5 text-lg-end pb-lg-2">
                 <p class="text-secondary mb-0 fs-6" style="font-weight: 400;">
-                    <?= $locale === 'en' ? 'Click on the logo to visit the official website of each institution.' : 'Klik logo untuk mengunjungi situs resmi masing-masing lembaga.'; ?>
+                    <?= esc($t($sections['partners'] ?? [], 'subtitle') ?: ($locale === 'en' ? 'Click on the logo to visit the official website of each institution.' : 'Klik logo untuk mengunjungi situs resmi masing-masing lembaga.')); ?>
                 </p>
             </div>
         </div>
@@ -958,7 +954,7 @@ if (empty($visiTitle)) {
                                 <img src="<?= esc($partner['logo_url'] ?? ''); ?>" alt="<?= esc($partner['name']); ?>" class="img-fluid" style="max-height: 90px; object-fit: contain;">
                             </div>
                             <span class="d-block fw-bold text-center mb-4 text-dark" style="font-size: 0.85rem; line-height: 1.4;">
-                                <?= esc($partner['name']); ?>
+                                <?= esc(($locale === 'en' && !empty($partner['name_en'])) ? $partner['name_en'] : $partner['name']); ?>
                             </span>
                         </a>
                     </div>
@@ -1027,8 +1023,10 @@ if (empty($visiTitle)) {
                                 <label class="d-block text-uppercase fw-bold mb-2" style="color: var(--bamusi-red, #cc0000); letter-spacing: 1px; font-size: 0.8rem;"><?= $locale === 'en' ? 'Interest' : 'Minat Kontribusi'; ?></label>
                                 <select name="interest" class="form-select shadow-none px-0 rounded-0 fw-bold" style="border: none; border-bottom: 1px solid #111111; background: transparent; font-size: 1rem; color: #111111; cursor: pointer;" onfocus="this.style.borderBottomColor='#cc0000'" onblur="this.style.borderBottomColor='#111111'">
                                     <option value="" disabled selected><?= $locale === 'en' ? 'Choose interest' : 'Pilih minat'; ?></option>
-                                    <option value="Keanggotaan Umum"><?= $locale === 'en' ? 'General Membership' : 'Keanggotaan Umum'; ?></option>
-                                    <option value="Relawan Program"><?= $locale === 'en' ? 'Program Volunteer' : 'Relawan Program'; ?></option>
+                                    <?php foreach (($homepageItems['join_interest'] ?? []) as $interest): ?>
+                                        <?php $interestText = $t($interest, 'label') ?: $t($interest, 'title'); ?>
+                                        <option value="<?= esc($interestText); ?>"><?= esc($interestText); ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-12">

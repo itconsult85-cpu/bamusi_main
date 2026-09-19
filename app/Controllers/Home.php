@@ -50,6 +50,13 @@ class Home extends BaseController
             $sections[$sec['section_key']] = $sec;
         }
 
+        $homepageItems = [];
+        if ($db->tableExists('homepage_section_items')) {
+            foreach ($db->table('homepage_section_items')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray() as $item) {
+                $homepageItems[$item['section_key']][] = $item;
+            }
+        }
+
         // 3. RSS Google News (tidak berubah)
         $rssUrl = $settings['news_rss_url'] ?? 'https://news.google.com/rss/search?q=BAMUSI%20Baitul%20Muslimin%20Indonesia&hl=id&gl=ID&ceid=ID:id';
         $newsFeed = [];
@@ -83,6 +90,7 @@ class Home extends BaseController
             'locale'      => $locale,
             'settings'    => $settings,
             'sections'    => $sections,
+            'homepageItems' => $homepageItems,
             'heroSlides'  => (new HeroSlideModel())          // ← ✅ DI SINI
                 ->where('published', 1)
                 ->orderBy('sort_order', 'ASC')

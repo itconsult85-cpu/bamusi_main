@@ -79,6 +79,19 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('sections/edit/(:num)', 'SectionCMS::edit/$1');
     $routes->post('sections/save', 'SectionCMS::save');
 
+    $routes->get('homepage-content', 'HomepageContentCMS::index');
+    $routes->get('homepage-content/(:segment)', 'HomepageContentCMS::index/$1');
+    $routes->get('homepage-content/create/(:segment)', 'HomepageContentCMS::create/$1');
+    $routes->get('homepage-content/edit/(:num)', 'HomepageContentCMS::edit/$1');
+    $routes->post('homepage-content/save', 'HomepageContentCMS::save');
+    $routes->post('homepage-content/delete/(:num)', 'HomepageContentCMS::delete/$1');
+
+    $routes->get('partners', 'PartnerCMS::index');
+    $routes->get('partners/create', 'PartnerCMS::create');
+    $routes->get('partners/edit/(:num)', 'PartnerCMS::edit/$1');
+    $routes->post('partners/save', 'PartnerCMS::save');
+    $routes->post('partners/delete/(:num)', 'PartnerCMS::delete/$1');
+
     $routes->get('about-values', 'AboutValueCMS::index');
     $routes->get('about-values/create', 'AboutValueCMS::create');
     $routes->get('about-values/edit/(:num)', 'AboutValueCMS::edit/$1');
