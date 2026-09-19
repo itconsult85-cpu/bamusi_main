@@ -245,6 +245,10 @@ class SectionCMS extends BaseController
         $buttonLocation = $this->request->getPost('button_location') ?: 'bottom';
         if (!in_array($buttonPosition, ['left', 'center', 'right'], true)) $buttonPosition = 'center';
         if (!in_array($buttonLocation, ['top', 'bottom'], true)) $buttonLocation = 'bottom';
+        $color = static function ($value, string $default): string {
+            $value = trim((string) $value);
+            return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? $value : $default;
+        };
 
         $oldData = !empty($id) ? $this->sectionModel->find($id) : null;
         // Kunci section yang sudah dipakai template homepage tidak boleh berubah.
@@ -275,6 +279,10 @@ class SectionCMS extends BaseController
             'subtitle_en'     => $subEn,
             'quote'           => $quoteId,
             'quote_en'        => $quoteEn,
+            'kicker_color'    => $color($this->request->getPost('kicker_color'), '#e7aa6b'),
+            'title_color'     => $color($this->request->getPost('title_color'), '#ffffff'),
+            'lead_color'      => $color($this->request->getPost('lead_color'), '#d7e8dd'),
+            'quote_color'     => $color($this->request->getPost('quote_color'), '#e7aa6b'),
             'content'         => $contentId,
             'content_en'      => $contentEn,
             'button_label'    => $btnLabelId,
@@ -368,7 +376,21 @@ class SectionCMS extends BaseController
             ];
             if ($id && $old) { $record['id'] = $id; $kept[] = $id; }
             $this->aboutValueModel->save($record);
-            if (!$id) $kept[] = (int) $this->aboutValueModel->getInsertID();
+            if (!$id) $id = (int) $this->aboutValueModel->getInsertID();
+            $kept[] = $id;
+            $this->itemModel->where(['section_key' => 'nilai', 'item_key' => 'value-' . $id])->set([
+                'label' => $label,
+                'label_en' => $record['label_en'],
+                'title' => $label,
+                'title_en' => $record['label_en'],
+                'body' => $description,
+                'body_en' => $record['description_en'],
+                'sort_order' => $record['sort_order'],
+                'published' => $record['published'],
+            ])->update();
+            if ($this->itemModel->where(['section_key' => 'nilai', 'item_key' => 'value-' . $id])->countAllResults() === 0) {
+                $this->itemModel->insert(['section_key' => 'nilai', 'item_key' => 'value-' . $id, 'label' => $label, 'label_en' => $record['label_en'], 'title' => $label, 'title_en' => $record['label_en'], 'body' => $description, 'body_en' => $record['description_en'], 'sort_order' => $record['sort_order'], 'published' => $record['published']]);
+            }
         }
         foreach ($this->aboutValueModel->findAll() as $existing) {
             if (!in_array((int) $existing['id'], $kept, true)) $this->aboutValueModel->delete($existing['id']);
@@ -396,7 +418,15 @@ class SectionCMS extends BaseController
             ];
             if ($id && $old) { $record['id'] = $id; $kept[] = $id; }
             $this->sectionLinkModel->save($record);
-            if (!$id) $kept[] = (int) $this->sectionLinkModel->getInsertID();
+            if (!$id) $id = (int) $this->sectionLinkModel->getInsertID();
+            $kept[] = $id;
+            $itemKey = 'link-' . $id;
+            $itemData = ['section_key' => 'about_links', 'item_key' => $itemKey, 'label' => $label, 'label_en' => $record['label_en'], 'title' => $label, 'title_en' => $record['label_en'], 'body' => $record['sublabel'], 'body_en' => $record['sublabel_en'], 'url' => $record['url'], 'sort_order' => $record['sort_order'], 'published' => $record['published']];
+            if ($this->itemModel->where(['section_key' => 'about_links', 'item_key' => $itemKey])->countAllResults() > 0) {
+                $this->itemModel->where(['section_key' => 'about_links', 'item_key' => $itemKey])->set($itemData)->update();
+            } else {
+                $this->itemModel->insert($itemData);
+            }
         }
         foreach ($this->sectionLinkModel->where('section_key', 'about')->findAll() as $existing) {
             if (!in_array((int) $existing['id'], $kept, true)) $this->sectionLinkModel->delete($existing['id']);

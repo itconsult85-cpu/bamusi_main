@@ -66,14 +66,6 @@
                         <li class="nav-header">KONTEN</li>
 
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/hero-slides'); ?>"
-                                class="nav-link <?= (strpos(current_url(), 'admin/hero-slides') !== false) ? 'active' : ''; ?>">
-                                <i class="nav-icon fas fa-images"></i>
-                                <p>Hero Slides</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
                             <a href="<?= base_url('admin/sections'); ?>"
                                 class="nav-link <?= (strpos(current_url(), 'admin/sections') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-layer-group"></i>

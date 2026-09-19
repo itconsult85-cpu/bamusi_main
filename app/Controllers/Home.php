@@ -55,6 +55,29 @@ class Home extends BaseController
                 $homepageItems[$item['section_key']][] = $item;
             }
         }
+        $itemOptions = static function (array $item): array {
+            $options = json_decode((string) ($item['options_json'] ?? ''), true);
+            return is_array($options) ? $options : [];
+        };
+        $agenda = array_map(static function (array $item) use ($itemOptions): array {
+            $options = $itemOptions($item);
+            return array_merge($item, ['title' => $item['title'] ?: $item['label'], 'title_en' => $item['title_en'] ?: $item['label_en'], 'event_date' => $options['event_date'] ?? '', 'slug' => $options['slug'] ?? $item['item_key']]);
+        }, $homepageItems['agenda'] ?? []);
+        $writingArticles = array_map(static function (array $item) use ($itemOptions): array {
+            $options = $itemOptions($item);
+            return array_merge($item, ['id' => $item['id'], 'title' => $item['title'] ?: $item['label'], 'title_en' => $item['title_en'] ?: $item['label_en'], 'image_url' => $item['media_url'], 'category' => $options['category'] ?? '']);
+        }, $homepageItems['writing'] ?? []);
+        $programs = array_map(static function (array $item) use ($itemOptions): array {
+            $options = $itemOptions($item);
+            return array_merge($item, ['name' => $item['title'] ?: $item['label'], 'name_en' => $item['title_en'] ?: $item['label_en'], 'description' => $item['body'], 'description_en' => $item['body_en'], 'slug' => $options['slug'] ?? $item['item_key']]);
+        }, $homepageItems['program'] ?? []);
+        $board = array_map(static function (array $item) use ($itemOptions): array {
+            $options = $itemOptions($item);
+            return array_merge($item, ['name' => $item['title'] ?: $item['label'], 'name_en' => $item['title_en'] ?: $item['label_en'], 'role' => $item['body'], 'role_en' => $item['body_en'], 'photo_url' => $item['media_url'], 'group_order' => (int) ($options['group_order'] ?? 0), 'member_order' => (int) ($options['member_order'] ?? $item['sort_order'])]);
+        }, $homepageItems['board'] ?? []);
+        $aboutValues = array_map(static function (array $item): array {
+            return ['label' => $item['title'] ?: $item['label'], 'label_en' => $item['title_en'] ?: $item['label_en'], 'description' => $item['body'], 'description_en' => $item['body_en'], 'sort_order' => $item['sort_order'], 'published' => $item['published']];
+        }, $homepageItems['nilai'] ?? []);
 
         // Builder bersifat opt-in. Section legacy tetap dirender seperti sebelumnya
         // sampai admin mengaktifkan mode Builder dan menambahkan blok.
@@ -139,6 +162,10 @@ class Home extends BaseController
                     'lead_en' => $section['subtitle_en'] ?? '',
                     'quote' => $section['quote'] ?? '',
                     'quote_en' => $section['quote_en'] ?? '',
+                    'kicker_color' => $section['kicker_color'] ?? '#e7aa6b',
+                    'title_color' => $section['title_color'] ?? '#ffffff',
+                    'lead_color' => $section['lead_color'] ?? '#d7e8dd',
+                    'quote_color' => $section['quote_color'] ?? '#e7aa6b',
                     'image_url' => $section['media_url'] ?? '',
                     'button_label' => $section['button_label'] ?? '',
                     'button_label_en' => $section['button_label_en'] ?? '',
@@ -148,24 +175,28 @@ class Home extends BaseController
             }, array_values(array_filter($sectionsData, static fn (array $section): bool => ($section['section_key'] ?? '') === 'hero'))), static function (array $slide): bool {
                 return trim((string) ($slide['title'] ?? '')) !== '' || trim((string) ($slide['image_url'] ?? '')) !== '';
             })),
-            'aboutValues' => $db->table('about_values')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray(),
-            'agenda'      => $db->table('cms_items')->where('kind', 'agenda')->where('published', 1)->orderBy('created_at', 'DESC')->limit(4)->get()->getResultArray(),
-            'writingArticles' => $db->table('cms_items')->where('kind', 'article')->where('published', 1)->orderBy('created_at', 'DESC')->limit(4)->get()->getResultArray(),
-            'programs'    => $db->table('programs')->where('published', 1)->get()->getResultArray(),
+            'aboutValues' => $aboutValues,
+            'agenda'      => array_slice($agenda, 0, 4),
+            'writingArticles' => array_slice($writingArticles, 0, 4),
+            'programs'    => $programs,
             'partners'    => $homepagePartners,
-            'board'       => $db->table('board_members')->where('published', 1)->orderBy('group_order', 'ASC')->orderBy('member_order', 'ASC')->orderBy('sort_order', 'ASC')->get()->getResultArray(),
+            'board'       => $board,
             'news'        => $newsFeed,
         ];
 
-        $linkModel = new SectionLinkModel();
-        $allLinks = $linkModel
-            ->where('published', 1)
-            ->orderBy('sort_order', 'ASC')
-            ->findAll();
-
         $sectionLinks = [];
-        foreach ($allLinks as $row) {
-            $sectionLinks[$row['section_key']][] = $row;
+        foreach ($homepageItems['about_links'] ?? [] as $item) {
+            $options = $itemOptions($item);
+            $sectionLinks['about'][] = [
+                'label' => $item['title'] ?: $item['label'],
+                'label_en' => $item['title_en'] ?: $item['label_en'],
+                'sublabel' => $item['body'],
+                'sublabel_en' => $item['body_en'],
+                'url' => $item['url'],
+                'sort_order' => $item['sort_order'],
+                'published' => $item['published'],
+                'options' => $options,
+            ];
         }
 
         $data['sectionLinks'] = $sectionLinks;

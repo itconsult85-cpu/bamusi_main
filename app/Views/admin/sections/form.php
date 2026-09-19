@@ -80,6 +80,12 @@
                                 <label>Kutipan Tokoh (Quote)</label>
                                 <textarea name="quote" class="form-control" rows="2" placeholder="Contoh: Kutipan dari Ketua Umum..."><?= isset($section) ? esc($section['quote']) : '' ?></textarea>
                             </div>
+                            <div class="row g-2 mt-3">
+                                <div class="col-md-3"><label>Warna Kicker</label><input type="color" name="kicker_color" class="form-control form-control-color w-100" value="<?= esc($section['kicker_color'] ?? '#e7aa6b'); ?>"></div>
+                                <div class="col-md-3"><label>Warna Judul</label><input type="color" name="title_color" class="form-control form-control-color w-100" value="<?= esc($section['title_color'] ?? '#ffffff'); ?>"></div>
+                                <div class="col-md-3"><label>Warna Lead</label><input type="color" name="lead_color" class="form-control form-control-color w-100" value="<?= esc($section['lead_color'] ?? '#d7e8dd'); ?>"></div>
+                                <div class="col-md-3"><label>Warna Quote</label><input type="color" name="quote_color" class="form-control form-control-color w-100" value="<?= esc($section['quote_color'] ?? '#e7aa6b'); ?>"></div>
+                            </div>
                         </div>
                     </div>
 

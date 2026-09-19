@@ -617,7 +617,8 @@ $visiTitle = $t($visi, 'title');
                     <?php if (!empty($agenda)): ?>
                         <?php foreach (array_slice($agenda, 0, 4) as $i => $item):
                             $agendaSlug = $item['slug'] ?? $item['id'] ?? '#';
-                            $agendaUrl = base_url('agenda/' . $agendaSlug);
+                            $agendaUrl = !empty($item['url']) ? $item['url'] : base_url('agenda/' . $agendaSlug);
+                            if (!preg_match('#^https?://#i', $agendaUrl) && $agendaUrl !== '#' && $agendaUrl[0] !== '#') $agendaUrl = base_url(ltrim($agendaUrl, '/'));
                         ?>
                             <a href="<?= $agendaUrl; ?>" class="text-decoration-none text-white d-block group-agenda">
                                 <article class="d-flex align-items-center py-4 px-3 rounded-3 position-relative"
@@ -768,7 +769,8 @@ $visiTitle = $t($visi, 'title');
                 $articleTitle = ($locale === 'en' && !empty($article['title_en'])) ? $article['title_en'] : $article['title'];
                 ?>
                 <div class="col-lg-3 col-6 <?= $index < 3 ? 'border-end' : ''; ?>" style="border-color: #e0e0e0 !important;">
-                    <a href="<?= base_url('artikel/' . $article['id']); ?>" class="d-block h-100 p-4 text-decoration-none" style="transition: background-color 0.2s ease;"
+                    <?php $articleUrl = $article['url'] ?? ''; if ($articleUrl !== '' && !preg_match('#^https?://#i', $articleUrl) && $articleUrl[0] !== '#') $articleUrl = base_url(ltrim($articleUrl, '/')); ?>
+                    <a href="<?= esc($articleUrl ?: base_url('artikel/' . $article['id'])); ?>" class="d-block h-100 p-4 text-decoration-none" style="transition: background-color 0.2s ease;"
                         onmouseover="this.style.backgroundColor='#fdf0f0';"
                         onmouseout="this.style.backgroundColor='transparent';">
                         <span class="fw-bold d-block mb-4" style="color: var(--bamusi-red, #cc0000); font-size: 0.9rem;">
