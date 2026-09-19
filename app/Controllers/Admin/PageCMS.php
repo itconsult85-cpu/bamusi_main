@@ -146,6 +146,7 @@ class PageCMS extends BaseController
         $excerptId = $this->request->getPost('excerpt');
         $bodyId    = $this->request->getPost('body');
         $menuId    = $this->request->getPost('menu_label');
+        $menuDescId = $this->request->getPost('menu_desc');
         $oldData   = !empty($id) ? $this->model->find($id) : null;
 
 
@@ -154,11 +155,13 @@ class PageCMS extends BaseController
             $excerptEn = !empty($excerptId) ? $tr->translate($excerptId) : null;
             $bodyEn    = !empty($bodyId)    ? $tr->translate($bodyId)    : null;
             $menuEn    = !empty($menuId)    ? $tr->translate($menuId)    : null;
+            $menuDescEn = !empty($menuDescId) ? $tr->translate($menuDescId) : null;
         } catch (\Exception $e) {
             $titleEn   = $oldData['title_en'] ?? null;
             $excerptEn = $oldData['excerpt_en'] ?? null;
             $bodyEn    = $oldData['body_en'] ?? null;
             $menuEn    = $oldData['menu_label_en'] ?? null;
+            $menuDescEn = $oldData['menu_desc_en'] ?? null;
         }
 
         $data = [
@@ -184,8 +187,8 @@ class PageCMS extends BaseController
             'header_show_back'  => $this->request->getPost('header_show_back') ?? 0,
             'parent_id'  => $this->request->getPost('parent_id') ?: null,
             'is_mega'    => $this->request->getPost('is_mega') ?? 0,
-            'menu_desc'  => $this->request->getPost('menu_desc'),
-            'menu_desc_en' => $this->request->getPost('menu_desc'), // bisa ditranslate
+            'menu_desc'  => $menuDescId,
+            'menu_desc_en' => $menuDescEn,
         ];
 
         // Upload image utama (image_url)

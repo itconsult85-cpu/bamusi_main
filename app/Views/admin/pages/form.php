@@ -173,6 +173,11 @@ $chk = function ($key, $default = 1) use ($page) {
                                     id="publishCheck" <?= $chk('published', 1); ?>>
                                 <label class="form-check-label fw-bold" for="publishCheck">Tampilkan di Web</label>
                             </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" name="show_in_menu" value="1"
+                                    id="menuCheck" <?= $chk('show_in_menu', 1); ?>>
+                                <label class="form-check-label" for="menuCheck">Tampilkan di Menu Website</label>
+                            </div>
                             <button type="submit" class="btn btn-primary w-100 mb-2">
                                 <i class="fas fa-save me-1"></i> Simpan & Terjemahkan
                             </button>
@@ -209,6 +214,10 @@ $chk = function ($key, $default = 1) use ($page) {
                                 <input class="form-check-input" type="checkbox" name="is_mega" value="1"
                                     id="isMega" <?= $chk('is_mega', 0); ?>>
                                 <label class="form-check-label" for="isMega">Tampilkan sebagai Mega Menu</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Label Menu</label>
+                                <input type="text" name="menu_label" class="form-control" value="<?= $val('menu_label'); ?>" placeholder="Kosongkan untuk memakai judul halaman">
                             </div>
                             <div class="mb-0">
                                 <label class="form-label">Deskripsi Menu (Mega)</label>

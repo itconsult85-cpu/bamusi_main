@@ -90,6 +90,14 @@
                         </li>
 
                         <li class="nav-item">
+                            <a href="<?= base_url('admin/menu'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/menu') !== false) ? 'active' : ''; ?>">
+                                <i class="nav-icon fas fa-bars"></i>
+                                <p>Susunan Menu</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a href="<?= base_url('admin/section-links'); ?>"
                                 class="nav-link <?= (strpos(current_url(), 'admin/section-links') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-link"></i>

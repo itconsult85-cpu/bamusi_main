@@ -3,29 +3,28 @@
 // =========================================================
 // AUTO-BUILD NAV MENU
 // =========================================================
-if (!isset($navMenu)) {
-    $dbAuto = \Config\Database::connect();
-    $all = $dbAuto->table('pages')
-        ->where('published', 1)
-        ->where('show_in_menu', 1)
-        ->orderBy('sort_order', 'ASC')
-        ->get()->getResultArray();
+$dbAuto = \Config\Database::connect();
+$all = $dbAuto->table('pages')
+    ->where('published', 1)
+    ->where('show_in_menu', 1)
+    ->orderBy('sort_order', 'ASC')
+    ->orderBy('id', 'ASC')
+    ->get()->getResultArray();
 
-    $parents = [];
-    $children = [];
-    foreach ($all as $row) {
-        if (empty($row['parent_id'])) {
-            $parents[$row['id']] = $row;
-            $parents[$row['id']]['children'] = [];
-        } else {
-            $children[$row['parent_id']][] = $row;
-        }
+$parents = [];
+$children = [];
+foreach ($all as $row) {
+    if (empty($row['parent_id'])) {
+        $parents[$row['id']] = $row;
+        $parents[$row['id']]['children'] = [];
+    } else {
+        $children[$row['parent_id']][] = $row;
     }
-    foreach ($children as $parentId => $kids) {
-        if (isset($parents[$parentId])) $parents[$parentId]['children'] = $kids;
-    }
-    $navMenu = array_values($parents);
 }
+foreach ($children as $parentId => $kids) {
+    if (isset($parents[$parentId])) $parents[$parentId]['children'] = $kids;
+}
+$navMenu = array_values($parents);
 
 // =========================================================
 // AUTO-LOAD SETTINGS
