@@ -15,6 +15,10 @@ $chk = function ($key, $default = 1) use ($page) {
     if (empty($page)) return $default ? 'checked' : '';
     return (!empty($page[$key])) ? 'checked' : '';
 };
+$menuTargetType = $isEdit ? ($page['menu_target_type'] ?? 'page') : 'page';
+$sectionOptions = \Config\Database::connect()->tableExists('page_sections')
+    ? \Config\Database::connect()->table('page_sections')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray()
+    : [];
 ?>
 
 <div class="app-content-header">
@@ -219,6 +223,27 @@ $chk = function ($key, $default = 1) use ($page) {
                                 <label class="form-label">Label Menu</label>
                                 <input type="text" name="menu_label" class="form-control" value="<?= $val('menu_label'); ?>" placeholder="Kosongkan untuk memakai judul halaman">
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">Arah Menu</label>
+                                <select name="menu_target_type" id="menuTargetType" class="form-select">
+                                    <option value="page" <?= $menuTargetType === 'page' ? 'selected' : ''; ?>>Halaman ini</option>
+                                    <option value="section" <?= $menuTargetType === 'section' ? 'selected' : ''; ?>>Section Homepage</option>
+                                    <option value="url" <?= $menuTargetType === 'url' ? 'selected' : ''; ?>>URL Custom</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="menuTargetField" style="<?= $menuTargetType === 'page' ? 'display:none;' : ''; ?>">
+                                <label class="form-label" id="menuTargetLabel">Target</label>
+                                <select name="menu_target" id="menuSectionTarget" class="form-select" <?= $menuTargetType !== 'section' ? 'style="display:none;"' : ''; ?>>
+                                    <option value="">— Pilih section homepage —</option>
+                                    <?php foreach ($sectionOptions as $section): ?>
+                                        <option value="#<?= esc($section['section_key']); ?>" <?= ($page['menu_target'] ?? '') === '#' . $section['section_key'] ? 'selected' : ''; ?>>
+                                            <?= esc($section['section_name']); ?> (#<?= esc($section['section_key']); ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <input type="text" name="menu_target_custom" id="menuCustomTarget" class="form-control" value="<?= $menuTargetType === 'url' ? $val('menu_target') : ''; ?>" placeholder="https://contoh.com atau /kontak" <?= $menuTargetType !== 'url' ? 'style="display:none;"' : ''; ?>>
+                                <small class="text-muted">Section akan diarahkan ke anchor homepage, misalnya <code>#nilai</code>.</small>
+                            </div>
                             <div class="mb-0">
                                 <label class="form-label">Deskripsi Menu (Mega)</label>
                                 <textarea name="menu_desc" class="form-control" rows="2"><?= $val('menu_desc'); ?></textarea>
@@ -270,6 +295,21 @@ $chk = function ($key, $default = 1) use ($page) {
                 ['view', ['fullscreen', 'codeview']]
             ]
         });
+
+        const targetType = document.getElementById('menuTargetType');
+        const targetField = document.getElementById('menuTargetField');
+        const sectionTarget = document.getElementById('menuSectionTarget');
+        const customTarget = document.getElementById('menuCustomTarget');
+        const syncTargetFields = () => {
+            const type = targetType.value;
+            targetField.style.display = type === 'page' ? 'none' : '';
+            sectionTarget.style.display = type === 'section' ? '' : 'none';
+            customTarget.style.display = type === 'url' ? '' : 'none';
+            sectionTarget.disabled = type !== 'section';
+            customTarget.disabled = type !== 'url';
+        };
+        targetType.addEventListener('change', syncTargetFields);
+        syncTargetFields();
     });
 </script>
 <script>

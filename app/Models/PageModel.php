@@ -12,6 +12,8 @@ class PageModel extends Model
         'slug',
         'parent_id',
         'is_mega',
+        'menu_target_type',
+        'menu_target',
         'menu_desc',
         'menu_desc_en',
         'title',

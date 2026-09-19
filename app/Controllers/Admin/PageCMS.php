@@ -148,6 +148,14 @@ class PageCMS extends BaseController
         $menuId    = $this->request->getPost('menu_label');
         $menuDescId = $this->request->getPost('menu_desc');
         $oldData   = !empty($id) ? $this->model->find($id) : null;
+        $menuTargetType = $this->request->getPost('menu_target_type') ?: 'page';
+        if (!in_array($menuTargetType, ['page', 'section', 'url'], true)) {
+            $menuTargetType = 'page';
+        }
+        $menuTarget = trim((string) $this->request->getPost('menu_target'));
+        if ($menuTargetType === 'url') {
+            $menuTarget = trim((string) $this->request->getPost('menu_target_custom'));
+        }
 
 
         try {
@@ -187,6 +195,8 @@ class PageCMS extends BaseController
             'header_show_back'  => $this->request->getPost('header_show_back') ?? 0,
             'parent_id'  => $this->request->getPost('parent_id') ?: null,
             'is_mega'    => $this->request->getPost('is_mega') ?? 0,
+            'menu_target_type' => $menuTargetType,
+            'menu_target' => $menuTarget !== '' ? $menuTarget : null,
             'menu_desc'  => $menuDescId,
             'menu_desc_en' => $menuDescEn,
         ];

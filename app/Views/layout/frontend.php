@@ -26,6 +26,18 @@ foreach ($children as $parentId => $kids) {
 }
 $navMenu = array_values($parents);
 
+$menuUrl = static function (array $item): string {
+    $type = $item['menu_target_type'] ?? 'page';
+    $target = trim((string) ($item['menu_target'] ?? ''));
+    if ($type === 'section' && $target !== '') {
+        return base_url('/') . '#' . ltrim($target, '#');
+    }
+    if ($type === 'url' && $target !== '') {
+        return $target;
+    }
+    return base_url((string) ($item['slug'] ?? ''));
+};
+
 // =========================================================
 // AUTO-LOAD SETTINGS
 // =========================================================
@@ -520,20 +532,20 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                     ?>
                         <?php if (!$hasChildren): ?>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?= base_url($item['slug']); ?>">
+                                <a class="nav-link" href="<?= esc($menuUrl($item)); ?>">
                                     <?= esc($label); ?>
                                 </a>
                             </li>
                         <?php elseif ($isMega): ?>
                             <li class="nav-item nav-has-mega">
-                                <a class="nav-link" href="<?= base_url($item['slug']); ?>"
+                                <a class="nav-link" href="<?= esc($menuUrl($item)); ?>"
                                     data-mega-id="<?= $item['id']; ?>">
                                     <?= esc($label); ?> <span class="caret">▾</span>
                                 </a>
                             </li>
                         <?php else: ?>
                             <li class="nav-item dropdown-small">
-                                <a class="nav-link" href="<?= base_url($item['slug']); ?>">
+                                <a class="nav-link" href="<?= esc($menuUrl($item)); ?>">
                                     <?= esc($label); ?> <span class="caret">▾</span>
                                 </a>
                                 <ul class="dropdown-list">
@@ -545,7 +557,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                                         else $childLabel = $child['title'];
                                     ?>
                                         <li>
-                                            <a href="<?= base_url($child['slug']); ?>">
+                                            <a href="<?= esc($menuUrl($child)); ?>">
                                                 <?= esc($childLabel); ?>
                                             </a>
                                         </li>
@@ -608,7 +620,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                                 ? ($item['menu_desc_en'] ?? 'Explore this section to learn more.')
                                 : ($item['menu_desc'] ?? 'Jelajahi bagian ini untuk informasi lebih lanjut.')); ?>
                         </p>
-                        <a href="<?= base_url($item['slug']); ?>" class="home-link">
+                        <a href="<?= esc($menuUrl($item)); ?>" class="home-link">
                             <?= esc($s('mega.view_all', 'Lihat Semua')); ?>
                         </a>
                     </div>
@@ -624,7 +636,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                                 elseif (!empty($child['menu_label'])) $childLabel = $child['menu_label'];
                                 else $childLabel = $child['title'];
                             ?>
-                                <a href="<?= base_url($child['slug']); ?>" class="indeks-item">
+                                <a href="<?= esc($menuUrl($child)); ?>" class="indeks-item">
                                     <span class="indeks-item-title"><?= esc($childLabel); ?></span>
                                     <span class="indeks-item-arrow">›</span>
                                 </a>
@@ -646,7 +658,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                                 $img = trim((string)($child['image_url'] ?? ''));
                                 if ($img && !preg_match('#^https?://#i', $img)) $img = base_url(ltrim($img, '/'));
                             ?>
-                                <a href="<?= base_url($child['slug']); ?>" class="indeks-preview-card">
+                                <a href="<?= esc($menuUrl($child)); ?>" class="indeks-preview-card">
                                     <div class="indeks-preview-thumb">
                                         <?php if ($img): ?>
                                             <img src="<?= esc($img); ?>" alt="<?= esc($childLabel); ?>">
@@ -709,7 +721,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                             elseif ($locale === 'en' && !empty($item['title_en'])) $navLabel = $item['title_en'];
                             else $navLabel = $item['title'];
                         ?>
-                            <a href="<?= base_url($item['slug']); ?>" class="indeks-item">
+                            <a href="<?= esc($menuUrl($item)); ?>" class="indeks-item">
                                 <span class="indeks-item-title"><?= esc($navLabel); ?></span>
                                 <span class="indeks-item-arrow">›</span>
                             </a>
@@ -734,7 +746,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                                 $img = trim((string)($item['image_url'] ?? ''));
                                 if ($img && !preg_match('#^https?://#i', $img)) $img = base_url(ltrim($img, '/'));
                             ?>
-                                <a href="<?= base_url($item['slug']); ?>" class="indeks-preview-card">
+                                <a href="<?= esc($menuUrl($item)); ?>" class="indeks-preview-card">
                                     <div class="indeks-preview-thumb">
                                         <?php if ($img): ?>
                                             <img src="<?= esc($img); ?>" alt="<?= esc($navLabel); ?>">
