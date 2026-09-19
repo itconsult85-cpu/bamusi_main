@@ -24,6 +24,41 @@ foreach ($all as $row) {
 foreach ($children as $parentId => $kids) {
     if (isset($parents[$parentId])) $parents[$parentId]['children'] = $kids;
 }
+
+if ($dbAuto->tableExists('cms_menu_items')) {
+    $directItems = $dbAuto->table('cms_menu_items')
+        ->where('active', 1)
+        ->orderBy('sort_order', 'ASC')
+        ->orderBy('id', 'ASC')
+        ->get()->getResultArray();
+    $directParents = [];
+    $directChildren = [];
+    foreach ($directItems as $row) {
+        $row['id'] = 'm' . $row['id'];
+        $row['parent_id'] = !empty($row['parent_id']) ? 'm' . $row['parent_id'] : null;
+        $row['slug'] = '';
+        $row['title'] = $row['label'];
+        $row['title_en'] = $row['label_en'];
+        $row['menu_label'] = $row['label'];
+        $row['menu_label_en'] = $row['label_en'];
+        $row['menu_target_type'] = $row['target_type'];
+        $row['menu_target'] = $row['target'];
+        $row['menu_desc'] = $row['description'];
+        $row['menu_desc_en'] = $row['description_en'];
+        if (empty($row['parent_id'])) {
+            $directParents[$row['id']] = $row;
+            $directParents[$row['id']]['children'] = [];
+        } else {
+            $directChildren[$row['parent_id']][] = $row;
+        }
+    }
+    foreach ($directChildren as $parentId => $kids) {
+        if (isset($directParents[$parentId])) $directParents[$parentId]['children'] = $kids;
+    }
+    $parents = array_merge($parents, $directParents);
+}
+$parents = array_values($parents);
+usort($parents, static fn (array $a, array $b): int => ((int) ($a['sort_order'] ?? 0)) <=> ((int) ($b['sort_order'] ?? 0)));
 $navMenu = array_values($parents);
 
 $menuUrl = static function (array $item): string {

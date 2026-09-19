@@ -66,6 +66,10 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('pages/delete/(:num)', 'PageCMS::delete/$1');
 
     $routes->get('menu', 'MenuCMS::index');
+    $routes->get('menu/create', 'MenuCMS::create');
+    $routes->get('menu/edit/(:num)', 'MenuCMS::edit/$1');
+    $routes->post('menu/item/save', 'MenuCMS::saveItem');
+    $routes->post('menu/item/delete/(:num)', 'MenuCMS::deleteItem/$1');
     $routes->post('menu/save', 'MenuCMS::save');
 
     $routes->get('sections', 'SectionCMS::index');
