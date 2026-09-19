@@ -6,9 +6,10 @@
 <div class="app-content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <h3 class="mb-0">Kelola Halaman</h3>
-        <a href="<?= base_url('admin/pages/create'); ?>" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> Tambah Halaman
-        </a>
+        <div class="d-flex gap-2">
+            <form action="<?= site_url('admin/pages/translate-all'); ?>" method="post" onsubmit="return confirm('Lengkapi terjemahan halaman dan block yang masih kosong?')"><?= csrf_field(); ?><button class="btn btn-outline-success"><i class="fas fa-language me-1"></i> Lengkapi Terjemahan</button></form>
+            <a href="<?= base_url('admin/pages/create'); ?>" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Tambah Halaman</a>
+        </div>
     </div>
 </div>
 

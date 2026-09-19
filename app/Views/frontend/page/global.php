@@ -1,5 +1,5 @@
 <?= $this->extend('layout/frontend'); ?>
-<?= $this->section('title'); ?><?= esc($meta_title); ?><?= $this->endSection(); ?>
+<?= $this->section('title'); ?><?= esc(($locale === 'en' && !empty($page['meta_title_en'])) ? $page['meta_title_en'] : $meta_title); ?><?= $this->endSection(); ?>
 
 <?= $this->section('content'); ?>
 <?php
@@ -7,9 +7,9 @@ $isEn = ($locale === 'en');
 $title = ($isEn && !empty($page['title_en'])) ? $page['title_en'] : $page['title'];
 $body  = ($isEn && !empty($page['body_en'])) ? $page['body_en'] : $page['body'];
 
-$kicker = $page['header_kicker'] ?: 'BAMUSI';
-$hTitle = $page['header_title'] ?: $title;
-$hIntro = $page['header_intro'] ?: '';
+$kicker = ($isEn && !empty($page['header_kicker_en'])) ? $page['header_kicker_en'] : ($page['header_kicker'] ?: 'BAMUSI');
+$hTitle = ($isEn && !empty($page['header_title_en'])) ? $page['header_title_en'] : ($page['header_title'] ?: $title);
+$hIntro = ($isEn && !empty($page['header_intro_en'])) ? $page['header_intro_en'] : ($page['header_intro'] ?: '');
 ?>
 
 <!-- Hero Section -->

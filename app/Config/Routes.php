@@ -63,6 +63,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('pages/create', 'PageCMS::create');
     $routes->get('pages/edit/(:num)', 'PageCMS::edit/$1');
     $routes->post('pages/save', 'PageCMS::save');
+    $routes->post('pages/translate-all', 'PageCMS::translateAll');
     $routes->post('pages/delete/(:num)', 'PageCMS::delete/$1');
 
     $routes->get('menu', 'MenuCMS::index');

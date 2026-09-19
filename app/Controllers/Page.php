@@ -137,6 +137,9 @@ class Page extends BaseController
         $blocks = $this->blockModel->where('page_id', $pageId)->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
         foreach ($blocks as &$block) {
             $block['data'] = json_decode($block['block_data'], true) ?: [];
+            $block['data_en'] = !empty($block['block_data_en'])
+                ? (json_decode($block['block_data_en'], true) ?: [])
+                : [];
             if ($block['block_type'] === 'program_list') {
                 $block['data']['programs'] = (new ProgramModel())
                     ->where('published', 1)

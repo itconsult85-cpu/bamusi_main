@@ -143,6 +143,11 @@ class PageCMS extends BaseController
         $bodyId    = $this->request->getPost('body');
         $menuId    = $this->request->getPost('menu_label');
         $menuDescId = $this->request->getPost('menu_desc');
+        $metaTitleId = $this->request->getPost('meta_title');
+        $metaDescId = $this->request->getPost('meta_description');
+        $headerKickerId = $this->request->getPost('header_kicker');
+        $headerTitleId = $this->request->getPost('header_title');
+        $headerIntroId = $this->request->getPost('header_intro');
         $oldData   = !empty($id) ? $this->model->find($id) : null;
         $menuTargetType = $this->request->getPost('menu_target_type') ?: 'page';
         if (!in_array($menuTargetType, ['page', 'section', 'url'], true)) {
@@ -159,6 +164,11 @@ class PageCMS extends BaseController
         $bodyEn     = $this->translateText($bodyId, $oldData['body_en'] ?? null);
         $menuEn     = $this->translateText($menuId, $oldData['menu_label_en'] ?? null);
         $menuDescEn = $this->translateText($menuDescId, $oldData['menu_desc_en'] ?? null);
+        $metaTitleEn = $this->translateText($metaTitleId, $oldData['meta_title_en'] ?? null);
+        $metaDescEn = $this->translateText($metaDescId, $oldData['meta_description_en'] ?? null);
+        $headerKickerEn = $this->translateText($headerKickerId, $oldData['header_kicker_en'] ?? null);
+        $headerTitleEn = $this->translateText($headerTitleId, $oldData['header_title_en'] ?? null);
+        $headerIntroEn = $this->translateText($headerIntroId, $oldData['header_intro_en'] ?? null);
 
         $data = [
             'slug'              => $slug,
@@ -174,10 +184,15 @@ class PageCMS extends BaseController
             'menu_label_en'     => $menuEn,
             'sort_order'        => $this->request->getPost('sort_order') ?? 0,
             'meta_title'        => $this->request->getPost('meta_title'),
+            'meta_title_en'     => $metaTitleEn,
             'meta_description'  => $this->request->getPost('meta_description'),
+            'meta_description_en' => $metaDescEn,
             'header_kicker'     => $this->request->getPost('header_kicker'),
+            'header_kicker_en' => $headerKickerEn,
             'header_title'      => $this->request->getPost('header_title'),
+            'header_title_en' => $headerTitleEn,
             'header_intro'      => $this->request->getPost('header_intro'),
+            'header_intro_en' => $headerIntroEn,
             'header_show_logo'  => $this->request->getPost('header_show_logo') ?? 0,
             'header_show_intro' => $this->request->getPost('header_show_intro') ?? 0,
             'header_show_back'  => $this->request->getPost('header_show_back') ?? 0,
@@ -240,6 +255,40 @@ class PageCMS extends BaseController
         return redirect()->to('/admin/pages')->with('success', 'Halaman berhasil disimpan.');
     }
 
+    public function translateAll()
+    {
+        $pages = $this->model->findAll();
+        $translatedPages = 0;
+        foreach ($pages as $page) {
+            $pageData = [];
+            foreach ([
+                'title' => 'title_en', 'excerpt' => 'excerpt_en', 'body' => 'body_en',
+                'menu_label' => 'menu_label_en', 'menu_desc' => 'menu_desc_en',
+                'meta_title' => 'meta_title_en', 'meta_description' => 'meta_description_en',
+                'header_kicker' => 'header_kicker_en', 'header_title' => 'header_title_en', 'header_intro' => 'header_intro_en',
+            ] as $source => $target) {
+                if (!empty($page[$source]) && empty($page[$target])) {
+                    $pageData[$target] = $this->translateText($page[$source], null);
+                }
+            }
+            if ($pageData) {
+                $this->model->update($page['id'], $pageData);
+                $translatedPages++;
+            }
+
+            if (!empty($page['id']) && \Config\Database::connect()->tableExists('page_blocks')) {
+                $blocks = $this->blockModel->where('page_id', $page['id'])->findAll();
+                foreach ($blocks as $block) {
+                    if (!empty($block['block_data_en'])) continue;
+                    $data = json_decode($block['block_data'], true) ?: [];
+                    $dataEn = $this->translateBlockData($block['block_type'], $data);
+                    $this->blockModel->update($block['id'], ['block_data_en' => json_encode($dataEn, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+                }
+            }
+        }
+        return redirect()->to('/admin/pages')->with('success', "Terjemahan halaman dan block lama dilengkapi ({$translatedPages} halaman diperbarui).");
+    }
+
     private function saveBlocks(int $pageId, string $rawBlocks): void
     {
         if ($pageId < 1) return;
@@ -252,14 +301,36 @@ class PageCMS extends BaseController
             $type = (string) ($block['type'] ?? '');
             if (!in_array($type, $allowed, true)) continue;
             $data = is_array($block['data'] ?? null) ? $block['data'] : [];
+            $dataEn = $this->translateBlockData($type, $data);
             $this->blockModel->insert([
                 'page_id' => $pageId,
                 'block_type' => $type,
                 'block_data' => json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'block_data_en' => json_encode($dataEn, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                 'sort_order' => (int) $order,
                 'published' => !empty($block['published']) ? 1 : 0,
             ]);
         }
+    }
+
+    private function translateBlockData(string $type, array $data): array
+    {
+        $translated = $data;
+        $fields = match ($type) {
+            'rich_text' => ['html'],
+            'program_list' => ['title'],
+            'cards' => ['title', 'items'],
+            'quote' => ['text', 'author'],
+            'cta' => ['text', 'label'],
+            'image' => ['alt', 'caption'],
+            default => [],
+        };
+        foreach ($fields as $field) {
+            if (array_key_exists($field, $data)) {
+                $translated[$field] = $this->translateText((string) $data[$field], null);
+            }
+        }
+        return $translated;
     }
 
     /* ============ 6. DELETE ============ */

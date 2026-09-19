@@ -11,9 +11,9 @@ $t = function ($array, $field) use ($locale) {
 $title    = $t($page, 'title');
 $excerpt  = $t($page, 'excerpt');
 $body     = $t($page, 'body');
-$kicker   = $page['header_kicker'] ?? '';
-$headTitle = $page['header_title'] ?: $title;
-$headIntro = $page['header_intro'] ?: $excerpt;
+$kicker   = $t($page, 'header_kicker');
+$headTitle = $t($page, 'header_title') ?: $title;
+$headIntro = $t($page, 'header_intro') ?: $excerpt;
 $logo     = $page['header_logo_url'] ?? '';
 $showLogo  = (int)($page['header_show_logo'] ?? 1);
 $showIntro = (int)($page['header_show_intro'] ?? 1);
@@ -85,7 +85,7 @@ if ($image && !preg_match('#^https?://#i', $image)) $image = base_url(ltrim($ima
                 <?php endif; ?>
 
                 <?php if (!empty($blocks)): ?>
-                    <?php foreach ($blocks as $block): $b = $block['data'] ?? []; $type = $block['block_type'] ?? ''; ?>
+                    <?php foreach ($blocks as $block): $b = ($locale === 'en' && !empty($block['data_en'])) ? array_replace($block['data'] ?? [], $block['data_en']) : ($block['data'] ?? []); $type = $block['block_type'] ?? ''; ?>
                         <?php if ($type === 'rich_text'): ?>
                             <article class="page-body fs-5 lh-lg text-dark mb-5"><?= $b['html'] ?? ''; ?></article>
                         <?php elseif ($type === 'image' && !empty($b['url'])): $src = preg_match('#^https?://#i', $b['url']) ? $b['url'] : base_url(ltrim($b['url'], '/')); ?>
