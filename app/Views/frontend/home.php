@@ -337,7 +337,7 @@ if (empty($visiTitle)) {
         <div class="col-lg-6 ps-lg-5 pe-lg-5 px-4 d-flex flex-column justify-content-center py-5">
             <div class="pe-xl-5">
                 <span class="eyebrow-text text-danger text-uppercase fw-bold"
-                    style="letter-spacing: 1px; font-size: 1.05rem;">
+                    style="letter-spacing: 1.8px; font-size: 1.35rem;">
                     <?= esc($visiKicker); ?>
                 </span>
 
@@ -443,7 +443,7 @@ if (empty($visiTitle)) {
             <div class="col-lg-8">
                 <div class="board-slider-container pengurus-scroll-wrapper d-flex flex-nowrap gap-4 pb-3" style="overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
                     <?php if (!empty($board)): ?>
-                        <?php foreach (array_slice($board, 0, 8) as $member):
+                        <?php foreach ($board as $member):
                             $photo = trim((string)($member['photo_url'] ?? ''));
                             if ($photo !== '' && !preg_match('#^https?://#i', $photo)) {
                                 $photo = base_url(ltrim($photo, '/'));
