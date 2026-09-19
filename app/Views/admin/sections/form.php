@@ -61,6 +61,35 @@
                         </div>
                     </div>
 
+                    <?php if (($section['section_key'] ?? '') === 'visi'): ?>
+                    <div class="card card-danger card-outline mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title m-0"><i class="fas fa-eye me-2"></i>Konten Visi &amp; Misi Homepage</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border mb-4">
+                                <strong>Sumber tampilan homepage:</strong> data di bawah ini dipakai pada section Visi &amp; Misi, dengan gaya teks merah, judul besar gelap, latar putih, dan daftar misi bernomor.
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold">Visi</label>
+                                <textarea name="vision" class="form-control" rows="4" placeholder="Tuliskan visi BAMUSI..."><?= isset($section) ? esc($section['vision'] ?? '') : '' ?></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label class="fw-bold">Misi</label>
+                                <textarea name="mission" class="form-control" rows="7" placeholder="Satu misi per baris..."><?= isset($section) ? esc($section['mission'] ?? '') : '' ?></textarea>
+                                <small class="text-muted">Gunakan satu misi per baris. Homepage otomatis menampilkan nomor 01, 02, 03, dan seterusnya.</small>
+                            </div>
+                            <div class="rounded-3 overflow-hidden border" style="background:#fff;">
+                                <div class="px-4 py-3" style="border-left:5px solid #c8102e;">
+                                    <small class="text-danger fw-bold text-uppercase" style="letter-spacing:1px;">VISI DAN MISI</small>
+                                    <div class="fw-bolder mt-2" style="color:#212529;font-size:1.5rem;line-height:1.1;">Menjadi rumah kebangsaan Muslim Indonesia yang progresif.</div>
+                                    <div class="mt-3 text-secondary small">Preview layout homepage: latar putih, aksen merah BAMUSI, tipografi besar, dan daftar misi dengan garis pemisah.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- Box: Konten & Artikel -->
                     <div class="card card-primary card-outline mb-4">
                         <div class="card-header">

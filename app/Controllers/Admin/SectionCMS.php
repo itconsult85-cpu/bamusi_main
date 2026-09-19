@@ -106,6 +106,7 @@ class SectionCMS extends BaseController
         $quoteId    = $this->request->getPost('quote');
         $contentId  = $this->request->getPost('content');
         $btnLabelId = $this->request->getPost('button_label');
+        $sectionKey = (string) $this->request->getPost('section_key');
         $buttonPosition = $this->request->getPost('button_position') ?: 'center';
         $buttonLocation = $this->request->getPost('button_location') ?: 'bottom';
         if (!in_array($buttonPosition, ['left', 'center', 'right'], true)) $buttonPosition = 'center';
@@ -143,6 +144,15 @@ class SectionCMS extends BaseController
             'cards_columns'   => max(2, min(6, (int) ($this->request->getPost('cards_columns') ?: 5))),
             'published'       => $this->request->getPost('published') ?? 1
         ];
+
+        if ($sectionKey === 'visi') {
+            $visionId = $this->request->getPost('vision');
+            $missionId = $this->request->getPost('mission');
+            $data['vision'] = $visionId;
+            $data['vision_en'] = $this->translateText($visionId, $oldData['vision_en'] ?? null);
+            $data['mission'] = $missionId;
+            $data['mission_en'] = $this->translateText($missionId, $oldData['mission_en'] ?? null);
+        }
 
         // LOGIKA UPLOAD GAMBAR/VIDEO
         $mediaFile = $this->request->getFile('media_url');

@@ -349,9 +349,12 @@ if (empty($visiTitle)) {
                 <!-- VISI -->
                 <p class="fs-5 mb-5 text-secondary lh-base">
                     <?php
-                    $visiText = ($locale === 'en' && !empty($settings['about_vision_en']))
-                        ? $settings['about_vision_en']
-                        : ($settings['about_vision'] ?? '');
+                    $visiText = $t($visi, 'vision');
+                    if ($visiText === '') {
+                        $visiText = ($locale === 'en' && !empty($settings['about_vision_en']))
+                            ? $settings['about_vision_en']
+                            : ($settings['about_vision'] ?? '');
+                    }
                     ?>
                     <?= esc($visiText); ?>
                 </p>
@@ -359,9 +362,12 @@ if (empty($visiTitle)) {
                 <!-- MISI -->
                 <div class="mt-4">
                     <?php
-                    $raw_missions = ($locale === 'en' && !empty($settings['about_mission_en']))
-                        ? $settings['about_mission_en']
-                        : ($settings['about_mission'] ?? '');
+                    $raw_missions = $t($visi, 'mission');
+                    if ($raw_missions === '') {
+                        $raw_missions = ($locale === 'en' && !empty($settings['about_mission_en']))
+                            ? $settings['about_mission_en']
+                            : ($settings['about_mission'] ?? '');
+                    }
 
                     $missions = explode("\n", trim($raw_missions));
                     $counter = 0;
