@@ -58,6 +58,10 @@ class Page extends BaseController
             ->orderBy('sort_order', 'ASC')
             ->findAll();
 
+        if (session()->get('lang') === 'en') {
+            $page = $this->ensureEnglishContent($page);
+        }
+
         $data = [
             'page'     => $page,
             'blocks'   => $this->getBlocks($page['id']),
@@ -150,6 +154,49 @@ class Page extends BaseController
         }
         unset($block);
         return $blocks;
+    }
+
+    private function ensureEnglishContent(array $page): array
+    {
+        $pageData = [];
+        foreach ([
+            'title' => 'title_en', 'excerpt' => 'excerpt_en', 'body' => 'body_en',
+            'menu_label' => 'menu_label_en', 'menu_desc' => 'menu_desc_en',
+            'meta_title' => 'meta_title_en', 'meta_description' => 'meta_description_en',
+            'header_kicker' => 'header_kicker_en', 'header_title' => 'header_title_en', 'header_intro' => 'header_intro_en',
+        ] as $source => $target) {
+            if (!empty($page[$source]) && empty($page[$target])) {
+                $translated = $this->translateText($page[$source], null);
+                if ($translated !== null) {
+                    $pageData[$target] = $translated;
+                    $page[$target] = $translated;
+                }
+            }
+        }
+        if ($pageData) $this->pageModel->update($page['id'], $pageData);
+
+        $db = \Config\Database::connect();
+        if (!$db->tableExists('page_blocks')) return $page;
+        $blocks = $this->blockModel->where('page_id', $page['id'])->findAll();
+        foreach ($blocks as $block) {
+            if (!empty($block['block_data_en'])) continue;
+            $data = json_decode($block['block_data'], true) ?: [];
+            $translatedData = [];
+            $fields = match ($block['block_type']) {
+                'rich_text' => ['html'], 'program_list' => ['title'], 'cards' => ['title', 'items'],
+                'quote' => ['text', 'author'], 'cta' => ['text', 'label'], 'image' => ['alt', 'caption'], default => [],
+            };
+            foreach ($fields as $field) {
+                if (array_key_exists($field, $data)) {
+                    $translated = $this->translateText((string) $data[$field], null);
+                    if ($translated !== null) $translatedData[$field] = $translated;
+                }
+            }
+            if ($translatedData) {
+                $this->blockModel->update($block['id'], ['block_data_en' => json_encode($translatedData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+            }
+        }
+        return $page;
     }
 
     /**
