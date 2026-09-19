@@ -10,6 +10,7 @@ class PageSectionModel extends Model
     protected $primaryKey = 'id';
     protected $allowedFields = [
         'section_key',
+        'render_key',
         'section_name',
         'label',
         'label_en',

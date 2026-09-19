@@ -45,14 +45,21 @@ class Home extends BaseController
         // 2. Ambil Sections
         $sectionsData = $this->sectionModel->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
         $sections = [];
+        $sectionByKey = [];
         foreach ($sectionsData as $sec) {
             $sections[$sec['section_key']] = $sec;
+            $sectionByKey[$sec['section_key']] = $sec;
+            $renderKey = trim((string) ($sec['render_key'] ?? ''));
+            if ($renderKey !== '') {
+                $sections[$renderKey] = $sec;
+            }
         }
 
         $homepageItems = [];
         if ($db->tableExists('homepage_section_items')) {
             foreach ($db->table('homepage_section_items')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray() as $item) {
-                $homepageItems[$item['section_key']][] = $item;
+                $renderKey = $sectionByKey[$item['section_key']]['render_key'] ?? $item['section_key'];
+                $homepageItems[$renderKey][] = $item;
             }
         }
         $itemOptions = static function (array $item): array {

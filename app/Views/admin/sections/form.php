@@ -32,8 +32,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label>Section Key (Kunci Sistem)</label>
-                                <input type="text" name="section_key" class="form-control" required placeholder="Contoh: hero_main" value="<?= isset($section) ? esc($section['section_key']) : '' ?>" <?= isset($section) ? 'readonly' : '' ?>>
-                                <small class="text-warning">Kunci ini dipakai template homepage. Jangan diubah saat edit agar section tetap muncul di lokasi yang benar.</small>
+                                <input type="text" name="section_key" class="form-control" required placeholder="Contoh: hero_main" value="<?= isset($section) ? esc($section['section_key']) : '' ?>">
+                                <small class="text-info">Kunci unik data section. Layout homepage tetap dipertahankan saat kunci ini diubah.</small>
                             </div>
                             <?php if (isset($section)): ?>
                             <div class="col-md-6 mt-3">

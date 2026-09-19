@@ -35,6 +35,9 @@ $sectionImg = function ($key) use ($sections) {
     }
     return $url;
 };
+$sectionVisible = static function (string $key) use ($sections): bool {
+    return isset($sections[$key]) && (int) ($sections[$key]['published'] ?? 0) === 1;
+};
 ?>
 
 <?php
@@ -51,7 +54,8 @@ $ts = function ($row, $field) use ($locale) {
     <?= view('frontend/homepage_builder', get_defined_vars()); ?>
 <?php endif; ?>
 
-<section class="hero-split-wrapper">
+<?php if ($sectionVisible('hero')): ?>
+<section data-section-key="hero" class="hero-split-wrapper">
     <div class="hero-split-bg-right d-none d-lg-block"></div>
     <div id="mainHeroCarousel" class="carousel slide carousel-fade hero-carousel"
         data-bs-ride="carousel" data-bs-interval="5000">
@@ -130,8 +134,10 @@ $ts = function ($row, $field) use ($locale) {
         <?php endif; ?>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="py-5 position-relative" style="background-color: #f8f9fa;" id="tentang">
+<?php if ($sectionVisible('about')): ?>
+<section data-section-key="about" class="py-5 position-relative" style="background-color: #f8f9fa;" id="tentang">
     <div class="position-absolute d-none d-lg-block" style="top: 2rem; right: 4rem;">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--bamusi-red, #a00000)" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
@@ -204,6 +210,7 @@ $ts = function ($row, $field) use ($locale) {
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <?php
 $history = $sections['history'] ?? [];
@@ -218,7 +225,8 @@ $nilaiCardsColumns = max(2, min(6, (int) ($nilai['cards_columns'] ?? 5)));
 $nilaiColumnClass = [2 => 'col-lg-6', 3 => 'col-lg-4', 4 => 'col-lg-3', 5 => 'col-lg', 6 => 'col-lg-2'][$nilaiCardsColumns] ?? 'col-lg';
 $nilaiButtonClass = ['left' => 'text-start', 'center' => 'text-center', 'right' => 'text-end'][$nilaiButtonPosition];
 ?>
-<section class="py-5 text-white position-relative overflow-hidden" id="nilai"
+<?php if ($sectionVisible('nilai')): ?>
+<section data-section-key="nilai" class="py-5 text-white position-relative overflow-hidden" id="nilai"
     style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
     <div class="position-absolute" style="top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(204,0,0,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
     <div class="position-absolute" style="bottom: -20%; left: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(204,0,0,0.1) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
@@ -297,6 +305,7 @@ $nilaiButtonClass = ['left' => 'text-start', 'center' => 'text-center', 'right' 
 
     </div>
 </section>
+<?php endif; ?>
 
 <?php
 $visi = $sections['visi'] ?? [];
@@ -306,7 +315,8 @@ $visiKicker = $t($visi, 'kicker');
 $visiTitle = $t($visi, 'title');
 ?>
 
-<section class="pb-0 bg-white" id="visi">
+<?php if ($sectionVisible('visi')): ?>
+<section data-section-key="visi" class="pb-0 bg-white" id="visi">
     <div class="row g-0 align-items-stretch">
         <div class="col-lg-6 position-relative">
             <?php $imgVisi = $sectionImg('visi'); ?>
@@ -358,8 +368,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="pt-0 mt-0 text-white position-relative overflow-hidden" id="sejarah" style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
+<?php if ($sectionVisible('history')): ?>
+<section data-section-key="history" class="pt-0 mt-0 text-white position-relative overflow-hidden" id="sejarah" style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
     <div class="position-absolute" style="top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(204,0,0,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
     <div class="position-absolute" style="bottom: -20%; left: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(204,0,0,0.1) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
 
@@ -396,9 +408,11 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="py-5 bg-white" id="pengurus">
-    <style>
+<?php if ($sectionVisible('board')): ?>
+<section data-section-key="board" class="py-5 bg-white" id="pengurus">
+<style>
         .pengurus-scroll-wrapper::-webkit-scrollbar {
             display: none;
         }
@@ -454,8 +468,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="py-0 position-relative" id="khidmah" style="background-color: #0a0a0a;">
+<?php if ($sectionVisible('program')): ?>
+<section data-section-key="program" class="py-0 position-relative" id="khidmah" style="background-color: #0a0a0a;">
     <?php $imgKhidmah = $sectionImg('program'); ?>
     <div class="position-relative text-white py-5 curved-banner overflow-hidden"
         style="<?= $imgKhidmah
@@ -523,8 +539,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="bg-light" id="program-unggulan">
+<?php if ($sectionVisible('program')): ?>
+<section data-section-key="program" class="bg-light" id="program-unggulan">
     <div class="container-fluid p-0">
         <div class="row g-0 align-items-stretch">
             <div class="col-lg-6 position-relative pe-lg-4 pb-4 pb-lg-0 d-flex">
@@ -594,8 +612,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="py-5 text-white position-relative overflow-hidden" id="agenda" style="background: linear-gradient(135deg, #8a0000 0%, #4a0000 50%, #200000 100%);">
+<?php if ($sectionVisible('agenda')): ?>
+<section data-section-key="agenda" class="py-5 text-white position-relative overflow-hidden" id="agenda" style="background: linear-gradient(135deg, #8a0000 0%, #4a0000 50%, #200000 100%);">
     <div class="position-absolute" style="top: -30%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
 
     <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
@@ -649,8 +669,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="py-5 bg-white position-relative overflow-hidden" id="berita">
+<?php if ($sectionVisible('news')): ?>
+<section data-section-key="news" class="py-5 bg-white position-relative overflow-hidden" id="berita">
     <div class="position-absolute w-100 h-100 top-0 start-0" style="pointer-events: none; z-index: 0;">
         <div class="container-fluid px-4 px-lg-5 h-100 position-relative">
             <div class="row h-100 justify-content-between">
@@ -717,8 +739,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="py-5 bg-light position-relative" id="tulisan" style="overflow: hidden;">
+<?php if ($sectionVisible('writing')): ?>
+<section data-section-key="writing" class="py-5 bg-light position-relative" id="tulisan" style="overflow: hidden;">
     <div class="position-absolute" style="bottom: -20px; right: 8%; width: 180px; height: 220px; border: 30px solid rgba(204,0,0,0.06); border-bottom: 0; border-top-left-radius: 100px; border-top-right-radius: 100px; z-index: 0; pointer-events: none;"></div>
 
     <div class="container-fluid px-4 px-lg-5 py-5 position-relative" style="z-index: 1;">
@@ -791,8 +815,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="py-5 position-relative overflow-hidden" id="sosial-media" style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
+<?php if ($sectionVisible('social')): ?>
+<section data-section-key="social" class="py-5 position-relative overflow-hidden" id="sosial-media" style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
     <div class="position-absolute" style="top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(204,0,0,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
     <div class="position-absolute" style="bottom: -20%; left: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(204,0,0,0.1) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
 
@@ -897,8 +923,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section class="py-5 position-relative" style="background-color: #fdfdfd; overflow: hidden;" id="mitra">
+<?php if ($sectionVisible('partners')): ?>
+<section data-section-key="partners" class="py-5 position-relative" style="background-color: #fdfdfd; overflow: hidden;" id="mitra">
     <div class="position-absolute d-none d-lg-block" style="top: 3rem; left: 2rem; opacity: 0.05; color: var(--bamusi-red, #cc0000);">
         <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
@@ -946,8 +974,10 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
 
-<section id="bergabung">
+<?php if ($sectionVisible('join')): ?>
+<section data-section-key="join" id="bergabung">
     <div class="container-fluid p-0">
         <div class="row g-0 align-items-stretch">
             <div class="col-lg-5 p-4 p-lg-5 d-flex flex-column justify-content-between" style="background-color: var(--bamusi-red, #cc0000);">
@@ -1038,6 +1068,50 @@ $visiTitle = $t($visi, 'title');
         </div>
     </div>
 </section>
+<?php endif; ?>
+
+<?php
+$knownRenderKeys = ['hero', 'about', 'nilai', 'visi', 'history', 'board', 'program', 'agenda', 'news', 'writing', 'social', 'partners', 'join'];
+$genericRendered = [];
+foreach ($sectionsData ?? [] as $genericSection):
+    $genericKey = trim((string) ($genericSection['render_key'] ?? $genericSection['section_key'] ?? ''));
+    if ($genericKey === '' || in_array($genericKey, $knownRenderKeys, true) || isset($genericRendered[$genericKey])) continue;
+    $genericRendered[$genericKey] = true;
+    $genericItems = $homepageItems[$genericKey] ?? [];
+?>
+<section data-section-key="<?= esc($genericKey); ?>" id="section-<?= esc($genericSection['section_key']); ?>" class="py-5 bg-white">
+    <div class="container-fluid px-4 px-lg-5">
+        <?php if (!empty($genericSection['kicker'])): ?><div class="text-uppercase text-danger fw-bold mb-2"><?= esc($t($genericSection, 'kicker')); ?></div><?php endif; ?>
+        <?php if (!empty($genericSection['title'])): ?><h2 class="fw-bold mb-3"><?= $t_br($genericSection, 'title'); ?></h2><?php endif; ?>
+        <?php if (!empty($genericSection['subtitle'])): ?><p class="text-secondary mb-4"><?= esc($t($genericSection, 'subtitle')); ?></p><?php endif; ?>
+        <?php if (!empty($genericSection['content'])): ?><div class="mb-4"><?= $genericSection['content']; ?></div><?php endif; ?>
+        <?php if (!empty($genericItems)): ?><div class="row g-3">
+            <?php foreach ($genericItems as $genericItem): ?><div class="col-md-4"><article class="border rounded-3 p-3 h-100">
+                <?php if (!empty($genericItem['title'] ?: $genericItem['label'])): ?><h3 class="h5"><?= esc($t($genericItem, 'title') ?: $t($genericItem, 'label')); ?></h3><?php endif; ?>
+                <?php if (!empty($genericItem['body'])): ?><p class="text-secondary mb-0"><?= esc($t($genericItem, 'body')); ?></p><?php endif; ?>
+            </article></div><?php endforeach; ?>
+        </div><?php endif; ?>
+    </div>
+</section>
+<?php endforeach; ?>
+
+<?php
+$sectionOrder = [];
+foreach ($sections as $sectionRow) {
+    $renderKey = trim((string) ($sectionRow['render_key'] ?? $sectionRow['section_key'] ?? ''));
+    if ($renderKey !== '' && !isset($sectionOrder[$renderKey])) $sectionOrder[$renderKey] = (int) ($sectionRow['sort_order'] ?? 0);
+}
+?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const order = <?= json_encode($sectionOrder, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    const main = document.querySelector('main');
+    if (!main) return;
+    const sections = Array.from(main.querySelectorAll('section[data-section-key]'));
+    sections.sort((a, b) => (order[a.dataset.sectionKey] ?? 999999) - (order[b.dataset.sectionKey] ?? 999999));
+    sections.forEach(section => main.appendChild(section));
+});
+</script>
 
 <style>
     .reveal {

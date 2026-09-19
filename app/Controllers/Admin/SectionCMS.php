@@ -251,9 +251,15 @@ class SectionCMS extends BaseController
         };
 
         $oldData = !empty($id) ? $this->sectionModel->find($id) : null;
-        // Kunci section yang sudah dipakai template homepage tidak boleh berubah.
-        if ($oldData) {
-            $sectionKey = (string) $oldData['section_key'];
+        $sectionKey = strtolower(trim($sectionKey));
+        $sectionKey = preg_replace('/[^a-z0-9_-]+/', '-', $sectionKey);
+        $sectionKey = trim($sectionKey, '-_');
+        if ($sectionKey === '') {
+            return redirect()->back()->withInput()->with('error', 'Section key wajib diisi.');
+        }
+        $duplicate = $this->sectionModel->where('section_key', $sectionKey)->first();
+        if ($duplicate && (int) ($duplicate['id'] ?? 0) !== (int) $id) {
+            return redirect()->back()->withInput()->with('error', 'Section key sudah digunakan section lain.');
         }
         $labelEn    = $this->translateText($labelId, $oldData['label_en'] ?? null);
         $kickerEn   = $this->translateText($kickerId, $oldData['kicker_en'] ?? null);
@@ -267,6 +273,7 @@ class SectionCMS extends BaseController
         $data = [
             'section_name'    => $this->request->getPost('section_name'),
             'section_key'     => $sectionKey,
+            'render_key'      => $oldData['render_key'] ?? $sectionKey,
             'label'           => $labelId,
             'label_en'        => $labelEn,
             'label_size'      => max(1, min(200, (int) ($this->request->getPost('label_size') ?: 96))),
@@ -290,12 +297,12 @@ class SectionCMS extends BaseController
             'button_url'      => $this->request->getPost('button_url'),
             'button_position' => $buttonPosition,
             'button_location' => $buttonLocation,
-            'cards_visible'   => $this->request->getPost('cards_visible') ?? 1,
+            'cards_visible'   => $this->request->getPost('cards_visible') !== null ? 1 : 0,
             'cards_limit'     => max(1, min(12, (int) ($this->request->getPost('cards_limit') ?: 5))),
             'cards_columns'   => max(2, min(6, (int) ($this->request->getPost('cards_columns') ?: 5))),
             'layout_mode'     => in_array($this->request->getPost('layout_mode'), ['legacy', 'builder'], true) ? $this->request->getPost('layout_mode') : 'legacy',
             'layout_options'  => trim((string) $this->request->getPost('layout_options')) ?: null,
-            'published'       => $this->request->getPost('published') ?? 1
+            'published'       => $this->request->getPost('published') !== null ? 1 : 0
         ];
 
         // Bidang konten tambahan berlaku seragam untuk semua section.
@@ -346,11 +353,18 @@ class SectionCMS extends BaseController
         }
 
         $this->sectionModel->save($data);
+        if ($oldData && $oldData['section_key'] !== $sectionKey) {
+            $this->itemModel->where('section_key', $oldData['section_key'])->set(['section_key' => $sectionKey])->update();
+            if (\Config\Database::connect()->tableExists('homepage_section_blocks')) {
+                $this->blockModel->where('section_key', $oldData['section_key'])->set(['section_key' => $sectionKey])->update();
+            }
+        }
         $savedId = (int) ($id ?: $this->sectionModel->getInsertID());
-        if ($sectionKey === 'nilai' && $savedId > 0) {
+        $renderKey = (string) ($data['render_key'] ?? $sectionKey);
+        if ($renderKey === 'nilai' && $savedId > 0) {
             $this->syncAboutValues();
         }
-        if ($sectionKey === 'about' && $savedId > 0) {
+        if ($renderKey === 'about' && $savedId > 0) {
             $this->syncSectionLinks();
         }
         return redirect()->to('/admin/sections/edit/' . $savedId)->with('success', 'Section dan seluruh data pendukung berhasil disimpan dan diterjemahkan penuh.');
