@@ -337,17 +337,18 @@ if (empty($visiTitle)) {
         <div class="col-lg-6 ps-lg-5 pe-lg-5 px-4 d-flex flex-column justify-content-center py-5">
             <div class="pe-xl-5">
                 <span class="eyebrow-text text-danger text-uppercase fw-bold"
-                    style="letter-spacing: 1px; font-size: 0.85rem;">
+                    style="letter-spacing: 1px; font-size: 1.05rem;">
                     <?= esc($visiKicker); ?>
                 </span>
 
-                <h2 class="fw-bolder mb-4 mt-2"
-                    style="font-size: clamp(2.5rem, 4vw, 4rem); letter-spacing: -1.5px; line-height: 1.1; color: var(--bamusi-dark, #212529);">
+                <h2 class="fw-bolder mb-5 mt-2"
+                    style="font-size: clamp(3rem, 5vw, 5rem); letter-spacing: -1.8px; line-height: 1.05; color: var(--bamusi-dark, #212529);">
                     <?= esc($visiTitle); ?>
                 </h2>
 
                 <!-- VISI -->
-                <p class="fs-5 mb-5 text-secondary lh-base">
+                <div class="mb-5">
+                    <h3 class="text-danger text-uppercase fw-bold mb-3" style="font-size: 1.05rem; letter-spacing: 1.5px;"><?= $locale === 'en' ? 'Vision' : 'Visi'; ?></h3>
                     <?php
                     $visiText = $t($visi, 'vision');
                     if ($visiText === '') {
@@ -356,11 +357,14 @@ if (empty($visiTitle)) {
                             : ($settings['about_vision'] ?? '');
                     }
                     ?>
-                    <?= esc($visiText); ?>
-                </p>
+                    <p class="mb-0 text-dark" style="font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.65; font-weight: 500;">
+                        <?= esc($visiText); ?>
+                    </p>
+                </div>
 
                 <!-- MISI -->
-                <div class="mt-4">
+                <div class="mt-4 pt-4 border-top" style="border-color: #e6e6e6 !important;">
+                    <h3 class="text-danger text-uppercase fw-bold mb-3" style="font-size: 1.05rem; letter-spacing: 1.5px;"><?= $locale === 'en' ? 'Mission' : 'Misi'; ?></h3>
                     <?php
                     $raw_missions = $t($visi, 'mission');
                     if ($raw_missions === '') {
@@ -369,22 +373,9 @@ if (empty($visiTitle)) {
                             : ($settings['about_mission'] ?? '');
                     }
 
-                    $missions = explode("\n", trim($raw_missions));
-                    $counter = 0;
-                    foreach ($missions as $mission):
-                        if (trim($mission) == '') continue;
-                        $counter++;
-                        $num = str_pad((string)$counter, 2, '0', STR_PAD_LEFT);
-                    ?>
-                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom border-light">
-                            <span class="fw-bold me-4" style="color: var(--bamusi-red, #c8102e); font-size: 1rem;">
-                                <?= $num; ?>
-                            </span>
-                            <p class="mb-0 fs-6 fw-semibold text-dark">
-                                <?= esc(trim($mission)); ?>
-                            </p>
-                        </div>
-                    <?php endforeach; ?>
+                    <p class="mb-0 text-dark" style="font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.65; font-weight: 500;">
+                        <?= esc(trim($raw_missions)); ?>
+                    </p>
                 </div>
             </div>
         </div>
