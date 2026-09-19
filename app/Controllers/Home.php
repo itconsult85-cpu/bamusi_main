@@ -92,7 +92,7 @@ class Home extends BaseController
             'writingArticles' => $db->table('cms_items')->where('kind', 'article')->where('published', 1)->orderBy('created_at', 'DESC')->limit(4)->get()->getResultArray(),
             'programs'    => $db->table('programs')->where('published', 1)->get()->getResultArray(),
             'partners'    => $db->table('partners')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray(),
-            'board'       => $db->table('board_members')->where('published', 1)->orderBy('sort_order', 'ASC')->limit(8)->get()->getResultArray(),
+            'board'       => $db->table('board_members')->where('published', 1)->orderBy('group_order', 'ASC')->orderBy('member_order', 'ASC')->orderBy('sort_order', 'ASC')->limit(8)->get()->getResultArray(),
             'news'        => $newsFeed,
         ];
 

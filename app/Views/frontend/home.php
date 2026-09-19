@@ -372,6 +372,7 @@ if (empty($visiTitle)) {
                             ? $settings['about_mission_en']
                             : ($settings['about_mission'] ?? '');
                     }
+                    ?>
 
                     <p class="mb-0 text-dark" style="font-size: clamp(1.2rem, 1.7vw, 1.55rem); line-height: 1.65; font-weight: 500;">
                         <?= esc(trim($raw_missions)); ?>
