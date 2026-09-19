@@ -138,10 +138,6 @@ class PageCMS extends BaseController
         }
         $slug = url_title($slug, '-', true);
 
-        // Auto translate
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-
         $titleId   = $this->request->getPost('title');
         $excerptId = $this->request->getPost('excerpt');
         $bodyId    = $this->request->getPost('body');
@@ -158,19 +154,11 @@ class PageCMS extends BaseController
         }
 
 
-        try {
-            $titleEn   = !empty($titleId)   ? $tr->translate($titleId)   : null;
-            $excerptEn = !empty($excerptId) ? $tr->translate($excerptId) : null;
-            $bodyEn    = !empty($bodyId)    ? $tr->translate($bodyId)    : null;
-            $menuEn    = !empty($menuId)    ? $tr->translate($menuId)    : null;
-            $menuDescEn = !empty($menuDescId) ? $tr->translate($menuDescId) : null;
-        } catch (\Exception $e) {
-            $titleEn   = $oldData['title_en'] ?? null;
-            $excerptEn = $oldData['excerpt_en'] ?? null;
-            $bodyEn    = $oldData['body_en'] ?? null;
-            $menuEn    = $oldData['menu_label_en'] ?? null;
-            $menuDescEn = $oldData['menu_desc_en'] ?? null;
-        }
+        $titleEn    = $this->translateText($titleId, $oldData['title_en'] ?? null);
+        $excerptEn  = $this->translateText($excerptId, $oldData['excerpt_en'] ?? null);
+        $bodyEn     = $this->translateText($bodyId, $oldData['body_en'] ?? null);
+        $menuEn     = $this->translateText($menuId, $oldData['menu_label_en'] ?? null);
+        $menuDescEn = $this->translateText($menuDescId, $oldData['menu_desc_en'] ?? null);
 
         $data = [
             'slug'              => $slug,

@@ -126,14 +126,8 @@ class WebsiteText extends BaseController
         $id      = $this->request->getPost('id');
         $valueId = $this->request->getPost('value');
 
-        // Auto translate
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-        try {
-            $valueEn = !empty($valueId) ? $tr->translate($valueId) : null;
-        } catch (\Exception $e) {
-            $valueEn = null;
-        }
+        $oldData = !empty($id) ? $this->textModel->find($id) : null;
+        $valueEn = $this->translateText($valueId, $oldData['value_en'] ?? null);
 
         $data = [
             'text_key'   => $this->request->getPost('text_key'),
@@ -179,24 +173,18 @@ class WebsiteText extends BaseController
                 ->with('success', 'Tidak ada teks yang perlu diterjemahkan.');
         }
 
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-
         $successCount = 0;
         $failCount = 0;
 
         foreach ($items as $item) {
             if (empty($item['value'])) continue;
 
-            try {
-                $translated = $tr->translate($item['value']);
-                if (!empty($translated)) {
-                    $this->textModel->update($item['id'], ['value_en' => $translated]);
-                    $successCount++;
-                }
-            } catch (\Exception $e) {
+            $translated = $this->translateText($item['value'], null);
+            if (!empty($translated)) {
+                $this->textModel->update($item['id'], ['value_en' => $translated]);
+                $successCount++;
+            } else {
                 $failCount++;
-                log_message('error', 'Translate failed for ID ' . $item['id'] . ': ' . $e->getMessage());
             }
         }
 

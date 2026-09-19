@@ -125,18 +125,10 @@ class BoardMember extends BaseController
         $noteId      = $this->request->getPost('note');
         $groupNameId = $this->request->getPost('group_name');
 
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-
-        try {
-            $roleEn      = !empty($roleId)      ? $tr->translate($roleId)      : null;
-            $noteEn      = !empty($noteId)      ? $tr->translate($noteId)      : null;
-            $groupNameEn = !empty($groupNameId) ? $tr->translate($groupNameId) : null;
-        } catch (\Exception $e) {
-            $roleEn = $noteEn = $groupNameEn = null;
-        }
-
         $oldData = !empty($id) ? $this->boardModel->find($id) : null;
+        $roleEn      = $this->translateText($roleId, $oldData['role_en'] ?? null);
+        $noteEn      = $this->translateText($noteId, $oldData['note_en'] ?? null);
+        $groupNameEn = $this->translateText($groupNameId, $oldData['group_name_en'] ?? null);
 
         $data = [
             'name'          => $this->request->getPost('name'),

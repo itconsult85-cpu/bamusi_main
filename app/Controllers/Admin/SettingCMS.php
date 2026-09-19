@@ -111,14 +111,8 @@ class SettingCMS extends BaseController
 
         // Auto translate ID → EN (hanya untuk text/textarea)
         $valueEn = $oldData['setting_value_en'] ?? null;
-        if (in_array($type, ['text', 'textarea']) && !empty($valueId)) {
-            $tr = new \Stichoza\GoogleTranslate\GoogleTranslate('en');
-            $tr->setSource('id');
-            try {
-                $valueEn = $tr->translate($valueId);
-            } catch (\Exception $e) {
-                $valueEn = null;
-            }
+        if (in_array($type, ['text', 'textarea'])) {
+            $valueEn = $this->translateText($valueId, $valueEn);
         }
 
         $data = [
@@ -184,25 +178,19 @@ class SettingCMS extends BaseController
                 ->with('success', 'Tidak ada setting yang perlu diterjemahkan.');
         }
 
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-
         $success = 0;
         $fail = 0;
         foreach ($items as $item) {
             if (empty($item['setting_value'])) continue;
-            try {
-                $translated = $tr->translate($item['setting_value']);
-                if (!empty($translated)) {
-                    $this->model->update($item['id'], [
-                        'setting_value_en' => $translated,
-                        'updated_at'       => date('Y-m-d H:i:s'),
-                    ]);
-                    $success++;
-                }
-            } catch (\Exception $e) {
+            $translated = $this->translateText($item['setting_value'], null);
+            if (!empty($translated)) {
+                $this->model->update($item['id'], [
+                    'setting_value_en' => $translated,
+                    'updated_at'       => date('Y-m-d H:i:s'),
+                ]);
+                $success++;
+            } else {
                 $fail++;
-                log_message('error', 'Translate setting ID ' . $item['id'] . ': ' . $e->getMessage());
             }
         }
 

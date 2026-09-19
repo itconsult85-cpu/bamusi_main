@@ -49,14 +49,9 @@ class SectionLinkCMS extends BaseController
         $labelId    = $this->request->getPost('label');
         $sublabelId = $this->request->getPost('sublabel');
 
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-        try {
-            $labelEn    = !empty($labelId)    ? $tr->translate($labelId)    : null;
-            $sublabelEn = !empty($sublabelId) ? $tr->translate($sublabelId) : null;
-        } catch (\Exception $e) {
-            $labelEn = $sublabelEn = null;
-        }
+        $oldData = !empty($id) ? $this->model->find($id) : null;
+        $labelEn    = $this->translateText($labelId, $oldData['label_en'] ?? null);
+        $sublabelEn = $this->translateText($sublabelId, $oldData['sublabel_en'] ?? null);
 
         $data = [
             'section_key'  => $this->request->getPost('section_key'),

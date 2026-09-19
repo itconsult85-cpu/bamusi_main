@@ -130,17 +130,10 @@ class CmsItem extends BaseController
         $summaryId = $this->request->getPost('summary');
         $bodyId    = $this->request->getPost('body');
 
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-        try {
-            $titleEn   = !empty($titleId)   ? $tr->translate($titleId)   : null;
-            $summaryEn = !empty($summaryId) ? $tr->translate($summaryId) : null;
-            $bodyEn    = !empty($bodyId)    ? $tr->translate($bodyId)    : null;
-        } catch (\Exception $e) {
-            $titleEn = $summaryEn = $bodyEn = null;
-        }
-
         $oldData = !empty($id) ? $this->model->find($id) : null;
+        $titleEn   = $this->translateText($titleId, $oldData['title_en'] ?? null);
+        $summaryEn = $this->translateText($summaryId, $oldData['summary_en'] ?? null);
+        $bodyEn    = $this->translateText($bodyId, $oldData['body_en'] ?? null);
 
         $data = [
             'kind'        => in_array($this->request->getPost('kind'), ['news', 'agenda', 'gallery', 'article', 'program'], true)

@@ -78,6 +78,12 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('sections/edit/(:num)', 'SectionCMS::edit/$1');
     $routes->post('sections/save', 'SectionCMS::save');
 
+    $routes->get('about-values', 'AboutValueCMS::index');
+    $routes->get('about-values/create', 'AboutValueCMS::create');
+    $routes->get('about-values/edit/(:num)', 'AboutValueCMS::edit/$1');
+    $routes->post('about-values/save', 'AboutValueCMS::save');
+    $routes->post('about-values/delete/(:num)', 'AboutValueCMS::delete/$1');
+
     $routes->get('section-links', 'SectionLinkCMS::index');
     $routes->get('section-links/create', 'SectionLinkCMS::create');
     $routes->get('section-links/edit/(:num)', 'SectionLinkCMS::edit/$1');

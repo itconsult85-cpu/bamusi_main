@@ -120,16 +120,9 @@ class Program extends BaseController
         $nameId = $this->request->getPost('name');
         $descId = $this->request->getPost('description');
 
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-        try {
-            $nameEn = !empty($nameId) ? $tr->translate($nameId) : null;
-            $descEn = !empty($descId) ? $tr->translate($descId) : null;
-        } catch (\Exception $e) {
-            $nameEn = $descEn = null;
-        }
-
         $oldData = !empty($id) ? $this->programModel->find($id) : null;
+        $nameEn = $this->translateText($nameId, $oldData['name_en'] ?? null);
+        $descEn = $this->translateText($descId, $oldData['description_en'] ?? null);
 
         $data = [
             'name'           => $nameId,

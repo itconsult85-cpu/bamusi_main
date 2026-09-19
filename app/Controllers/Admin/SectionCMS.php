@@ -111,19 +111,13 @@ class SectionCMS extends BaseController
         if (!in_array($buttonPosition, ['left', 'center', 'right'], true)) $buttonPosition = 'center';
         if (!in_array($buttonLocation, ['top', 'bottom'], true)) $buttonLocation = 'bottom';
 
-        // Auto Translate
-        $tr = new \Stichoza\GoogleTranslate\GoogleTranslate('en');
-        $tr->setSource('id');
-        try {
-            $kickerEn   = !empty($kickerId) ? $tr->translate($kickerId) : null;
-            $titleEn    = !empty($titleId) ? $tr->translate($titleId) : null;
-            $subEn      = !empty($subId) ? $tr->translate($subId) : null;
-            $quoteEn    = !empty($quoteId) ? $tr->translate($quoteId) : null;
-            $contentEn  = !empty($contentId) ? $tr->translate($contentId) : null;
-            $btnLabelEn = !empty($btnLabelId) ? $tr->translate($btnLabelId) : null;
-        } catch (\Exception $e) {
-            $kickerEn = $titleEn = $subEn = $quoteEn = $contentEn = $btnLabelEn = null;
-        }
+        $oldData = !empty($id) ? $this->sectionModel->find($id) : null;
+        $kickerEn   = $this->translateText($kickerId, $oldData['kicker_en'] ?? null);
+        $titleEn    = $this->translateText($titleId, $oldData['title_en'] ?? null);
+        $subEn      = $this->translateText($subId, $oldData['subtitle_en'] ?? null);
+        $quoteEn    = $this->translateText($quoteId, $oldData['quote_en'] ?? null);
+        $contentEn  = $this->translateText($contentId, $oldData['content_en'] ?? null);
+        $btnLabelEn = $this->translateText($btnLabelId, $oldData['button_label_en'] ?? null);
 
         // Siapkan Data Lengkap
         $data = [

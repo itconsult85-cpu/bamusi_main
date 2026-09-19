@@ -6,6 +6,7 @@ use CodeIgniter\Controller;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 /**
  * BaseController provides a convenient place for loading components
@@ -41,5 +42,20 @@ abstract class BaseController extends Controller
 
         // Preload any models, libraries, etc, here.
         // $this->session = service('session');
+    }
+
+    protected function translateText(?string $text, ?string $fallback = null): ?string
+    {
+        $text = trim((string) $text);
+        if ($text === '') return null;
+        try {
+            $translator = new GoogleTranslate('en');
+            $translator->setSource('id');
+            $translated = trim((string) $translator->translate($text));
+            return $translated !== '' ? $translated : $fallback;
+        } catch (\Throwable $e) {
+            log_message('error', 'Translation failed: ' . $e->getMessage());
+            return $fallback;
+        }
     }
 }

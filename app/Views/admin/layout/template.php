@@ -82,6 +82,14 @@
                         </li>
 
                         <li class="nav-item">
+                            <a href="<?= base_url('admin/about-values'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/about-values') !== false) ? 'active' : ''; ?>">
+                                <i class="nav-icon fas fa-star"></i>
+                                <p>Kartu Nilai Utama</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a href="<?= base_url('admin/pages'); ?>"
                                 class="nav-link <?= (strpos(current_url(), 'admin/pages') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-file-alt"></i>

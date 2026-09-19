@@ -117,19 +117,12 @@ class HeroSlideCMS extends BaseController
         $quoteId  = $this->request->getPost('quote');
         $btnId    = $this->request->getPost('button_label');
 
-        $tr = new GoogleTranslate('en');
-        $tr->setSource('id');
-        try {
-            $kickerEn = !empty($kickerId) ? $tr->translate($kickerId) : null;
-            $titleEn  = !empty($titleId)  ? $tr->translate($titleId)  : null;
-            $leadEn   = !empty($leadId)   ? $tr->translate($leadId)   : null;
-            $quoteEn  = !empty($quoteId)  ? $tr->translate($quoteId)  : null;
-            $btnEn    = !empty($btnId)    ? $tr->translate($btnId)    : null;
-        } catch (\Exception $e) {
-            $kickerEn = $titleEn = $leadEn = $quoteEn = $btnEn = null;
-        }
-
         $oldData = !empty($id) ? $this->model->find($id) : null;
+        $kickerEn = $this->translateText($kickerId, $oldData['kicker_en'] ?? null);
+        $titleEn  = $this->translateText($titleId, $oldData['title_en'] ?? null);
+        $leadEn   = $this->translateText($leadId, $oldData['lead_en'] ?? null);
+        $quoteEn  = $this->translateText($quoteId, $oldData['quote_en'] ?? null);
+        $btnEn    = $this->translateText($btnId, $oldData['button_label_en'] ?? null);
 
         $data = [
             'kicker'          => $kickerId,
