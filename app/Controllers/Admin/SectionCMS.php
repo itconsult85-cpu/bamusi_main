@@ -7,6 +7,8 @@ use App\Models\PageSectionModel;
 use App\Models\HomepageSectionItemModel;
 use App\Models\WebsiteTextModel;
 use App\Models\HomepageSectionBlockModel;
+use App\Models\AboutValueModel;
+use App\Models\SectionLinkModel;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class SectionCMS extends BaseController
@@ -15,6 +17,8 @@ class SectionCMS extends BaseController
     protected $itemModel;
     protected $textModel;
     protected $blockModel;
+    protected $aboutValueModel;
+    protected $sectionLinkModel;
 
     public function __construct()
     {
@@ -22,6 +26,8 @@ class SectionCMS extends BaseController
         $this->itemModel = new HomepageSectionItemModel();
         $this->textModel = new WebsiteTextModel();
         $this->blockModel = new HomepageSectionBlockModel();
+        $this->aboutValueModel = new AboutValueModel();
+        $this->sectionLinkModel = new SectionLinkModel();
     }
 
     // 1. Menampilkan Halaman Tabel (DataTables)
@@ -102,6 +108,10 @@ class SectionCMS extends BaseController
         }
         $data['sectionItems'] = $this->itemModel->where('section_key', $data['section']['section_key'])->orderBy('sort_order', 'ASC')->findAll();
         $data['sectionTexts'] = $this->textModel->where('section_key', $data['section']['section_key'])->orderBy('sort_order', 'ASC')->findAll();
+        $data['aboutValues'] = $data['section']['section_key'] === 'nilai'
+            ? $this->aboutValueModel->orderBy('sort_order', 'ASC')->findAll() : [];
+        $data['sectionLinks'] = $data['section']['section_key'] === 'about'
+            ? $this->sectionLinkModel->where('section_key', 'about')->orderBy('sort_order', 'ASC')->findAll() : [];
         $data['sectionBlocks'] = \Config\Database::connect()->tableExists('homepage_section_blocks')
             ? $this->blockModel->where('section_id', $id)->orderBy('sort_order', 'ASC')->findAll()
             : [];
@@ -347,14 +357,13 @@ class SectionCMS extends BaseController
             'published'       => $this->request->getPost('published') ?? 1
         ];
 
-        if ($sectionKey === 'visi') {
-            $visionId = $this->request->getPost('vision');
-            $missionId = $this->request->getPost('mission');
-            $data['vision'] = $visionId;
-            $data['vision_en'] = $this->translateText($visionId, $oldData['vision_en'] ?? null);
-            $data['mission'] = $missionId;
-            $data['mission_en'] = $this->translateText($missionId, $oldData['mission_en'] ?? null);
-        }
+        // Bidang konten tambahan berlaku seragam untuk semua section.
+        $visionId = trim((string) $this->request->getPost('vision'));
+        $missionId = trim((string) $this->request->getPost('mission'));
+        $data['vision'] = $visionId;
+        $data['vision_en'] = $this->translateText($visionId, $oldData['vision_en'] ?? null);
+        $data['mission'] = $missionId;
+        $data['mission_en'] = $this->translateText($missionId, $oldData['mission_en'] ?? null);
 
         $layoutOptions = trim((string) $this->request->getPost('layout_options'));
         if ($layoutOptions !== '') {
@@ -396,6 +405,68 @@ class SectionCMS extends BaseController
         }
 
         $this->sectionModel->save($data);
-        return redirect()->to('/admin/sections')->with('success', 'Section berhasil disimpan dan diterjemahkan penuh.');
+        $savedId = (int) ($id ?: $this->sectionModel->getInsertID());
+        if ($sectionKey === 'nilai' && $savedId > 0) {
+            $this->syncAboutValues();
+        }
+        if ($sectionKey === 'about' && $savedId > 0) {
+            $this->syncSectionLinks();
+        }
+        return redirect()->to('/admin/sections/edit/' . $savedId)->with('success', 'Section dan seluruh data pendukung berhasil disimpan dan diterjemahkan penuh.');
+    }
+
+    private function syncAboutValues(): void
+    {
+        $rows = $this->request->getPost('about_values') ?: [];
+        $kept = [];
+        foreach ($rows as $row) {
+            $id = (int) ($row['id'] ?? 0);
+            $label = trim((string) ($row['label'] ?? ''));
+            $description = trim((string) ($row['description'] ?? ''));
+            if ($label === '' && $description === '') continue;
+            $old = $id ? $this->aboutValueModel->find($id) : null;
+            $record = [
+                'label' => $label,
+                'label_en' => $this->translateText($label, $old['label_en'] ?? null),
+                'description' => $description,
+                'description_en' => $this->translateText($description, $old['description_en'] ?? null),
+                'sort_order' => max(0, (int) ($row['sort_order'] ?? 0)),
+                'published' => !empty($row['published']) ? 1 : 0,
+            ];
+            if ($id && $old) { $record['id'] = $id; $kept[] = $id; }
+            $this->aboutValueModel->save($record);
+            if (!$id) $kept[] = (int) $this->aboutValueModel->getInsertID();
+        }
+        foreach ($this->aboutValueModel->findAll() as $existing) {
+            if (!in_array((int) $existing['id'], $kept, true)) $this->aboutValueModel->delete($existing['id']);
+        }
+    }
+
+    private function syncSectionLinks(): void
+    {
+        $rows = $this->request->getPost('section_links') ?: [];
+        $kept = [];
+        foreach ($rows as $row) {
+            $id = (int) ($row['id'] ?? 0);
+            $label = trim((string) ($row['label'] ?? ''));
+            if ($label === '') continue;
+            $old = $id ? $this->sectionLinkModel->find($id) : null;
+            $record = [
+                'section_key' => 'about',
+                'label' => $label,
+                'label_en' => $this->translateText($label, $old['label_en'] ?? null),
+                'sublabel' => trim((string) ($row['sublabel'] ?? '')),
+                'sublabel_en' => $this->translateText(trim((string) ($row['sublabel'] ?? '')), $old['sublabel_en'] ?? null),
+                'url' => trim((string) ($row['url'] ?? '')),
+                'sort_order' => max(0, (int) ($row['sort_order'] ?? 0)),
+                'published' => !empty($row['published']) ? 1 : 0,
+            ];
+            if ($id && $old) { $record['id'] = $id; $kept[] = $id; }
+            $this->sectionLinkModel->save($record);
+            if (!$id) $kept[] = (int) $this->sectionLinkModel->getInsertID();
+        }
+        foreach ($this->sectionLinkModel->where('section_key', 'about')->findAll() as $existing) {
+            if (!in_array((int) $existing['id'], $kept, true)) $this->sectionLinkModel->delete($existing['id']);
+        }
     }
 }

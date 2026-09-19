@@ -74,35 +74,6 @@
                         </div>
                     </div>
 
-                    <?php if (($section['section_key'] ?? '') === 'visi'): ?>
-                    <div class="card card-danger card-outline mb-4">
-                        <div class="card-header">
-                            <h5 class="card-title m-0"><i class="fas fa-eye me-2"></i>Konten Visi &amp; Misi Homepage</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-light border mb-4">
-                                <strong>Sumber tampilan homepage:</strong> data ditampilkan berurutan sebagai judul utama, paragraf pertama, lalu paragraf terakhir. Tidak ada label Visi/Misi atau numbering pada homepage.
-                            </div>
-                            <div class="mb-3">
-                                <label class="fw-bold">Paragraf Terakhir</label>
-                                <textarea name="vision" class="form-control fs-5" rows="5" placeholder="Tuliskan paragraf terakhir..."><?= isset($section) ? esc($section['vision'] ?? '') : '' ?></textarea>
-                            </div>
-                            <div class="mb-4">
-                                <label class="fw-bold">Paragraf Utama</label>
-                                <textarea name="mission" class="form-control fs-5" rows="7" placeholder="Tuliskan paragraf utama..."><?= isset($section) ? esc($section['mission'] ?? '') : '' ?></textarea>
-                                <small class="text-muted">Urutan homepage: judul utama → Paragraf Utama → Paragraf Terakhir. Keduanya ditampilkan sebagai paragraf besar tanpa nomor.</small>
-                            </div>
-                            <div class="rounded-3 overflow-hidden border" style="background:#fff;">
-                                <div class="px-4 py-3" style="border-left:5px solid #c8102e;">
-                                    <small class="text-danger fw-bold text-uppercase" style="letter-spacing:1px;">VISI DAN MISI</small>
-                                    <div class="fw-bolder mt-2" style="color:#212529;font-size:1.5rem;line-height:1.1;">Menjadi rumah kebangsaan Muslim Indonesia yang progresif.</div>
-                                    <div class="mt-3 text-secondary" style="font-size:1rem;line-height:1.6;">Preview layout homepage: latar putih, aksen merah BAMUSI, tipografi besar, dan isi Visi–Misi sebagai paragraf.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
                     <!-- Box: Visual Section Builder -->
                     <?php if (isset($section)): ?>
                     <div class="card card-dark card-outline mb-4">
@@ -138,6 +109,31 @@
                     </div>
                     <?php endif; ?>
 
+
+                    <?php if (($section['section_key'] ?? '') === 'nilai'): ?>
+                    <div class="card card-warning card-outline mb-4">
+                        <div class="card-header"><h5 class="card-title m-0"><i class="fas fa-star me-2"></i>Data Kartu Nilai Utama</h5><small class="text-muted">Data ini adalah bagian dari section Nilai dan disimpan bersama form ini.</small></div>
+                        <div class="card-body" id="aboutValuesRows">
+                            <?php foreach (($aboutValues ?? []) as $i => $value): ?>
+                            <div class="border rounded p-3 mb-3 about-value-row"><input type="hidden" name="about_values[<?= $i ?>][id]" value="<?= (int) $value['id'] ?>"><div class="row g-2"><div class="col-md-4"><label>Label</label><input name="about_values[<?= $i ?>][label]" class="form-control" value="<?= esc($value['label']) ?>"></div><div class="col-md-5"><label>Deskripsi</label><textarea name="about_values[<?= $i ?>][description]" class="form-control" rows="2"><?= esc($value['description'] ?? '') ?></textarea></div><div class="col-md-2"><label>Urutan</label><input type="number" name="about_values[<?= $i ?>][sort_order]" class="form-control" value="<?= (int) $value['sort_order'] ?>"></div><div class="col-md-1 d-flex align-items-end"><label class="small"><input type="checkbox" name="about_values[<?= $i ?>][published]" value="1" <?= !empty($value['published']) ? 'checked' : '' ?>> Aktif</label></div></div></div>
+                            <?php endforeach; ?>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addValueRow"><i class="fas fa-plus me-1"></i>Tambah Kartu</button>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php if (($section['section_key'] ?? '') === 'about'): ?>
+                    <div class="card card-warning card-outline mb-4">
+                        <div class="card-header"><h5 class="card-title m-0"><i class="fas fa-link me-2"></i>Link Section</h5><small class="text-muted">Link navigasi ini adalah bagian dari section Tentang dan dikelola di sini.</small></div>
+                        <div class="card-body" id="sectionLinksRows">
+                            <?php foreach (($sectionLinks ?? []) as $i => $link): ?>
+                            <div class="border rounded p-3 mb-3 section-link-row"><input type="hidden" name="section_links[<?= $i ?>][id]" value="<?= (int) $link['id'] ?>"><div class="row g-2"><div class="col-md-3"><label>Label</label><input name="section_links[<?= $i ?>][label]" class="form-control" value="<?= esc($link['label']) ?>"></div><div class="col-md-3"><label>Sub-label</label><input name="section_links[<?= $i ?>][sublabel]" class="form-control" value="<?= esc($link['sublabel'] ?? '') ?>"></div><div class="col-md-3"><label>URL</label><input name="section_links[<?= $i ?>][url]" class="form-control" value="<?= esc($link['url'] ?? '') ?>"></div><div class="col-md-2"><label>Urutan</label><input type="number" name="section_links[<?= $i ?>][sort_order]" class="form-control" value="<?= (int) $link['sort_order'] ?>"></div><div class="col-md-1 d-flex align-items-end"><label class="small"><input type="checkbox" name="section_links[<?= $i ?>][published]" value="1" <?= !empty($link['published']) ? 'checked' : '' ?>> Aktif</label></div></div></div>
+                            <?php endforeach; ?>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addLinkRow"><i class="fas fa-plus me-1"></i>Tambah Link</button>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- Box: Konten & Artikel -->
                     <?php if (isset($section)): ?>
                     <div class="card card-info card-outline mb-4">
@@ -155,12 +151,16 @@
                     </div>
                     <?php endif; ?>
 
-                    <!-- Box: Konten & Artikel -->
+                    <!-- Box: Konten Tambahan Seragam -->
                     <div class="card card-primary card-outline mb-4">
                         <div class="card-header">
-                            <h5 class="card-title m-0">Konten Artikel (Opsional)</h5>
+                            <h5 class="card-title m-0">Konten Tambahan Section</h5>
+                            <small class="text-muted">Bidang opsional yang tersedia secara seragam untuk semua section.</small>
                         </div>
-                        <div class="card-body p-0">
+                        <div class="card-body">
+                            <div class="mb-3"><label>Paragraf Tambahan 1</label><textarea name="vision" class="form-control" rows="4" placeholder="Isi jika section membutuhkan paragraf tambahan."><?= esc($section['vision'] ?? '') ?></textarea></div>
+                            <div class="mb-3"><label>Paragraf Tambahan 2</label><textarea name="mission" class="form-control" rows="5" placeholder="Isi jika section membutuhkan paragraf tambahan kedua."><?= esc($section['mission'] ?? '') ?></textarea></div>
+                            <label>Konten Artikel / Deskripsi Panjang</label>
                             <textarea name="content" class="form-control summernote"><?= isset($section) ? $section['content'] : '' ?></textarea>
                         </div>
                     </div>
@@ -184,20 +184,12 @@
                                 <label>URL / Tautan Tombol</label>
                                 <input type="text" name="button_url" class="form-control" placeholder="Contoh: #agenda atau https://..." value="<?= isset($section) ? esc($section['button_url']) : '' ?>">
                             </div>
+                            <hr>
+<div class="mb-3"><label>Posisi Tombol</label><select name="button_position" class="form-select"><option value="left" <?= ($section['button_position'] ?? 'center') === 'left' ? 'selected' : '' ?>>Kiri</option><option value="center" <?= ($section['button_position'] ?? 'center') === 'center' ? 'selected' : '' ?>>Tengah</option><option value="right" <?= ($section['button_position'] ?? 'center') === 'right' ? 'selected' : '' ?>>Kanan</option></select></div>
+                            <div class="mb-0"><label>Letak Tombol</label><select name="button_location" class="form-select"><option value="top" <?= ($section['button_location'] ?? 'bottom') === 'top' ? 'selected' : '' ?>>Di atas konten</option><option value="bottom" <?= ($section['button_location'] ?? 'bottom') === 'bottom' ? 'selected' : '' ?>>Di bawah konten</option></select></div>
                         </div>
                     </div>
 
-                    <?php if (($section['section_key'] ?? '') === 'nilai'): ?>
-                    <div class="card card-warning card-outline mb-4">
-                        <div class="card-header"><h5 class="card-title m-0">Tata Letak Section Nilai</h5></div>
-                        <div class="card-body">
-                            <div class="mb-3"><label>Posisi Tombol</label><select name="button_position" class="form-select"><option value="left" <?= ($section['button_position'] ?? 'center') === 'left' ? 'selected' : '' ?>>Kiri</option><option value="center" <?= ($section['button_position'] ?? 'center') === 'center' ? 'selected' : '' ?>>Tengah</option><option value="right" <?= ($section['button_position'] ?? 'center') === 'right' ? 'selected' : '' ?>>Kanan</option></select></div>
-                            <div class="mb-3"><label>Letak Tombol</label><select name="button_location" class="form-select"><option value="top" <?= ($section['button_location'] ?? 'bottom') === 'top' ? 'selected' : '' ?>>Di atas kartu</option><option value="bottom" <?= ($section['button_location'] ?? 'bottom') === 'bottom' ? 'selected' : '' ?>>Di bawah kartu</option></select></div>
-                            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" name="cards_visible" value="1" <?= !array_key_exists('cards_visible', $section) || !empty($section['cards_visible']) ? 'checked' : '' ?>><label class="form-check-label">Tampilkan kartu nilai</label></div>
-                            <div class="row"><div class="col-6"><label>Jumlah kartu</label><input type="number" min="1" max="12" name="cards_limit" class="form-control" value="<?= (int) ($section['cards_limit'] ?? 5) ?>"></div><div class="col-6"><label>Kolom desktop</label><select name="cards_columns" class="form-select"><option value="2" <?= (int) ($section['cards_columns'] ?? 5) === 2 ? 'selected' : '' ?>>2</option><option value="3" <?= (int) ($section['cards_columns'] ?? 5) === 3 ? 'selected' : '' ?>>3</option><option value="4" <?= (int) ($section['cards_columns'] ?? 5) === 4 ? 'selected' : '' ?>>4</option><option value="5" <?= (int) ($section['cards_columns'] ?? 5) === 5 ? 'selected' : '' ?>>5</option><option value="6" <?= (int) ($section['cards_columns'] ?? 5) === 6 ? 'selected' : '' ?>>6</option></select></div></div>
-                        </div>
-                    </div>
-                    <?php endif; ?>
                     <!-- Box: Upload Media -->
                     <div class="card card-success card-outline mb-4">
                         <div class="card-header">
@@ -240,6 +232,15 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
 <script>
+
+    function addRepeaterRow(containerId, className, html) {
+        const container = document.getElementById(containerId);
+        const index = container.querySelectorAll('.' + className).length;
+        container.insertAdjacentHTML('beforeend', html.replaceAll('__INDEX__', index));
+    }
+    document.getElementById('addValueRow')?.addEventListener('click', () => addRepeaterRow('aboutValuesRows', 'about-value-row', `<div class="border rounded p-3 mb-3 about-value-row"><input type="hidden" name="about_values[__INDEX__][id]" value=""><div class="row g-2"><div class="col-md-4"><label>Label</label><input name="about_values[__INDEX__][label]" class="form-control"></div><div class="col-md-5"><label>Deskripsi</label><textarea name="about_values[__INDEX__][description]" class="form-control" rows="2"></textarea></div><div class="col-md-2"><label>Urutan</label><input type="number" name="about_values[__INDEX__][sort_order]" class="form-control" value="0"></div><div class="col-md-1 d-flex align-items-end"><label class="small"><input type="checkbox" name="about_values[__INDEX__][published]" value="1" checked> Aktif</label></div></div></div>`));
+    document.getElementById('addLinkRow')?.addEventListener('click', () => addRepeaterRow('sectionLinksRows', 'section-link-row', `<div class="border rounded p-3 mb-3 section-link-row"><input type="hidden" name="section_links[__INDEX__][id]" value=""><div class="row g-2"><div class="col-md-3"><label>Label</label><input name="section_links[__INDEX__][label]" class="form-control"></div><div class="col-md-3"><label>Sub-label</label><input name="section_links[__INDEX__][sublabel]" class="form-control"></div><div class="col-md-3"><label>URL</label><input name="section_links[__INDEX__][url]" class="form-control"></div><div class="col-md-2"><label>Urutan</label><input type="number" name="section_links[__INDEX__][sort_order]" class="form-control" value="0"></div><div class="col-md-1 d-flex align-items-end"><label class="small"><input type="checkbox" name="section_links[__INDEX__][published]" value="1" checked> Aktif</label></div></div></div>`));
+
     $(document).ready(function() {
         $('.summernote').summernote({
             height: 250,

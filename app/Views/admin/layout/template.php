@@ -82,14 +82,6 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/about-values'); ?>"
-                                class="nav-link <?= (strpos(current_url(), 'admin/about-values') !== false) ? 'active' : ''; ?>">
-                                <i class="nav-icon fas fa-star"></i>
-                                <p>Kartu Nilai Utama</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
                             <a href="<?= base_url('admin/pages'); ?>"
                                 class="nav-link <?= (strpos(current_url(), 'admin/pages') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-file-alt"></i>
@@ -102,14 +94,6 @@
                                 class="nav-link <?= (strpos(current_url(), 'admin/menu') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-bars"></i>
                                 <p>Susunan Menu</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="<?= base_url('admin/section-links'); ?>"
-                                class="nav-link <?= (strpos(current_url(), 'admin/section-links') !== false) ? 'active' : ''; ?>">
-                                <i class="nav-icon fas fa-link"></i>
-                                <p>Link Section</p>
                             </a>
                         </li>
 
