@@ -113,6 +113,10 @@ class SectionCMS extends BaseController
         if (!in_array($buttonLocation, ['top', 'bottom'], true)) $buttonLocation = 'bottom';
 
         $oldData = !empty($id) ? $this->sectionModel->find($id) : null;
+        // Kunci section yang sudah dipakai template homepage tidak boleh berubah.
+        if ($oldData) {
+            $sectionKey = (string) $oldData['section_key'];
+        }
         $kickerEn   = $this->translateText($kickerId, $oldData['kicker_en'] ?? null);
         $titleEn    = $this->translateText($titleId, $oldData['title_en'] ?? null);
         $subEn      = $this->translateText($subId, $oldData['subtitle_en'] ?? null);
@@ -123,7 +127,7 @@ class SectionCMS extends BaseController
         // Siapkan Data Lengkap
         $data = [
             'section_name'    => $this->request->getPost('section_name'),
-            'section_key'     => $this->request->getPost('section_key'),
+            'section_key'     => $sectionKey,
             'kicker'          => $kickerId,
             'kicker_en'       => $kickerEn,
             'title'           => $titleId,

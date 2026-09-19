@@ -26,12 +26,14 @@
                         </div>
                         <div class="card-body row">
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <label>Nama Section (Bantuan Admin)</label>
+                                <label>Nama Section (Bisa Diubah)</label>
                                 <input type="text" name="section_name" class="form-control" required placeholder="Contoh: Hero Homepage" value="<?= isset($section) ? esc($section['section_name']) : '' ?>">
+                                <small class="text-muted">Nama ini hanya untuk memudahkan pengelolaan di CMS dan tidak mengubah tampilan website.</small>
                             </div>
                             <div class="col-md-6">
                                 <label>Section Key (Kunci Sistem)</label>
-                                <input type="text" name="section_key" class="form-control" required placeholder="Contoh: hero_main" value="<?= isset($section) ? esc($section['section_key']) : '' ?>">
+                                <input type="text" name="section_key" class="form-control" required placeholder="Contoh: hero_main" value="<?= isset($section) ? esc($section['section_key']) : '' ?>" <?= isset($section) ? 'readonly' : '' ?>>
+                                <small class="text-warning">Kunci ini dipakai template homepage. Jangan diubah saat edit agar section tetap muncul di lokasi yang benar.</small>
                             </div>
                         </div>
                     </div>

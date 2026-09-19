@@ -161,7 +161,7 @@
                             <a href="<?= base_url('admin/texts'); ?>"
                                 class="nav-link <?= (strpos(current_url(), 'admin/texts') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-language"></i>
-                                <p>Teks Website (Translasi)</p>
+                                <p>Teks Global (Navbar/Footer)</p>
                             </a>
                         </li>
 

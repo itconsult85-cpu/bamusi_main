@@ -5,7 +5,7 @@
 
 <div class="app-content-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-        <h3 class="mb-0">Kelola Teks Website</h3>
+        <h3 class="mb-0">Teks Global (Navbar, Footer, Sistem)</h3>
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-outline-danger" id="btnBulkTranslate">
                 <i class="fas fa-language me-1"></i> Bulk Translate (EN Kosong)
@@ -19,6 +19,8 @@
 
 <div class="app-content">
     <div class="container-fluid">
+
+        <div class="alert alert-info"><i class="fas fa-info-circle me-1"></i> Menu ini hanya untuk teks global seperti nama brand, navbar, footer, dan label sistem. Isi section homepage dikelola dari <a href="<?= base_url('admin/sections'); ?>">Section Homepage</a>, bukan dari menu ini.</div>
 
         <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success alert-dismissible fade show">
