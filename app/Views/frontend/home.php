@@ -11,7 +11,6 @@ $agenda = $agenda ?? [];
 $news = $news ?? [];
 $board = $board ?? [];
 $partners = $partners ?? [];
-$texts = $texts ?? [];
 
 $locale = $locale ?? 'id';
 
@@ -207,6 +206,9 @@ $ts = function ($row, $field) use ($locale) {
 </section>
 
 <?php
+$history = $sections['history'] ?? [];
+$historyLabelSize = max(2, min(12, ((int) ($history['label_size'] ?? 96)) / 16));
+$historyTitleSize = max(2, min(6, ((int) ($history['title_size'] ?? 56)) / 16));
 $nilai = $sections['nilai'] ?? [];
 $nilaiButtonPosition = in_array(($nilai['button_position'] ?? 'center'), ['left', 'center', 'right'], true) ? $nilai['button_position'] : 'center';
 $nilaiButtonLocation = ($nilai['button_location'] ?? 'bottom') === 'top' ? 'top' : 'bottom';
@@ -392,14 +394,14 @@ if (empty($visiTitle)) {
             <div class="position-absolute w-100 h-100" style="top: 0; left: 0; background: linear-gradient(to right, rgba(17,17,17,0.3) 0%, rgba(17,17,17,1) 98%); z-index: -1;"></div>
             <div class="position-absolute w-100 h-100 d-lg-none" style="bottom: 0; left: 0; background: linear-gradient(to bottom, rgba(17,17,17,0) 60%, rgba(17,17,17,1) 100%); z-index: -1;"></div>
 
-            <h1 class="m-0 lh-1 position-relative" style="font-size: clamp(4rem, 8vw, 8rem); font-weight: 900; letter-spacing: -3px; color: #e60000; text-shadow: 3px 3px 0px #660000, 6px 6px 0px #330000, 12px 12px 25px rgba(0,0,0,0.9), -2px -2px 15px rgba(204,0,0,0.3); transform: translateY(-5px);">
-                <?= esc($t($sections['history'] ?? [], 'kicker') ?: ($locale === 'en' ? 'HISTORY' : 'SEJARAH')); ?>
+            <h1 class="m-0 lh-1 position-relative" style="font-size: clamp(<?= $historyLabelSize; ?>rem, 8vw, 8rem); font-weight: 900; letter-spacing: -3px; color: #e60000; text-shadow: 3px 3px 0px #660000, 6px 6px 0px #330000, 12px 12px 25px rgba(0,0,0,0.9), -2px -2px 15px rgba(204,0,0,0.3); transform: translateY(-5px);">
+                <?= esc($t($sections['history'] ?? [], 'label') ?: ($t($sections['history'] ?? [], 'kicker') ?: ($locale === 'en' ? 'HISTORY' : 'SEJARAH'))); ?>
             </h1>
         </div>
 
         <div class="col-lg-7 px-4 ps-lg-5 pe-lg-5 py-5 d-flex flex-column justify-content-center">
             <div class="pe-xl-5 py-lg-4" style="max-width: 800px;">
-                <h2 class="fw-bolder mb-4 text-uppercase text-white" style="font-size: clamp(2.2rem, 4.2vw, 4.2rem); letter-spacing: -1.5px; line-height: 1;">
+                <h2 class="fw-bolder mb-4 text-uppercase text-white" style="font-size: clamp(2.2rem, 4.2vw, <?= $historyTitleSize; ?>rem); letter-spacing: -1.5px; line-height: 1;">
                     <?= esc($t($sections['history'] ?? [], 'title')); ?>
                 </h2>
                 <p class="fs-5 mb-5 text-white opacity-75 lh-base">

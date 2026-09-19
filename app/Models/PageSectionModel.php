@@ -11,6 +11,10 @@ class PageSectionModel extends Model
     protected $allowedFields = [
         'section_key',
         'section_name',
+        'label',
+        'label_en',
+        'label_size',
+        'title_size',
         'kicker',
         'kicker_en',
         'title',

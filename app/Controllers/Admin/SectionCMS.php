@@ -5,7 +5,6 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\PageSectionModel;
 use App\Models\HomepageSectionItemModel;
-use App\Models\WebsiteTextModel;
 use App\Models\HomepageSectionBlockModel;
 use App\Models\AboutValueModel;
 use App\Models\SectionLinkModel;
@@ -15,7 +14,6 @@ class SectionCMS extends BaseController
 {
     protected $sectionModel;
     protected $itemModel;
-    protected $textModel;
     protected $blockModel;
     protected $aboutValueModel;
     protected $sectionLinkModel;
@@ -24,7 +22,6 @@ class SectionCMS extends BaseController
     {
         $this->sectionModel = new PageSectionModel();
         $this->itemModel = new HomepageSectionItemModel();
-        $this->textModel = new WebsiteTextModel();
         $this->blockModel = new HomepageSectionBlockModel();
         $this->aboutValueModel = new AboutValueModel();
         $this->sectionLinkModel = new SectionLinkModel();
@@ -107,7 +104,6 @@ class SectionCMS extends BaseController
             return redirect()->to('/admin/sections')->with('error', 'Data tidak ditemukan.');
         }
         $data['sectionItems'] = $this->itemModel->where('section_key', $data['section']['section_key'])->orderBy('sort_order', 'ASC')->findAll();
-        $data['sectionTexts'] = $this->textModel->where('section_key', $data['section']['section_key'])->orderBy('sort_order', 'ASC')->findAll();
         $data['aboutValues'] = $data['section']['section_key'] === 'nilai'
             ? $this->aboutValueModel->orderBy('sort_order', 'ASC')->findAll() : [];
         $data['sectionLinks'] = $data['section']['section_key'] === 'about'
@@ -230,82 +226,13 @@ class SectionCMS extends BaseController
         return redirect()->to(base_url('admin/sections/edit/' . $block['section_id']))->with('success', 'Blok layout berhasil dihapus.');
     }
 
-    public function textCreate($sectionKey)
-    {
-        $section = $this->sectionModel->where('section_key', $sectionKey)->first();
-        if (!$section) return redirect()->to('/admin/sections')->with('error', 'Section tidak ditemukan.');
-
-        return view('admin/sections/text_form', [
-            'item' => null,
-            'section' => $section,
-            'backUrl' => base_url('admin/sections/edit/' . $section['id']),
-        ]);
-    }
-
-    public function textEdit($id)
-    {
-        $item = $this->textModel->find($id);
-        if (!$item || empty($item['section_key'])) return redirect()->to('/admin/sections')->with('error', 'Teks section tidak ditemukan.');
-        $section = $this->sectionModel->where('section_key', $item['section_key'])->first();
-        if (!$section) return redirect()->to('/admin/sections')->with('error', 'Section tidak ditemukan.');
-
-        return view('admin/sections/text_form', [
-            'item' => $item,
-            'section' => $section,
-            'backUrl' => base_url('admin/sections/edit/' . $section['id']),
-        ]);
-    }
-
-    public function textSave()
-    {
-        $id = (int) $this->request->getPost('id');
-        $sectionKey = trim((string) $this->request->getPost('section_key'));
-        $section = $this->sectionModel->where('section_key', $sectionKey)->first();
-        if (!$section) return redirect()->to('/admin/sections')->with('error', 'Section tidak ditemukan.');
-
-        $old = $id ? $this->textModel->find($id) : null;
-        if ($old) $sectionKey = (string) $old['section_key'];
-        $textKey = trim((string) $this->request->getPost('text_key'));
-        $value = trim((string) $this->request->getPost('value'));
-        $label = trim((string) $this->request->getPost('label'));
-        if ($textKey === '' || $label === '' || $value === '') {
-            return redirect()->back()->withInput()->with('error', 'Key, label, dan nilai teks wajib diisi.');
-        }
-
-        $duplicate = $this->textModel->where('text_key', $textKey)->where('id !=', $id)->first();
-        if ($duplicate) return redirect()->back()->withInput()->with('error', 'Text key sudah digunakan. Gunakan key yang unik.');
-
-        $data = [
-            'text_key' => $textKey,
-            'label' => $label,
-            'location' => 'homepage',
-            'section_key' => $sectionKey,
-            'value' => $value,
-            'value_en' => $this->translateText($value, $old['value_en'] ?? null),
-            'sort_order' => (int) $this->request->getPost('sort_order'),
-            'published' => $this->request->getPost('published') ? 1 : 0,
-        ];
-        if ($id) $data['id'] = $id;
-        $this->textModel->save($data);
-
-        return redirect()->to(base_url('admin/sections/edit/' . $section['id']))->with('success', 'Teks section berhasil disimpan.');
-    }
-
-    public function textDelete($id)
-    {
-        $item = $this->textModel->find($id);
-        if (!$item || empty($item['section_key'])) return redirect()->to('/admin/sections')->with('error', 'Teks section tidak ditemukan.');
-        $section = $this->sectionModel->where('section_key', $item['section_key'])->first();
-        $this->textModel->delete($id);
-        return redirect()->to(base_url('admin/sections/edit/' . ($section['id'] ?? '')))->with('success', 'Teks section berhasil dihapus.');
-    }
-
     // 5. Menyimpan Data (dari Create atau Edit)
     public function save()
     {
         $id = $this->request->getPost('id');
 
         // Tangkap semua input teks ID
+        $labelId    = $this->request->getPost('label');
         $kickerId   = $this->request->getPost('kicker');
         $titleId    = $this->request->getPost('title');
         $subId      = $this->request->getPost('subtitle');
@@ -323,6 +250,7 @@ class SectionCMS extends BaseController
         if ($oldData) {
             $sectionKey = (string) $oldData['section_key'];
         }
+        $labelEn    = $this->translateText($labelId, $oldData['label_en'] ?? null);
         $kickerEn   = $this->translateText($kickerId, $oldData['kicker_en'] ?? null);
         $titleEn    = $this->translateText($titleId, $oldData['title_en'] ?? null);
         $subEn      = $this->translateText($subId, $oldData['subtitle_en'] ?? null);
@@ -334,6 +262,10 @@ class SectionCMS extends BaseController
         $data = [
             'section_name'    => $this->request->getPost('section_name'),
             'section_key'     => $sectionKey,
+            'label'           => $labelId,
+            'label_en'        => $labelEn,
+            'label_size'      => max(1, min(200, (int) ($this->request->getPost('label_size') ?: 96))),
+            'title_size'      => max(1, min(200, (int) ($this->request->getPost('title_size') ?: 56))),
             'kicker'          => $kickerId,
             'kicker_en'       => $kickerEn,
             'title'           => $titleId,

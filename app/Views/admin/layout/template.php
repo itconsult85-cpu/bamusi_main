@@ -126,14 +126,6 @@
                         <li class="nav-header">PENGATURAN</li>
 
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/texts'); ?>"
-                                class="nav-link <?= (strpos(current_url(), 'admin/texts') !== false) ? 'active' : ''; ?>">
-                                <i class="nav-icon fas fa-language"></i>
-                                <p>Teks Global (Navbar/Footer)</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
                             <a href="<?= base_url('admin/settings'); ?>"
                                 class="nav-link <?= (strpos(current_url(), 'admin/settings') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-cog"></i>

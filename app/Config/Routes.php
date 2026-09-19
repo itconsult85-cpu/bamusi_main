@@ -36,14 +36,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('settings/delete/(:num)', 'SettingCMS::delete/$1');
     $routes->get('settings/bulkTranslate', 'SettingCMS::bulkTranslate');
 
-    $routes->get('texts', 'WebsiteText::index');
-    $routes->get('texts/ajaxData', 'WebsiteText::ajaxData');
-    $routes->get('texts/create', 'WebsiteText::create');
-    $routes->get('texts/edit/(:num)', 'WebsiteText::edit/$1');
-    $routes->post('texts/save', 'WebsiteText::save');
-    $routes->get('texts/delete/(:num)', 'WebsiteText::delete/$1');
-    $routes->get('texts/bulkTranslate', 'WebsiteText::bulkTranslate');
-
     $routes->get('board', 'BoardMember::index');
     $routes->get('board/ajaxData', 'BoardMember::ajaxData');
     $routes->get('board/create', 'BoardMember::create');
@@ -85,10 +77,6 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->get('sections/block/edit/(:num)', 'SectionCMS::blockEdit/$1');
     $routes->post('sections/block/save', 'SectionCMS::blockSave');
     $routes->post('sections/block/delete/(:num)', 'SectionCMS::blockDelete/$1');
-    $routes->get('sections/text/create/(:segment)', 'SectionCMS::textCreate/$1');
-    $routes->get('sections/text/edit/(:num)', 'SectionCMS::textEdit/$1');
-    $routes->post('sections/text/save', 'SectionCMS::textSave');
-    $routes->post('sections/text/delete/(:num)', 'SectionCMS::textDelete/$1');
 
     $routes->get('homepage-content', 'HomepageContentCMS::index');
     $routes->get('homepage-content/(:segment)', 'HomepageContentCMS::index/$1');

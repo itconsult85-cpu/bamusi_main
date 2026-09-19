@@ -43,17 +43,6 @@ class Home extends BaseController
             }
         }
 
-        // Teks global tetap kompatibel; section homepage sekarang dapat mengelolanya
-        // dari form section melalui kolom website_texts.section_key.
-        $texts = [];
-        if ($db->tableExists('website_texts')) {
-            foreach ($db->table('website_texts')->where('published', 1)->get()->getResultArray() as $text) {
-                $texts[$text['text_key']] = ($locale === 'en' && !empty($text['value_en']))
-                    ? $text['value_en']
-                    : $text['value'];
-            }
-        }
-
         // 2. Ambil Sections
         $sectionsData = $this->sectionModel->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
         $sections = [];
@@ -136,7 +125,6 @@ class Home extends BaseController
         $data = [
             'locale'      => $locale,
             'settings'    => $settings,
-            'texts'       => $texts,
             'sections'    => $sections,
             'homepageItems' => $homepageItems,
             'builderSections' => $builderSections,
