@@ -58,7 +58,7 @@ if ($dbAuto->tableExists('cms_menu_items')) {
     $parents = array_merge($parents, $directParents);
 }
 $parents = array_values($parents);
-usort($parents, static fn (array $a, array $b): int => ((int) ($a['sort_order'] ?? 0)) <=> ((int) ($b['sort_order'] ?? 0)));
+usort($parents, static fn(array $a, array $b): int => ((int) ($a['sort_order'] ?? 0)) <=> ((int) ($b['sort_order'] ?? 0)));
 $navMenu = array_values($parents);
 
 $menuUrl = static function (array $item): string {
@@ -813,7 +813,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
 
         <div class="container-fluid px-4 px-lg-5 pt-5 position-relative" style="z-index: 1;">
 
-            <div class="row g-5 mb-4">
+            <div class="row g-5 mb-4" id="kontak">
                 <div class="col-lg-5 pe-lg-5">
                     <div class="d-flex align-items-center gap-4 mb-4">
                         <?php
