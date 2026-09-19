@@ -48,14 +48,32 @@ abstract class BaseController extends Controller
     {
         $text = trim((string) $text);
         if ($text === '') return null;
+        if (mb_strlen($text) > 4000) {
+            $segments = preg_split('/(?<=<\/p>|<\/li>|<br\s*\/?>|\r?\n)/i', $text, -1, PREG_SPLIT_NO_EMPTY);
+            if (count($segments) < 2) {
+                $segments = mb_str_split($text, 3500);
+            }
+            $translatedSegments = [];
+            foreach ($segments as $segment) {
+                $translated = $this->translateTextChunk($segment);
+                if ($translated === null) return $fallback;
+                $translatedSegments[] = $translated;
+            }
+            return implode('', $translatedSegments);
+        }
+        return $this->translateTextChunk($text) ?? $fallback;
+    }
+
+    private function translateTextChunk(string $text): ?string
+    {
         try {
             $translator = new GoogleTranslate('en');
             $translator->setSource('id');
             $translated = trim((string) $translator->translate($text));
-            return $translated !== '' ? $translated : $fallback;
+            return $translated !== '' ? $translated : null;
         } catch (\Throwable $e) {
             log_message('error', 'Translation failed: ' . $e->getMessage());
-            return $fallback;
+            return null;
         }
     }
 }
