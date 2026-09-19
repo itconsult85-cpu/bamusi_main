@@ -90,22 +90,6 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="<?= base_url('admin/homepage-content'); ?>"
-                                class="nav-link <?= (strpos(current_url(), 'admin/homepage-content') !== false) ? 'active' : ''; ?>">
-                                <i class="nav-icon fas fa-th-large"></i>
-                                <p>Konten Homepage</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="<?= base_url('admin/partners'); ?>"
-                                class="nav-link <?= (strpos(current_url(), 'admin/partners') !== false) ? 'active' : ''; ?>">
-                                <i class="nav-icon fas fa-handshake"></i>
-                                <p>Mitra Homepage</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
                             <a href="<?= base_url('admin/pages'); ?>"
                                 class="nav-link <?= (strpos(current_url(), 'admin/pages') !== false) ? 'active' : ''; ?>">
                                 <i class="nav-icon fas fa-file-alt"></i>

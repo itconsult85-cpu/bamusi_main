@@ -4,15 +4,18 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\PageSectionModel;
+use App\Models\HomepageSectionItemModel;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class SectionCMS extends BaseController
 {
     protected $sectionModel;
+    protected $itemModel;
 
     public function __construct()
     {
         $this->sectionModel = new PageSectionModel();
+        $this->itemModel = new HomepageSectionItemModel();
     }
 
     // 1. Menampilkan Halaman Tabel (DataTables)
@@ -91,7 +94,38 @@ class SectionCMS extends BaseController
         if (!$data['section']) {
             return redirect()->to('/admin/sections')->with('error', 'Data tidak ditemukan.');
         }
+        $data['sectionItems'] = $this->itemModel->where('section_key', $data['section']['section_key'])->orderBy('sort_order', 'ASC')->findAll();
         return view('admin/sections/form', $data);
+    }
+
+    public function itemCreate($sectionKey)
+    {
+        $section = $this->sectionModel->where('section_key', $sectionKey)->first();
+        if (!$section) return redirect()->to('/admin/sections')->with('error', 'Section tidak ditemukan.');
+        return view('admin/homepage_content/form', ['item' => null, 'sectionKey' => $sectionKey, 'sectionLabel' => $section['section_name'], 'backUrl' => base_url('admin/sections/edit/' . $section['id'])]);
+    }
+
+    public function itemEdit($id)
+    {
+        $item = $this->itemModel->find($id);
+        if (!$item) return redirect()->to('/admin/sections')->with('error', 'Item section tidak ditemukan.');
+        $section = $this->sectionModel->where('section_key', $item['section_key'])->first();
+        return view('admin/homepage_content/form', ['item' => $item, 'sectionKey' => $item['section_key'], 'sectionLabel' => $section['section_name'] ?? $item['section_key'], 'backUrl' => base_url('admin/sections/edit/' . ($section['id'] ?? ''))]);
+    }
+
+    public function itemDelete($id)
+    {
+        $item = $this->itemModel->find($id);
+        $sectionKey = $item['section_key'] ?? 'feature';
+        if ($item) {
+            if (!empty($item['media_url'])) {
+                $mediaPath = FCPATH . ltrim($item['media_url'], '/');
+                if (is_file($mediaPath)) @unlink($mediaPath);
+            }
+            $this->itemModel->delete($id);
+        }
+        $section = $this->sectionModel->where('section_key', $sectionKey)->first();
+        return redirect()->to('/admin/sections/edit/' . ($section['id'] ?? ''))->with('success', 'Item section berhasil dihapus.');
     }
 
     // 5. Menyimpan Data (dari Create atau Edit)

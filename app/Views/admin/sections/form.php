@@ -93,6 +93,23 @@
                     <?php endif; ?>
 
                     <!-- Box: Konten & Artikel -->
+                    <?php if (isset($section)): ?>
+                    <div class="card card-info card-outline mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title m-0"><i class="fas fa-list me-2"></i>Item Konten Section</h5>
+                            <a href="<?= base_url('admin/sections/item/create/' . $section['section_key']); ?>" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i>Tambah Item</a>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">Gunakan item ini untuk konten berulang seperti kartu, pilihan, sosial media, mitra, atau daftar lain. Form inputnya seragam: teks, URL, media, urutan, dan status aktif.</p>
+                            <?php if (!empty($sectionItems)): ?>
+                                <div class="table-responsive"><table class="table table-sm table-striped align-middle mb-0"><thead><tr><th>Urutan</th><th>Judul / Label</th><th>Isi</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+                                <?php foreach ($sectionItems as $sectionItem): ?><tr><td><?= (int) $sectionItem['sort_order']; ?></td><td><?= esc($sectionItem['title'] ?: $sectionItem['label'] ?: '-'); ?></td><td><?= esc(mb_strimwidth((string) ($sectionItem['body'] ?: $sectionItem['url'] ?: ''), 0, 70, '…')); ?></td><td><?= !empty($sectionItem['published']) ? '<span class="badge text-bg-success">Aktif</span>' : '<span class="badge text-bg-secondary">Nonaktif</span>'; ?></td><td class="text-nowrap"><a href="<?= base_url('admin/sections/item/edit/' . $sectionItem['id']); ?>" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a><form method="post" action="<?= base_url('admin/sections/item/delete/' . $sectionItem['id']); ?>" class="d-inline" onsubmit="return confirm('Hapus item section ini?');"><?= csrf_field(); ?><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button></form></td></tr><?php endforeach; ?></tbody></table></div>
+                            <?php else: ?><div class="text-muted small">Belum ada item tambahan pada section ini.</div><?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Box: Konten & Artikel -->
                     <div class="card card-primary card-outline mb-4">
                         <div class="card-header">
                             <h5 class="card-title m-0">Konten Artikel (Opsional)</h5>

@@ -109,7 +109,11 @@ class HomepageContentCMS extends BaseController
 
         if ($id) $data['id'] = $id;
         $this->model->save($data);
-        return redirect()->to('/admin/homepage-content/' . $sectionKey)->with('success', 'Konten homepage berhasil disimpan.');
+        $returnTo = (string) $this->request->getPost('return_to');
+        if ($returnTo === '' || !str_starts_with($returnTo, base_url('admin/'))) {
+            $returnTo = base_url('admin/homepage-content/' . $sectionKey);
+        }
+        return redirect()->to($returnTo)->with('success', 'Konten homepage berhasil disimpan.');
     }
 
     public function delete(int $id)

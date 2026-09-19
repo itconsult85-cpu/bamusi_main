@@ -56,6 +56,19 @@ class Home extends BaseController
                 $homepageItems[$item['section_key']][] = $item;
             }
         }
+        $homepagePartners = $db->table('partners')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray();
+        if (!empty($homepageItems['partners'])) {
+            $homepagePartners = array_map(static function (array $item): array {
+                return [
+                    'name' => $item['title'] ?: $item['label'],
+                    'name_en' => $item['title_en'] ?: $item['label_en'],
+                    'website_url' => $item['url'],
+                    'logo_url' => $item['media_url'],
+                    'published' => $item['published'],
+                    'sort_order' => $item['sort_order'],
+                ];
+            }, $homepageItems['partners']);
+        }
 
         // 3. RSS Google News (tidak berubah)
         $rssUrl = $settings['news_rss_url'] ?? 'https://news.google.com/rss/search?q=BAMUSI%20Baitul%20Muslimin%20Indonesia&hl=id&gl=ID&ceid=ID:id';
@@ -99,7 +112,7 @@ class Home extends BaseController
             'agenda'      => $db->table('cms_items')->where('kind', 'agenda')->where('published', 1)->orderBy('created_at', 'DESC')->limit(4)->get()->getResultArray(),
             'writingArticles' => $db->table('cms_items')->where('kind', 'article')->where('published', 1)->orderBy('created_at', 'DESC')->limit(4)->get()->getResultArray(),
             'programs'    => $db->table('programs')->where('published', 1)->get()->getResultArray(),
-            'partners'    => $db->table('partners')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray(),
+            'partners'    => $homepagePartners,
             'board'       => $db->table('board_members')->where('published', 1)->orderBy('group_order', 'ASC')->orderBy('member_order', 'ASC')->orderBy('sort_order', 'ASC')->get()->getResultArray(),
             'news'        => $newsFeed,
         ];
