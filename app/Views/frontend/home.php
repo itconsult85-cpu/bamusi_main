@@ -361,10 +361,10 @@ $visiTitle = $t($visi, 'title');
                     ?>
                     <div class="mt-4">
                         <p class="mb-4 text-dark" style="font-size: clamp(1.35rem, 2vw, 1.8rem); line-height: 1.6; font-weight: 600;">
-                            <?= esc(trim($visiText)); ?>
+                            <?= esc(trim($missionText)); ?>
                         </p>
                         <p class="mb-0 text-dark" style="font-size: clamp(1.35rem, 2vw, 1.8rem); line-height: 1.6; font-weight: 600;">
-                            <?= esc(trim($missionText)); ?>
+                            <?= esc(trim($visiText)); ?>
                         </p>
                     </div>
                 </div>
