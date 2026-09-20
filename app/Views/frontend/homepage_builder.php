@@ -21,7 +21,8 @@ $resolveUrl = static function (string $url): string {
 $sourceRows = static function (string $source) use ($agenda, $news, $writingArticles, $programs, $features, $board, $partners, $aboutValues, $homepageItems): array {
     return match ($source) {
         'agenda' => $agenda,
-        'article', 'news' => $news ?: $writingArticles,
+        'article', 'writing' => $writingArticles,
+        'news' => $news,
         'program' => $programs,
         'feature' => $features,
         'board' => $board,
@@ -76,12 +77,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
     const transitionNames = ['fade-up', 'slide-left', 'slide-right', 'soft-zoom'];
+    let previousTransition = null;
     const playTransition = block => {
+        if (block.dataset.transitionPlayed === 'true') return;
         block.classList.remove('transition-playing');
         void block.offsetWidth;
-        const name = transitionNames[Math.floor(Math.random() * transitionNames.length)];
+        const available = transitionNames.filter(name => name !== previousTransition);
+        const name = available[Math.floor(Math.random() * available.length)];
+        previousTransition = name;
         block.classList.remove(...transitionNames.map(item => 'transition-' + item));
         block.classList.add('transition-' + name, 'transition-playing');
+        block.dataset.transitionPlayed = 'true';
     };
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => entries.forEach(entry => {

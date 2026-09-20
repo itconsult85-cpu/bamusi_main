@@ -44,9 +44,11 @@ class MigrateHomepageToBlocks extends Migration
                 case 'about': $type = 'image_text'; break;
                 case 'nilai': $type = 'cards'; $data['source'] = 'about_values'; $data['variant'] = 'dark'; $data['columns'] = 5; $data['limit'] = 5; break;
                 case 'board': $type = 'cards'; $data['source'] = 'board'; $data['columns'] = 4; $data['limit'] = 12; break;
-                case 'program': case 'feature': $type = 'cards'; $data['source'] = 'program'; $data['columns'] = 3; $data['limit'] = 12; break;
+                case 'program': $type = 'cards'; $data['source'] = 'program'; $data['columns'] = 3; $data['limit'] = 12; break;
+                case 'feature': $type = 'cards'; $data['source'] = 'feature'; $data['columns'] = 3; $data['limit'] = 12; break;
                 case 'agenda': $type = 'cards'; $data['source'] = 'agenda'; $data['columns'] = 4; $data['limit'] = 4; break;
-                case 'news': case 'writing': $type = 'collection'; $data['source'] = 'news'; $data['columns'] = 4; $data['limit'] = 4; break;
+                case 'news': $type = 'collection'; $data['source'] = 'news'; $data['columns'] = 4; $data['limit'] = 4; break;
+                case 'writing': $type = 'collection'; $data['source'] = 'article'; $data['columns'] = 4; $data['limit'] = 4; break;
                 case 'social': $type = 'cards'; $data['source'] = 'social'; $data['columns'] = 3; $data['limit'] = 12; break;
                 case 'partners': $type = 'logo_grid'; $data['source'] = 'partners'; $data['columns'] = 5; $data['limit'] = 24; break;
                 case 'join': case 'internship': $type = 'join_form'; break;
