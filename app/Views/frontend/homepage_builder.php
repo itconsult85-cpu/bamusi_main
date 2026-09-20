@@ -43,8 +43,8 @@ $blockItems = static function (array $data, string $source, array $section) use 
 ?>
 <main class="homepage-builder" data-homepage-renderer="blocks">
 <?php foreach ($builderSections as $section): ?>
-    <?php foreach (($section['blocks'] ?? []) as $block): $data = $block['data'] ?? []; $en = $block['data_en'] ?? []; if ($locale === 'en') $data = array_replace($data, $en); $type = $block['block_type']; $source = (string) ($data['source'] ?? 'manual'); $items = $blockItems(array_merge($data, ['section_key' => $section['section_key']]), $source, $section); $limit = max(1, min(24, (int) ($data['limit'] ?? 4))); $items = array_slice($items, 0, $limit); $columns = max(1, min(6, (int) ($data['columns'] ?? 3))); $col = max(1, (int) floor(12 / $columns)); $sectionDomKey = preg_replace('/[^a-zA-Z0-9_-]+/', '-', (string) $section['section_key']); ?>
-    <div class="homepage-block-section" data-section-key="<?= esc($section['section_key']); ?>" id="<?= esc($sectionDomKey); ?>" style="scroll-margin-top: 88px;">
+    <?php foreach (($section['blocks'] ?? []) as $block): $data = $block['data'] ?? []; $en = $block['data_en'] ?? []; if ($locale === 'en') $data = array_replace($data, $en); $type = $block['block_type']; $source = (string) ($data['source'] ?? 'manual'); $items = $blockItems(array_merge($data, ['section_key' => $section['section_key']]), $source, $section); $limit = array_key_exists('limit', $data) ? max(1, min(24, (int) $data['limit'])) : null; if ($limit !== null) $items = array_slice($items, 0, $limit); $columns = max(1, min(6, (int) ($data['columns'] ?? 3))); $col = max(1, (int) floor(12 / $columns)); $sectionDomKey = preg_replace('/[^a-zA-Z0-9_-]+/', '-', (string) $section['section_key']); ?>
+    <div class="homepage-block-section" data-section-key="<?= esc($section['section_key']); ?>" data-render-key="<?= esc($section['render_key'] ?? ''); ?>" data-section-name="<?= esc($section['section_name'] ?? ''); ?>" id="<?= esc($sectionDomKey); ?>" style="scroll-margin-top: 88px;">
     <?php $variant = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($data['template_variant'] ?? '')); ?>
     <?php if ($variant !== ''): ?><?= view('frontend/blocks/' . $variant, ['section' => $section, 'items' => $items, 'locale' => $locale, 'block' => $block]); ?>
     <?php elseif ($type === 'spacer'): ?><div style="height:<?= max(20, min(240, (int) ($data['height'] ?? 80))); ?>px"></div>
@@ -61,3 +61,29 @@ $blockItems = static function (array $data, string $source, array $section) use 
     <?php endforeach; ?>
 <?php endforeach; ?>
 </main>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+    const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
+    const resolveTarget = hash => {
+        const token = normalize(String(hash || '').replace(/^#/, ''));
+        if (!token) return null;
+        return blocks.find(block => [block.dataset.sectionKey, block.dataset.renderKey, block.dataset.sectionName, block.id]
+            .some(value => normalize(value) === token || normalize(value).includes(token))) || null;
+    };
+    const go = hash => {
+        const target = resolveTarget(hash);
+        if (!target) return false;
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+        return true;
+    };
+    document.querySelectorAll('a[href*="#"]').forEach(link => link.addEventListener('click', function (event) {
+        const hash = this.hash;
+        if (!hash || !resolveTarget(hash)) return;
+        event.preventDefault();
+        history.pushState(null, '', hash);
+        go(hash);
+    }));
+    if (window.location.hash) window.setTimeout(() => go(window.location.hash), 0);
+});
+</script>
