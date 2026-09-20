@@ -269,6 +269,23 @@ class SectionCMS extends BaseController
         $contentEn  = $this->translateText($contentId, $oldData['content_en'] ?? null);
         $btnLabelEn = $this->translateText($btnLabelId, $oldData['button_label_en'] ?? null);
 
+        $stableRenderKey = static function (?array $section, string $fallback): string {
+            $name = strtolower(trim((string) ($section['section_name'] ?? '')));
+            $known = [
+                'hero banner' => 'hero', 'tentang bamusi' => 'about',
+                'lima nilai utama' => 'nilai', 'visi dan misi' => 'visi',
+                'sejarah bamusi' => 'history', 'pengurus bamusi' => 'board',
+                'program bamusi' => 'program', 'agenda bamusi' => 'agenda',
+                'berita bamusi' => 'news', 'tulisan bamusi' => 'writing',
+                'sosial media bamusi' => 'social', 'mitra homepage' => 'partners',
+                'bergabung bamusi' => 'join',
+            ];
+            foreach ($known as $label => $key) {
+                if ($name === $label || str_contains($name, $label)) return $key;
+            }
+            return !empty($section['render_key']) ? (string) $section['render_key'] : ($section['section_key'] ?? $fallback);
+        };
+
         // Siapkan Data Lengkap
         $data = [
             'section_name'    => $this->request->getPost('section_name'),
@@ -276,7 +293,7 @@ class SectionCMS extends BaseController
             // Simpan renderer lama sebagai identitas layout saat section_key
             // diganti. Fallback ke key lama untuk database sebelum migration
             // render_key selesai dijalankan.
-            'render_key'      => !empty($oldData['render_key']) ? $oldData['render_key'] : ($oldData['section_key'] ?? $sectionKey),
+            'render_key'      => $stableRenderKey($oldData, $sectionKey),
             'label'           => $labelId,
             'label_en'        => $labelEn,
             'label_size'      => max(1, min(200, (int) ($this->request->getPost('label_size') ?: 96))),
