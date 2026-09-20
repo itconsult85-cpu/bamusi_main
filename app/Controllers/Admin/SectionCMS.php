@@ -105,9 +105,9 @@ class SectionCMS extends BaseController
             return redirect()->to('/admin/sections')->with('error', 'Data tidak ditemukan.');
         }
         $data['sectionItems'] = $this->itemModel->where('section_key', $data['section']['section_key'])->orderBy('sort_order', 'ASC')->findAll();
-        $data['aboutValues'] = $data['section']['section_key'] === 'nilai'
+        $data['aboutValues'] = (($data['section']['render_key'] ?? $data['section']['section_key'] ?? '') === 'nilai')
             ? $this->aboutValueModel->orderBy('sort_order', 'ASC')->findAll() : [];
-        $data['sectionLinks'] = $data['section']['section_key'] === 'about'
+        $data['sectionLinks'] = (($data['section']['render_key'] ?? $data['section']['section_key'] ?? '') === 'about')
             ? $this->sectionLinkModel->where('section_key', 'about')->orderBy('sort_order', 'ASC')->findAll() : [];
         $data['sectionBlocks'] = \Config\Database::connect()->tableExists('homepage_section_blocks')
             ? $this->blockModel->where('section_id', $id)->orderBy('sort_order', 'ASC')->findAll()
@@ -273,7 +273,10 @@ class SectionCMS extends BaseController
         $data = [
             'section_name'    => $this->request->getPost('section_name'),
             'section_key'     => $sectionKey,
-            'render_key'      => $oldData['render_key'] ?? $sectionKey,
+            // Simpan renderer lama sebagai identitas layout saat section_key
+            // diganti. Fallback ke key lama untuk database sebelum migration
+            // render_key selesai dijalankan.
+            'render_key'      => !empty($oldData['render_key']) ? $oldData['render_key'] : ($oldData['section_key'] ?? $sectionKey),
             'label'           => $labelId,
             'label_en'        => $labelEn,
             'label_size'      => max(1, min(200, (int) ($this->request->getPost('label_size') ?: 96))),
@@ -302,7 +305,7 @@ class SectionCMS extends BaseController
             'cards_columns'   => max(2, min(6, (int) ($this->request->getPost('cards_columns') ?: 5))),
             'layout_mode'     => in_array($this->request->getPost('layout_mode'), ['legacy', 'builder'], true) ? $this->request->getPost('layout_mode') : 'legacy',
             'layout_options'  => trim((string) $this->request->getPost('layout_options')) ?: null,
-            'published'       => $this->request->getPost('published') !== null ? 1 : 0
+            'published'       => (int) $this->request->getPost('published') === 1 ? 1 : 0
         ];
 
         // Bidang konten tambahan berlaku seragam untuk semua section.
