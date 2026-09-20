@@ -33,7 +33,20 @@ $blockItems = static function (array $data, string $source) use ($sourceRows, $h
     if ($source !== 'manual') return $sourceRows($source);
     return $homepageItems[$data['section_key'] ?? ''] ?? [];
 };
+$legacySelectors = [
+    'hero' => '.hero-split-wrapper', 'about' => '#tentang', 'nilai' => '#nilai',
+    'visi' => '#visi', 'history' => '#sejarah', 'board' => '#pengurus',
+    'program' => '#khidmah', 'feature' => '#program-unggulan', 'agenda' => '#agenda',
+    'news' => '#berita', 'writing' => '#tulisan', 'social' => '#sosial-media',
+    'partners' => '#mitra', 'join' => '#bergabung', 'internship' => '#bergabung',
+];
+$hiddenSelectors = [];
+foreach ($builderSections as $builderSection) {
+    $legacyKey = (string) ($builderSection['_render_key'] ?? $builderSection['section_key'] ?? '');
+    if (!empty($legacySelectors[$legacyKey])) $hiddenSelectors[] = $legacySelectors[$legacyKey];
+}
 ?>
+<?php if ($hiddenSelectors): ?><style><?= implode(',', $hiddenSelectors); ?> { display: none !important; }</style><?php endif; ?>
 <div class="homepage-builder">
 <?php foreach ($builderSections as $section): ?>
     <?php foreach (($section['blocks'] ?? []) as $block): $data = $block['data'] ?? []; $en = $block['data_en'] ?? []; if ($locale === 'en') $data = array_replace($data, $en); $type = $block['block_type']; $source = (string) ($data['source'] ?? 'manual'); $items = $blockItems(array_merge($data, ['section_key' => $section['section_key']]), $source); $limit = max(1, min(24, (int) ($data['limit'] ?? 4))); $items = array_slice($items, 0, $limit); $columns = max(1, min(6, (int) ($data['columns'] ?? 3))); $col = max(1, (int) floor(12 / $columns)); ?>

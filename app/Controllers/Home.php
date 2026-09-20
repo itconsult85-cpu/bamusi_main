@@ -64,9 +64,6 @@ class Home extends BaseController
             foreach ($db->table('homepage_section_items')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray() as $item) {
                 $renderKey = $sectionByKey[$item['section_key']]['render_key'] ?? $item['section_key'];
                 $homepageItems[$renderKey][] = $item;
-                if ($renderKey !== $item['section_key']) {
-                    $homepageItems[$item['section_key']][] = $item;
-                }
             }
         }
         $itemOptions = static function (array $item): array {
