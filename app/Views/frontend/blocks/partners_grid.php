@@ -43,19 +43,28 @@ $sectionImg = static function (string $key) use ($section): string {
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-0 border-top border-start" style="border-color: #eaeaea !important;">
                 <?php if (!empty($items)): ?>
                     <?php foreach ($items as $partner):
-                        if (!(int)($partner['published'] ?? 0)) continue;
+                        if (!(int) ($partner['published'] ?? 0)) continue;
+                        $partnerName = $t($partner, 'name') ?: ($t($partner, 'title') ?: $t($partner, 'label'));
+                        $partnerLogo = trim((string) ($partner['logo_url'] ?? $partner['image_url'] ?? $partner['media_url'] ?? ''));
+                        if ($partnerLogo !== '' && !preg_match('#^https?://#i', $partnerLogo)) {
+                            $partnerLogo = base_url(ltrim($partnerLogo, '/'));
+                        }
+                        $partnerWebsite = trim((string) ($partner['website_url'] ?? $partner['url'] ?? '#'));
+                        if ($partnerWebsite !== '#' && !preg_match('#^https?://#i', $partnerWebsite) && $partnerWebsite[0] !== '#') {
+                            $partnerWebsite = base_url(ltrim($partnerWebsite, '/'));
+                        }
                     ?>
                         <div class="col border-end border-bottom position-relative overflow-hidden bg-white" style="border-color: #eaeaea !important;">
                             <div class="position-absolute" style="bottom: -40px; left: 50%; transform: translateX(-50%); width: 120px; height: 120px; border: 15px solid rgba(204,0,0,0.04); border-radius: 50%; pointer-events: none;"></div>
-                            <a href="<?= esc($partner['website_url'] ?? '#'); ?>" target="_blank" class="d-flex flex-column align-items-center justify-content-between p-4 h-100 text-decoration-none text-dark position-relative z-1"
+                            <a href="<?= esc($partnerWebsite); ?>" target="_blank" class="d-flex flex-column align-items-center justify-content-between p-4 h-100 text-decoration-none text-dark position-relative z-1"
                                 style="transition: background-color 0.3s ease, transform 0.3s ease;"
                                 onmouseover="this.style.backgroundColor='#fff5f5'; this.querySelector('.arrow-icon')?.style?.transform='translate(3px, -3px)';"
                                 onmouseout="this.style.backgroundColor='transparent'; this.querySelector('.arrow-icon')?.style?.transform='translate(0, 0)';">
                                 <div class="d-flex align-items-center justify-content-center mb-4" style="height: 120px;">
-                                    <img src="<?= esc($partner['logo_url'] ?? ''); ?>" alt="<?= esc($partner['name']); ?>" class="img-fluid" style="max-height: 90px; object-fit: contain;">
+                                    <?php if ($partnerLogo !== ''): ?><img src="<?= esc($partnerLogo); ?>" alt="<?= esc($partnerName); ?>" class="img-fluid" style="max-height: 90px; object-fit: contain;"><?php endif; ?>
                                 </div>
                                 <span class="d-block fw-bold text-center mb-4 text-dark" style="font-size: 0.85rem; line-height: 1.4;">
-                                    <?= esc(($locale === 'en' && !empty($partner['name_en'])) ? $partner['name_en'] : $partner['name']); ?>
+                                    <?= esc($partnerName !== '' ? $partnerName : '—'); ?>
                                 </span>
                             </a>
                         </div>
