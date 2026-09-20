@@ -15,6 +15,13 @@ $sectionImg = static function (string $key) use ($section): string {
     $url = trim((string) ($section['media_url'] ?? ''));
     return $url === '' ? '' : (preg_match('#^https?://#i', $url) ? $url : base_url(ltrim($url, '/')));
 };
+$items = array_map(static function (array $slide): array {
+    return array_merge($slide, [
+        'image_url' => $slide['image_url'] ?? $slide['media_url'] ?? '',
+        'lead' => $slide['lead'] ?? $slide['subtitle'] ?? '',
+        'lead_en' => $slide['lead_en'] ?? $slide['subtitle_en'] ?? '',
+    ]);
+}, $items);
 ?>
     <section data-section-key="<?= esc((string) ($section['section_key'] ?? '')); ?>" class="hero-split-wrapper">
         <div class="hero-split-bg-right d-none d-lg-block"></div>
@@ -26,7 +33,6 @@ $sectionImg = static function (string $key) use ($section): string {
                     if ($photo !== '' && !preg_match('#^https?://#i', $photo)) {
                         $photo = base_url(ltrim($photo, '/'));
                     }
-                    if ($photo === '') continue;
                 ?>
                     <div class="carousel-item <?= $i === 0 ? 'active' : ''; ?> h-100">
                         <div class="container-fluid px-4 px-lg-5 h-100">
@@ -74,7 +80,7 @@ $sectionImg = static function (string $key) use ($section): string {
                                 <div class="col-lg-5 d-none d-lg-flex hero-image-col">
                                     <div class="arched-frame">
                                         <div class="arched-frame-inner">
-                                            <img src="<?= esc($photo); ?>" alt="Hero Slide <?= $i + 1; ?>">
+                                            <?php if ($photo !== ''): ?><img src="<?= esc($photo); ?>" alt="Hero Slide <?= $i + 1; ?>"><?php else: ?><div class="w-100 h-100 d-flex align-items-center justify-content-center text-white-50">Gambar belum diunggah</div><?php endif; ?>
                                         </div>
                                     </div>
                                 </div>
