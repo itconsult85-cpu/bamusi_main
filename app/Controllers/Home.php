@@ -67,12 +67,18 @@ class Home extends BaseController
             $options = $itemOptions($item);
             return array_merge($item, ['id' => $item['id'], 'title' => $item['title'] ?: $item['label'], 'title_en' => $item['title_en'] ?: $item['label_en'], 'image_url' => $item['media_url'], 'category' => $options['category'] ?? '']);
         }, $homepageItems['writing'] ?? []);
-        $programItems = array_merge($homepageItems['program'] ?? [], $homepageItems['feature'] ?? []);
-        usort($programItems, static fn (array $a, array $b): int => ((int) ($a['sort_order'] ?? 0)) <=> ((int) ($b['sort_order'] ?? 0)));
-        $programs = array_map(static function (array $item) use ($itemOptions): array {
+        $programItems = $homepageItems['program'] ?? [];
+        $featureItems = $homepageItems['feature'] ?? [];
+        foreach ([$programItems, $featureItems] as &$itemsToSort) {
+            usort($itemsToSort, static fn (array $a, array $b): int => ((int) ($a['sort_order'] ?? 0)) <=> ((int) ($b['sort_order'] ?? 0)));
+        }
+        unset($itemsToSort);
+        $normalizeProgram = static function (array $item) use ($itemOptions): array {
             $options = $itemOptions($item);
             return array_merge($item, ['name' => $item['title'] ?: $item['label'], 'name_en' => $item['title_en'] ?: $item['label_en'], 'description' => $item['body'], 'description_en' => $item['body_en'], 'slug' => $options['slug'] ?? $item['item_key']]);
-        }, $programItems);
+        };
+        $programs = array_map($normalizeProgram, $programItems);
+        $features = array_map($normalizeProgram, $featureItems);
         $board = array_map(static function (array $item) use ($itemOptions): array {
             $options = $itemOptions($item);
             return array_merge($item, ['name' => $item['title'] ?: $item['label'], 'name_en' => $item['title_en'] ?: $item['label_en'], 'role' => $item['body'], 'role_en' => $item['body_en'], 'photo_url' => $item['media_url'], 'group_order' => (int) ($options['group_order'] ?? 0), 'member_order' => (int) ($options['member_order'] ?? $item['sort_order'])]);
@@ -172,6 +178,7 @@ class Home extends BaseController
             'agenda'      => array_slice($agenda, 0, 4),
             'writingArticles' => array_slice($writingArticles, 0, 4),
             'programs'    => $programs,
+            'features'    => $features,
             'partners'    => $homepagePartners,
             'board'       => $board,
             'news'        => $newsFeed,
