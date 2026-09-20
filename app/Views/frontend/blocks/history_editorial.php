@@ -15,8 +15,10 @@ $sectionImg = static function (string $key) use ($section): string {
     $url = trim((string) ($section['media_url'] ?? ''));
     return $url === '' ? '' : (preg_match('#^https?://#i', $url) ? $url : base_url(ltrim($url, '/')));
 };
-?>
 $history = $section;
+$historyLabelSize = max(2, min(12, ((int) ($history['label_size'] ?? 96)) / 16));
+$historyTitleSize = max(2, min(6, ((int) ($history['title_size'] ?? 56)) / 16));
+?>
     <section data-section-key="<?= esc((string) ($section['section_key'] ?? '')); ?>" class="pt-0 mt-0 text-white position-relative overflow-hidden" id="section-<?= esc($section['section_key'] ?? 'section'); ?>" style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
         <div class="position-absolute" style="top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(204,0,0,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
         <div class="position-absolute" style="bottom: -20%; left: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(204,0,0,0.1) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
