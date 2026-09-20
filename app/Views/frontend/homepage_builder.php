@@ -82,9 +82,12 @@ document.addEventListener('DOMContentLoaded', function () {
         '.nav-item', '.homepage-reveal-content', 'form', '.btn'
     ];
     if (builder) builder.classList.add('homepage-reveal-ready');
+    const sectionFor = block => Array.from(block.children).find(child => child.tagName === 'SECTION') || block.querySelector('section');
+    const revealTargets = [];
     blocks.forEach(block => {
-        const section = block.querySelector(':scope > section');
+        const section = sectionFor(block);
         if (!section) return;
+        revealTargets.push({block, section});
         section.classList.add('homepage-reveal-section');
         const items = Array.from(new Set(revealItems.flatMap(selector => Array.from(section.querySelectorAll(selector)))));
         items.forEach((item, index) => {
@@ -94,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     const playTransition = block => {
         if (block.dataset.transitionPlayed === 'true') return;
-        const section = block.querySelector(':scope > section');
+        const section = sectionFor(block);
         if (!section) return;
         section.classList.add('is-visible');
         section.querySelectorAll('.homepage-reveal-item').forEach(item => item.classList.add('is-visible'));
@@ -102,10 +105,11 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-            if (entry.isIntersecting) playTransition(entry.target);
+            if (entry.isIntersecting) playTransition(entry.target.closest('.homepage-block-section'));
         }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-        blocks.forEach(block => observer.observe(block));
-    } else blocks.forEach(playTransition);
+        revealTargets.forEach(({section}) => observer.observe(section));
+    } else revealTargets.forEach(({block}) => playTransition(block));
+    window.setTimeout(() => revealTargets.slice(0, 1).forEach(({block}) => playTransition(block)), 250);
     const resolveTarget = hash => {
         const token = normalize(String(hash || '').replace(/^#/, ''));
         if (!token) return null;
