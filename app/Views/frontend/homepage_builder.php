@@ -52,7 +52,7 @@ foreach ($builderSections as $candidate) {
 <?php foreach ($builderSections as $section): ?>
     <?php $sectionKeyLower = strtolower((string) ($section['section_key'] ?? '')); $sectionRenderKeyLower = strtolower((string) ($section['render_key'] ?? '')); if (($sectionKeyLower === 'internship' || $sectionRenderKeyLower === 'internship') && $joinSection !== null) continue; ?>
     <?php foreach (($section['blocks'] ?? []) as $block): $data = $block['data'] ?? []; $en = $block['data_en'] ?? []; if ($locale === 'en') $data = array_replace($data, $en); $type = $block['block_type']; $source = (string) ($data['source'] ?? 'manual'); $items = $blockItems(array_merge($data, ['section_key' => $section['section_key']]), $source, $section); $limit = array_key_exists('limit', $data) ? max(1, min(24, (int) $data['limit'])) : null; if ($limit !== null) $items = array_slice($items, 0, $limit); $columns = max(1, min(6, (int) ($data['columns'] ?? 3))); $col = max(1, (int) floor(12 / $columns)); $sectionDomKey = preg_replace('/[^a-zA-Z0-9_-]+/', '-', (string) $section['section_key']); ?>
-    <div class="homepage-block-section" data-section-key="<?= esc($section['section_key']); ?>" data-render-key="<?= esc($section['render_key'] ?? ''); ?>" data-section-name="<?= esc($section['section_name'] ?? ''); ?>" id="<?= esc($sectionDomKey); ?>" style="scroll-margin-top: 88px;">
+    <div class="homepage-block-section homepage-transition-target" data-section-key="<?= esc($section['section_key']); ?>" data-render-key="<?= esc($section['render_key'] ?? ''); ?>" data-section-name="<?= esc($section['section_name'] ?? ''); ?>" id="<?= esc($sectionDomKey); ?>" style="scroll-margin-top: 88px;">
     <?php $variant = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($data['template_variant'] ?? '')); ?>
     <?php if ($variant !== ''): ?><?= view('frontend/blocks/' . $variant, ['section' => $section, 'items' => $items, 'locale' => $locale, 'settings' => $settings ?? [], 'internshipSection' => $internshipSection, 'block' => $block]); ?>
     <?php elseif ($type === 'spacer'): ?><div style="height:<?= max(20, min(240, (int) ($data['height'] ?? 80))); ?>px"></div>
@@ -73,6 +73,14 @@ foreach ($builderSections as $candidate) {
 document.addEventListener('DOMContentLoaded', function () {
     const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
+    const transitionNames = ['fade-up', 'slide-left', 'slide-right', 'soft-zoom'];
+    blocks.forEach((block, index) => block.classList.add('transition-' + transitionNames[(index * 7 + Math.floor(Math.random() * transitionNames.length)) % transitionNames.length]));
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+            if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
+        }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        blocks.forEach(block => observer.observe(block));
+    } else blocks.forEach(block => block.classList.add('is-visible'));
     const resolveTarget = hash => {
         const token = normalize(String(hash || '').replace(/^#/, ''));
         if (!token) return null;
