@@ -38,12 +38,23 @@ $blockItems = static function (array $data, string $source, array $section) use 
     return $homepageItems[$data['section_key'] ?? ''] ?? [];
 };
 ?>
+<?php
+$joinSection = null;
+$internshipSection = null;
+foreach ($builderSections as $candidate) {
+    $candidateKey = strtolower((string) ($candidate['section_key'] ?? ''));
+    $candidateRenderKey = strtolower((string) ($candidate['render_key'] ?? ''));
+    if ($candidateKey === 'join' || $candidateRenderKey === 'join') $joinSection = $candidate;
+    if ($candidateKey === 'internship' || $candidateRenderKey === 'internship') $internshipSection = $candidate;
+}
+?>
 <main class="homepage-builder" data-homepage-renderer="blocks">
 <?php foreach ($builderSections as $section): ?>
+    <?php $sectionKeyLower = strtolower((string) ($section['section_key'] ?? '')); $sectionRenderKeyLower = strtolower((string) ($section['render_key'] ?? '')); if (($sectionKeyLower === 'internship' || $sectionRenderKeyLower === 'internship') && $joinSection !== null) continue; ?>
     <?php foreach (($section['blocks'] ?? []) as $block): $data = $block['data'] ?? []; $en = $block['data_en'] ?? []; if ($locale === 'en') $data = array_replace($data, $en); $type = $block['block_type']; $source = (string) ($data['source'] ?? 'manual'); $items = $blockItems(array_merge($data, ['section_key' => $section['section_key']]), $source, $section); $limit = array_key_exists('limit', $data) ? max(1, min(24, (int) $data['limit'])) : null; if ($limit !== null) $items = array_slice($items, 0, $limit); $columns = max(1, min(6, (int) ($data['columns'] ?? 3))); $col = max(1, (int) floor(12 / $columns)); $sectionDomKey = preg_replace('/[^a-zA-Z0-9_-]+/', '-', (string) $section['section_key']); ?>
     <div class="homepage-block-section" data-section-key="<?= esc($section['section_key']); ?>" data-render-key="<?= esc($section['render_key'] ?? ''); ?>" data-section-name="<?= esc($section['section_name'] ?? ''); ?>" id="<?= esc($sectionDomKey); ?>" style="scroll-margin-top: 88px;">
     <?php $variant = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($data['template_variant'] ?? '')); ?>
-    <?php if ($variant !== ''): ?><?= view('frontend/blocks/' . $variant, ['section' => $section, 'items' => $items, 'locale' => $locale, 'block' => $block]); ?>
+    <?php if ($variant !== ''): ?><?= view('frontend/blocks/' . $variant, ['section' => $section, 'items' => $items, 'locale' => $locale, 'settings' => $settings ?? [], 'internshipSection' => $internshipSection, 'block' => $block]); ?>
     <?php elseif ($type === 'spacer'): ?><div style="height:<?= max(20, min(240, (int) ($data['height'] ?? 80))); ?>px"></div>
     <?php elseif ($type === 'rich_text'): ?><section class="py-5 bg-white"><div class="container py-4"><h2 class="fw-bold text-danger mb-3"><?= esc($data['title'] ?? $t($section, 'title')); ?></h2><article class="page-body fs-5 lh-lg"><?= $data['body'] ?? ($t($section, 'content') ?: $t($section, 'subtitle')); ?></article></div></section>
     <?php elseif ($type === 'quote'): ?><section class="py-5 bg-light"><div class="container"><figure class="border-start border-4 border-danger p-4"><blockquote class="fs-3 fst-italic">“<?= esc($data['body'] ?? $section['quote'] ?? ''); ?>”</blockquote><figcaption><?= esc($data['title'] ?? ''); ?></figcaption></figure></div></section>
