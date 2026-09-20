@@ -379,6 +379,13 @@ class SectionCMS extends BaseController
             if (\Config\Database::connect()->tableExists('homepage_section_blocks')) {
                 $this->blockModel->where('section_key', $oldData['section_key'])->set(['section_key' => $sectionKey])->update();
             }
+            $db = \Config\Database::connect();
+            if ($db->tableExists('cms_menu_items')) {
+                $db->table('cms_menu_items')
+                    ->whereIn('target', ['#' . $oldData['section_key'], $oldData['section_key']])
+                    ->set(['target' => '#' . $sectionKey])
+                    ->update();
+            }
         }
         $savedId = (int) ($id ?: $this->sectionModel->getInsertID());
         $renderKey = (string) ($data['render_key'] ?? $sectionKey);
