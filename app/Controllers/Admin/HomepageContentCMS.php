@@ -46,21 +46,23 @@ class HomepageContentCMS extends BaseController
     public function edit(int $id)
     {
         $item = $this->model->find($id);
-        if (!$item || !isset($this->sections[$item['section_key']])) {
+        if (!$item || trim((string) ($item['section_key'] ?? '')) === '') {
             return redirect()->to('/admin/homepage-content')->with('error', 'Item homepage tidak ditemukan.');
         }
         return view('admin/homepage_content/form', [
             'item' => $item,
             'sectionKey' => $item['section_key'],
-            'sectionLabel' => $this->sections[$item['section_key']],
+            'sectionLabel' => $this->sections[$item['section_key']] ?? $item['section_key'],
         ]);
     }
 
     public function save()
     {
         $id = (int) $this->request->getPost('id');
-        $sectionKey = (string) $this->request->getPost('section_key');
-        if (!isset($this->sections[$sectionKey])) return redirect()->back()->withInput()->with('error', 'Jenis section tidak valid.');
+        $sectionKey = trim((string) $this->request->getPost('section_key'));
+        if ($sectionKey === '' || !preg_match('/^[a-zA-Z0-9_-]+$/', $sectionKey)) {
+            return redirect()->back()->withInput()->with('error', 'Section key tidak valid.');
+        }
 
         $old = $id ? $this->model->find($id) : null;
         $label = trim((string) $this->request->getPost('label'));
@@ -76,7 +78,7 @@ class HomepageContentCMS extends BaseController
             'body' => $body ?: null,
             'body_en' => $this->translateText($body, $old['body_en'] ?? null),
             'url' => trim((string) $this->request->getPost('url')) ?: null,
-            'sort_order' => (int) $this->request->getPost('sort_order'),
+            'sort_order' => max(0, (int) ($this->request->getPost('sort_order') ?? ($old['sort_order'] ?? 0))),
             'published' => $this->request->getPost('published') ? 1 : 0,
         ];
 
