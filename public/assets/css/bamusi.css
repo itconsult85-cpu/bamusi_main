@@ -490,3 +490,17 @@ body {
     padding-top: 20px;
   }
 }
+
+/* Dynamic homepage blocks: identity comes from page_sections.section_key. */
+.homepage-builder[data-homepage-renderer="blocks"] {
+  --homepage-gap: clamp(2rem, 4vw, 5rem);
+}
+.homepage-builder[data-homepage-renderer="blocks"] .homepage-block-section[data-section-key] {
+  scroll-margin-top: 5rem;
+}
+.homepage-builder[data-homepage-renderer="blocks"] .homepage-block-section + .homepage-block-section {
+  border-top: 1px solid rgba(0, 0, 0, .04);
+}
+.homepage-builder[data-homepage-renderer="blocks"] [data-section-key] img {
+  max-width: 100%;
+}

@@ -47,52 +47,12 @@ class Home extends BaseController
         // draft tetap tersimpan dan dapat diedit dari CMS, tetapi tidak boleh
         // membuat markup homepage maupun alias render-nya muncul kembali.
         $sectionsData = $this->sectionModel->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
-        $sections = [];
-        $sectionByKey = [];
-        $stableRenderKey = static function (array $section): string {
-            $name = strtolower(trim((string) ($section['section_name'] ?? '')));
-            $known = [
-                'hero banner' => 'hero',
-                'tentang bamusi' => 'about',
-                'lima nilai utama' => 'nilai',
-                'visi dan misi' => 'visi',
-                'sejarah bamusi' => 'history',
-                'pengurus bamusi' => 'board',
-                'program bamusi' => 'program',
-                'agenda bamusi' => 'agenda',
-                'berita bamusi' => 'news',
-                'tulisan bamusi' => 'writing',
-                'sosial media bamusi' => 'social',
-                'mitra homepage' => 'partners',
-                'bergabung bamusi' => 'join',
-            ];
-            foreach ($known as $label => $key) {
-                if ($name === $label || str_contains($name, $label)) {
-                    return $key;
-                }
-            }
-            return trim((string) ($section['render_key'] ?? '')) ?: (string) ($section['section_key'] ?? '');
-        };
-        foreach ($sectionsData as $sec) {
-            $sec['_render_key'] = $stableRenderKey($sec);
-            $sections[$sec['section_key']] = $sec;
-            $sectionByKey[$sec['section_key']] = $sec;
-            $renderKey = $sec['_render_key'];
-            if ($renderKey !== '' && $renderKey !== $sec['section_key']) {
-                $sections[$renderKey] = $sec;
-            }
-        }
+        $sections = $sectionsData;
 
         $homepageItems = [];
         if ($db->tableExists('homepage_section_items')) {
             foreach ($db->table('homepage_section_items')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray() as $item) {
-                $renderKey = $sectionByKey[$item['section_key']]['_render_key'] ?? $item['section_key'];
-                $homepageItems[$renderKey][] = $item;
-                // Saat section_key diganti, item tetap dapat diambil melalui
-                // key baru maupun renderer legacy yang dipakai template lama.
-                if ($renderKey !== $item['section_key']) {
-                    $homepageItems[$item['section_key']][] = $item;
-                }
+                $homepageItems[$item['section_key']][] = $item;
             }
         }
         $itemOptions = static function (array $item): array {
@@ -125,8 +85,9 @@ class Home extends BaseController
             }, $homepageItems['nilai'] ?? []);
         }
 
-        // Builder bersifat opt-in. Section legacy tetap dirender seperti sebelumnya
-        // sampai admin mengaktifkan mode Builder dan menambahkan blok.
+        // Homepage menggunakan block sebagai satu-satunya jalur render.
+        // Section baru tanpa block mendapat satu rich_text block virtual agar
+        // tetap tampil berdasarkan data section terbaru dari database.
         $builderSections = [];
         if ($db->tableExists('homepage_section_blocks') && $db->fieldExists('layout_mode', 'page_sections')) {
             $blockRows = $db->table('homepage_section_blocks')
@@ -141,8 +102,16 @@ class Home extends BaseController
                 $blocksBySection[$block['section_id']][] = $block;
             }
             foreach ($sectionsData as $section) {
-                if (($section['layout_mode'] ?? 'legacy') !== 'builder' || empty($blocksBySection[$section['id']] ?? [])) continue;
-                $section['blocks'] = $blocksBySection[$section['id']];
+                $section['blocks'] = $blocksBySection[$section['id']] ?? [[
+                    'id' => 'virtual-' . $section['id'],
+                    'block_type' => 'rich_text',
+                    'block_data' => json_encode(['source' => 'section']),
+                    'block_data_en' => json_encode([]),
+                    'data' => ['source' => 'section'],
+                    'data_en' => [],
+                    'published' => 1,
+                    'sort_order' => 0,
+                ]];
                 $builderSections[] = $section;
             }
         }
@@ -188,7 +157,7 @@ class Home extends BaseController
             }
         }
 
-        // 4. Susun $data — 'heroSlides' MASUK KE DALAM ARRAY
+        // 4. Susun data untuk renderer block database.
         $data = [
             'locale'      => $locale,
             'settings'    => $settings,
@@ -197,31 +166,6 @@ class Home extends BaseController
             'homepageItems' => $homepageItems,
             'builderSections' => $builderSections,
             'builderMode' => $builderMode,
-            // Hero hanya membaca section key "hero". Dengan begitu Quote, judul,
-            // media, dan CTA yang kosong di form tidak dapat muncul dari hero_slides.
-            'heroSlides'  => array_values(array_filter(array_map(static function (array $section): array {
-                return [
-                    'kicker' => $section['kicker'] ?? '',
-                    'kicker_en' => $section['kicker_en'] ?? '',
-                    'title' => $section['title'] ?? '',
-                    'title_en' => $section['title_en'] ?? '',
-                    'lead' => $section['subtitle'] ?? '',
-                    'lead_en' => $section['subtitle_en'] ?? '',
-                    'quote' => $section['quote'] ?? '',
-                    'quote_en' => $section['quote_en'] ?? '',
-                    'kicker_color' => $section['kicker_color'] ?? '#e7aa6b',
-                    'title_color' => $section['title_color'] ?? '#ffffff',
-                    'lead_color' => $section['lead_color'] ?? '#d7e8dd',
-                    'quote_color' => $section['quote_color'] ?? '#e7aa6b',
-                    'image_url' => $section['media_url'] ?? '',
-                    'button_label' => $section['button_label'] ?? '',
-                    'button_label_en' => $section['button_label_en'] ?? '',
-                    'button_url' => $section['button_url'] ?? '',
-                    'sort_order' => $section['sort_order'] ?? 0,
-                ];
-            }, array_values(array_filter($sectionsData, static fn (array $section): bool => (($section['_render_key'] ?? $section['section_key'] ?? '') === 'hero')))), static function (array $slide): bool {
-                return trim((string) ($slide['title'] ?? '')) !== '' || trim((string) ($slide['image_url'] ?? '')) !== '';
-            })),
             'aboutValues' => $aboutValues,
             'agenda'      => array_slice($agenda, 0, 4),
             'writingArticles' => array_slice($writingArticles, 0, 4),
