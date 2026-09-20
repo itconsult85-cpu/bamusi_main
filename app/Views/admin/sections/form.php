@@ -184,6 +184,11 @@
                             <hr>
 <div class="mb-3"><label>Posisi Tombol</label><select name="button_position" class="form-select"><option value="left" <?= ($section['button_position'] ?? 'center') === 'left' ? 'selected' : '' ?>>Kiri</option><option value="center" <?= ($section['button_position'] ?? 'center') === 'center' ? 'selected' : '' ?>>Tengah</option><option value="right" <?= ($section['button_position'] ?? 'center') === 'right' ? 'selected' : '' ?>>Kanan</option></select></div>
                             <div class="mb-0"><label>Letak Tombol</label><select name="button_location" class="form-select"><option value="top" <?= ($section['button_location'] ?? 'bottom') === 'top' ? 'selected' : '' ?>>Di atas konten</option><option value="bottom" <?= ($section['button_location'] ?? 'bottom') === 'bottom' ? 'selected' : '' ?>>Di bawah konten</option></select></div>
+                            <?php if (($section['render_key'] ?? $section['section_key'] ?? '') === 'nilai'): ?>
+                            <hr>
+                            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" name="cards_visible" value="1" id="cardsVisible" <?= !array_key_exists('cards_visible', $section) || !empty($section['cards_visible']) ? 'checked' : '' ?>><label class="form-check-label" for="cardsVisible">Tampilkan card Nilai</label></div>
+                            <div class="row g-2"><div class="col-6"><label>Jumlah Card</label><input type="number" name="cards_limit" min="1" max="12" class="form-control" value="<?= (int) ($section['cards_limit'] ?? 5) ?>"></div><div class="col-6"><label>Kolom Desktop</label><input type="number" name="cards_columns" min="2" max="6" class="form-control" value="<?= (int) ($section['cards_columns'] ?? 5) ?>"></div></div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
