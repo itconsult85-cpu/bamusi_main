@@ -125,7 +125,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= esc($texts['global.brand_name'] ?? $settings['global.brand_name'] ?? 'Baitul Muslimin Indonesia'); ?></title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('assets/css/bamusi.css'); ?>">
 
