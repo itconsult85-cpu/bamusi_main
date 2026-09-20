@@ -7,6 +7,7 @@ $agenda = $agenda ?? [];
 $news = $news ?? [];
 $writingArticles = $writingArticles ?? [];
 $programs = $programs ?? [];
+$features = $features ?? [];
 $board = $board ?? [];
 $partners = $partners ?? [];
 $aboutValues = $aboutValues ?? [];
@@ -17,11 +18,12 @@ $resolveUrl = static function (string $url): string {
     if ($url === '' || $url === '#') return $url ?: '#';
     return preg_match('#^https?://#i', $url) ? $url : base_url(ltrim($url, '/'));
 };
-$sourceRows = static function (string $source) use ($agenda, $news, $writingArticles, $programs, $board, $partners, $aboutValues, $homepageItems): array {
+$sourceRows = static function (string $source) use ($agenda, $news, $writingArticles, $programs, $features, $board, $partners, $aboutValues, $homepageItems): array {
     return match ($source) {
         'agenda' => $agenda,
         'article', 'news' => $news ?: $writingArticles,
         'program' => $programs,
+        'feature' => $features,
         'board' => $board,
         'partners' => $partners,
         'about_values' => $aboutValues,
@@ -74,13 +76,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
     const transitionNames = ['fade-up', 'slide-left', 'slide-right', 'soft-zoom'];
-    blocks.forEach((block, index) => block.classList.add('transition-' + transitionNames[(index * 7 + Math.floor(Math.random() * transitionNames.length)) % transitionNames.length]));
+    const playTransition = block => {
+        block.classList.remove('transition-playing');
+        void block.offsetWidth;
+        const name = transitionNames[Math.floor(Math.random() * transitionNames.length)];
+        block.classList.remove(...transitionNames.map(item => 'transition-' + item));
+        block.classList.add('transition-' + name, 'transition-playing');
+    };
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-            if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
+            if (entry.isIntersecting) playTransition(entry.target);
         }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
         blocks.forEach(block => observer.observe(block));
-    } else blocks.forEach(block => block.classList.add('is-visible'));
+    } else blocks.forEach(playTransition);
     const resolveTarget = hash => {
         const token = normalize(String(hash || '').replace(/^#/, ''));
         if (!token) return null;
