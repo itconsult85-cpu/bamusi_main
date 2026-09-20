@@ -38,6 +38,9 @@ $sectionImg = function ($key) use ($sections) {
 $sectionVisible = static function (string $key) use ($sections): bool {
     return isset($sections[$key]) && (int) ($sections[$key]['published'] ?? 0) === 1;
 };
+$sectionKey = static function (string $key) use ($sections): string {
+    return (string) ($sections[$key]['section_key'] ?? $key);
+};
 ?>
 
 <?php
@@ -1079,6 +1082,7 @@ foreach ($sectionsData ?? [] as $genericSection):
     if ($genericKey === '' || in_array($genericKey, $knownRenderKeys, true) || isset($genericRendered[$genericKey])) continue;
     $genericRendered[$genericKey] = true;
     $genericItems = $homepageItems[$genericKey] ?? [];
+    $genericActualKey = trim((string) ($genericSection['section_key'] ?? $genericKey));
 ?>
     <section data-section-key="<?= esc($genericKey); ?>" id="section-<?= esc($genericSection['section_key']); ?>" class="py-5 bg-white">
         <div class="container-fluid px-4 px-lg-5">
@@ -1101,8 +1105,8 @@ foreach ($sectionsData ?? [] as $genericSection):
 <?php
 $sectionOrder = [];
 foreach ($sections as $sectionRow) {
-    $renderKey = trim((string) ($sectionRow['render_key'] ?? $sectionRow['section_key'] ?? ''));
-    if ($renderKey !== '' && !isset($sectionOrder[$renderKey])) $sectionOrder[$renderKey] = (int) ($sectionRow['sort_order'] ?? 0);
+    $actualKey = trim((string) ($sectionRow['section_key'] ?? ''));
+    if ($actualKey !== '' && !isset($sectionOrder[$actualKey])) $sectionOrder[$actualKey] = (int) ($sectionRow['sort_order'] ?? 0);
 }
 ?>
 <script>

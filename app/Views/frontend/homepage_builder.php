@@ -42,7 +42,8 @@ $legacySelectors = [
 ];
 $hiddenSelectors = [];
 foreach ($builderSections as $builderSection) {
-    if (!empty($legacySelectors[$builderSection['section_key']])) $hiddenSelectors[] = $legacySelectors[$builderSection['section_key']];
+    $legacyKey = (string) ($builderSection['_render_key'] ?? $builderSection['section_key'] ?? '');
+    if (!empty($legacySelectors[$legacyKey])) $hiddenSelectors[] = $legacySelectors[$legacyKey];
 }
 ?>
 <?php if ($hiddenSelectors): ?><style><?= implode(',', $hiddenSelectors); ?> { display: none !important; }</style><?php endif; ?>

@@ -43,14 +43,18 @@ class Home extends BaseController
         }
 
         // 2. Ambil Sections
+        // Hanya section yang dipublikasikan yang dikirim ke frontend. Section
+        // draft tetap tersimpan dan dapat diedit dari CMS, tetapi tidak boleh
+        // membuat markup homepage maupun alias render-nya muncul kembali.
         $sectionsData = $this->sectionModel->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
         $sections = [];
         $sectionByKey = [];
         foreach ($sectionsData as $sec) {
+            $sec['_render_key'] = trim((string) ($sec['render_key'] ?? '')) ?: $sec['section_key'];
             $sections[$sec['section_key']] = $sec;
             $sectionByKey[$sec['section_key']] = $sec;
-            $renderKey = trim((string) ($sec['render_key'] ?? ''));
-            if ($renderKey !== '') {
+            $renderKey = $sec['_render_key'];
+            if ($renderKey !== '' && $renderKey !== $sec['section_key']) {
                 $sections[$renderKey] = $sec;
             }
         }
@@ -154,6 +158,7 @@ class Home extends BaseController
             'locale'      => $locale,
             'settings'    => $settings,
             'sections'    => $sections,
+            'sectionsData' => $sectionsData,
             'homepageItems' => $homepageItems,
             'builderSections' => $builderSections,
             'builderMode' => $builderMode,
@@ -179,7 +184,7 @@ class Home extends BaseController
                     'button_url' => $section['button_url'] ?? '',
                     'sort_order' => $section['sort_order'] ?? 0,
                 ];
-            }, array_values(array_filter($sectionsData, static fn (array $section): bool => ($section['section_key'] ?? '') === 'hero'))), static function (array $slide): bool {
+            }, array_values(array_filter($sectionsData, static fn (array $section): bool => (($section['_render_key'] ?? $section['section_key'] ?? '') === 'hero')))), static function (array $slide): bool {
                 return trim((string) ($slide['title'] ?? '')) !== '' || trim((string) ($slide['image_url'] ?? '')) !== '';
             })),
             'aboutValues' => $aboutValues,
