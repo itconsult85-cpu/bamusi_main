@@ -300,9 +300,10 @@ class SectionCMS extends BaseController
             'button_url'      => $this->request->getPost('button_url'),
             'button_position' => $buttonPosition,
             'button_location' => $buttonLocation,
-            'cards_visible'   => $this->request->getPost('cards_visible') !== null ? 1 : 0,
-            'cards_limit'     => max(1, min(12, (int) ($this->request->getPost('cards_limit') ?: 5))),
-            'cards_columns'   => max(2, min(6, (int) ($this->request->getPost('cards_columns') ?: 5))),
+            'cards_visible'   => $this->request->getPost('cards_visible') !== null
+                ? 1 : (int) ($oldData['cards_visible'] ?? 1),
+            'cards_limit'     => max(1, min(12, (int) ($this->request->getPost('cards_limit') ?: ($oldData['cards_limit'] ?? 5)))),
+            'cards_columns'   => max(2, min(6, (int) ($this->request->getPost('cards_columns') ?: ($oldData['cards_columns'] ?? 5)))),
             'layout_mode'     => in_array($this->request->getPost('layout_mode'), ['legacy', 'builder'], true) ? $this->request->getPost('layout_mode') : 'legacy',
             'layout_options'  => trim((string) $this->request->getPost('layout_options')) ?: null,
             'published'       => (int) $this->request->getPost('published') === 1 ? 1 : 0
