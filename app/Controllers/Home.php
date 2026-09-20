@@ -49,8 +49,32 @@ class Home extends BaseController
         $sectionsData = $this->sectionModel->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
         $sections = [];
         $sectionByKey = [];
+        $stableRenderKey = static function (array $section): string {
+            $name = strtolower(trim((string) ($section['section_name'] ?? '')));
+            $known = [
+                'hero banner' => 'hero',
+                'tentang bamusi' => 'about',
+                'lima nilai utama' => 'nilai',
+                'visi dan misi' => 'visi',
+                'sejarah bamusi' => 'history',
+                'pengurus bamusi' => 'board',
+                'program bamusi' => 'program',
+                'agenda bamusi' => 'agenda',
+                'berita bamusi' => 'news',
+                'tulisan bamusi' => 'writing',
+                'sosial media bamusi' => 'social',
+                'mitra homepage' => 'partners',
+                'bergabung bamusi' => 'join',
+            ];
+            foreach ($known as $label => $key) {
+                if ($name === $label || str_contains($name, $label)) {
+                    return $key;
+                }
+            }
+            return trim((string) ($section['render_key'] ?? '')) ?: (string) ($section['section_key'] ?? '');
+        };
         foreach ($sectionsData as $sec) {
-            $sec['_render_key'] = trim((string) ($sec['render_key'] ?? '')) ?: $sec['section_key'];
+            $sec['_render_key'] = $stableRenderKey($sec);
             $sections[$sec['section_key']] = $sec;
             $sectionByKey[$sec['section_key']] = $sec;
             $renderKey = $sec['_render_key'];
@@ -62,7 +86,7 @@ class Home extends BaseController
         $homepageItems = [];
         if ($db->tableExists('homepage_section_items')) {
             foreach ($db->table('homepage_section_items')->where('published', 1)->orderBy('sort_order', 'ASC')->get()->getResultArray() as $item) {
-                $renderKey = $sectionByKey[$item['section_key']]['render_key'] ?? $item['section_key'];
+                $renderKey = $sectionByKey[$item['section_key']]['_render_key'] ?? $item['section_key'];
                 $homepageItems[$renderKey][] = $item;
                 // Saat section_key diganti, item tetap dapat diambil melalui
                 // key baru maupun renderer legacy yang dipakai template lama.
