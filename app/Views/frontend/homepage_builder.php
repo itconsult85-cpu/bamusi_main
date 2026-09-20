@@ -75,18 +75,29 @@ foreach ($builderSections as $candidate) {
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+    const builder = document.querySelector('.homepage-builder[data-homepage-renderer="blocks"]');
     const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
-    const transitionNames = ['fade-up', 'slide-left', 'slide-right', 'soft-zoom'];
-    let previousTransition = null;
+    const revealItems = [
+        '.row > [class*="col-"]', '.card', '.about-link', '.feature-list-item',
+        '.nav-item', '.homepage-reveal-content', 'form', '.btn'
+    ];
+    if (builder) builder.classList.add('homepage-reveal-ready');
+    blocks.forEach(block => {
+        const section = block.querySelector(':scope > section');
+        if (!section) return;
+        section.classList.add('homepage-reveal-section');
+        const items = Array.from(new Set(revealItems.flatMap(selector => Array.from(section.querySelectorAll(selector)))));
+        items.forEach((item, index) => {
+            item.classList.add('homepage-reveal-item');
+            item.style.setProperty('--homepage-reveal-delay', `${Math.min(index, 7) * 70}ms`);
+        });
+    });
     const playTransition = block => {
         if (block.dataset.transitionPlayed === 'true') return;
-        block.classList.remove('transition-playing');
-        void block.offsetWidth;
-        const available = transitionNames.filter(name => name !== previousTransition);
-        const name = available[Math.floor(Math.random() * available.length)];
-        previousTransition = name;
-        block.classList.remove(...transitionNames.map(item => 'transition-' + item));
-        block.classList.add('transition-' + name, 'transition-playing');
+        const section = block.querySelector(':scope > section');
+        if (!section) return;
+        section.classList.add('is-visible');
+        section.querySelectorAll('.homepage-reveal-item').forEach(item => item.classList.add('is-visible'));
         block.dataset.transitionPlayed = 'true';
     };
     if ('IntersectionObserver' in window) {
