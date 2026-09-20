@@ -49,13 +49,13 @@ $sectionImg = static function (string $key) use ($section): string {
 
                 <div class="col-lg-4 ps-lg-5">
                     <!-- LINK LIST (dari section_links) -->
-                    <?php if (!empty($sectionLinks['about'])): ?>
+                    <?php if (!empty($items)): ?>
                         <div class="about-sidebar">
-                            <?php foreach ($sectionLinks['about'] as $link):
-                                $label    = ($locale === 'en' && !empty($link['label_en']))    ? $link['label_en']    : $link['label'];
-                                $sublabel = ($locale === 'en' && !empty($link['sublabel_en'])) ? $link['sublabel_en'] : $link['sublabel'];
-                                $url      = $link['url'] ?? '#';
-                                if (!preg_match('#^https?://#i', $url) && $url !== '#') {
+                            <?php foreach ($items as $link):
+                                $label    = $t($link, 'title') ?: $t($link, 'label');
+                                $sublabel = $t($link, 'body') ?: $t($link, 'sublabel');
+                                $url      = $link['url'] ?? $link['target'] ?? '#';
+                                if (!preg_match('#^https?://#i', $url) && $url !== '#' && ($url[0] ?? '') !== '#') {
                                     $url = base_url(ltrim($url, '/'));
                                 }
                             ?>
