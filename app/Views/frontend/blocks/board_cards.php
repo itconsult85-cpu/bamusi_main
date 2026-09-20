@@ -44,7 +44,9 @@ $sectionImg = static function (string $key) use ($section): string {
                     <div class="board-slider-container pengurus-scroll-wrapper d-flex flex-nowrap gap-4 pb-3" style="overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
                         <?php if (!empty($items)): ?>
                             <?php foreach ($items as $member):
-                                $photo = trim((string)($member['photo_url'] ?? ''));
+                                $memberName = trim((string) ($member['name'] ?? $member['title'] ?? $member['label'] ?? ''));
+                                $memberRole = $t($member, 'role') ?: ($t($member, 'position') ?: $t($member, 'body'));
+                                $photo = trim((string) ($member['photo_url'] ?? $member['image_url'] ?? $member['media_url'] ?? ''));
                                 if ($photo !== '' && !preg_match('#^https?://#i', $photo)) {
                                     $photo = base_url(ltrim($photo, '/'));
                                 }
@@ -53,16 +55,16 @@ $sectionImg = static function (string $key) use ($section): string {
                                     <div class="card-body p-4 text-center d-flex flex-column align-items-center">
                                         <div class="rounded-circle d-flex align-items-center justify-content-center overflow-hidden mb-4" style="width: 140px; height: 140px; background-color: #cc0000;">
                                             <?php if ($photo !== ''): ?>
-                                                <img src="<?= esc($photo); ?>" alt="<?= esc($member['name']); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="<?= esc($photo); ?>" alt="<?= esc($memberName); ?>" style="width: 100%; height: 100%; object-fit: cover;">
                                             <?php else: ?>
-                                                <span class="text-white fw-bolder" style="font-size: 3rem;"><?= esc(strtoupper(substr($member['name'], 0, 1))); ?></span>
+                                                <span class="text-white fw-bolder" style="font-size: 3rem;"><?= esc(strtoupper(substr($memberName !== '' ? $memberName : '?', 0, 1))); ?></span>
                                             <?php endif; ?>
                                         </div>
                                         <h5 class="fw-bold text-uppercase mb-2" style="color: #cc0000; font-size: 1rem; line-height: 1.4;">
-                                            <?= esc($member['name']); ?>
+                                            <?= esc($memberName !== '' ? $memberName : '—'); ?>
                                         </h5>
                                         <small class="text-secondary text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
-                                            <?= esc($t($member, 'role')); ?>
+                                            <?= esc($memberRole); ?>
                                         </small>
                                     </div>
                                 </div>
