@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const section = sectionFor(block);
         if (!section) return;
         revealTargets.push({block, section});
-        block.classList.add(sectionTransitions[Math.floor(Math.random() * sectionTransitions.length)]);
+        section.classList.add(sectionTransitions[Math.floor(Math.random() * sectionTransitions.length)]);
         section.classList.add('homepage-reveal-section');
         const items = Array.from(new Set(revealItems.flatMap(selector => Array.from(section.querySelectorAll(selector)))));
         items.forEach((item, index) => {
@@ -101,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (block.dataset.transitionPlayed === 'true') return;
         const section = sectionFor(block);
         if (!section) return;
-        block.classList.add('transition-playing');
         section.classList.add('is-visible');
         section.querySelectorAll('.homepage-reveal-item').forEach(item => item.classList.add('is-visible'));
         block.dataset.transitionPlayed = 'true';
