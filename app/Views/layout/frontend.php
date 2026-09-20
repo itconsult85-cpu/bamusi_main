@@ -189,6 +189,13 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
             pointer-events: none;
         }
 
+        .dropdown-small .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
         .dropdown-small:hover .dropdown-list {
             opacity: 1;
             visibility: visible;
@@ -573,11 +580,11 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
                                 </a>
                             </li>
                         <?php else: ?>
-                            <li class="nav-item dropdown-small">
-                                <a class="nav-link" href="<?= esc($menuUrl($item)); ?>">
-                                    <?= esc($label); ?> <span class="caret">▾</span>
+                            <li class="nav-item dropdown dropdown-small">
+                                <a class="nav-link dropdown-toggle" href="<?= esc($menuUrl($item)); ?>" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <?= esc($label); ?>
                                 </a>
-                                <ul class="dropdown-list">
+                                <ul class="dropdown-menu dropdown-list">
                                     <?php foreach ($item['children'] as $child):
                                         $childLabel = '';
                                         if ($locale === 'en' && !empty($child['menu_label_en'])) $childLabel = $child['menu_label_en'];
