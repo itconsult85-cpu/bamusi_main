@@ -15,8 +15,16 @@ $sectionImg = static function (string $key) use ($section): string {
     $url = trim((string) ($section['media_url'] ?? ''));
     return $url === '' ? '' : (preg_match('#^https?://#i', $url) ? $url : base_url(ltrim($url, '/')));
 };
-?>
 $nilai = $section;
+$nilaiButtonPositionValue = (string) ($nilai['button_position'] ?? 'center');
+$nilaiButtonPosition = in_array($nilaiButtonPositionValue, ['left', 'center', 'right'], true) ? $nilaiButtonPositionValue : 'center';
+$nilaiButtonLocation = ($nilai['button_location'] ?? 'bottom') === 'top' ? 'top' : 'bottom';
+$nilaiCardsVisible = !array_key_exists('cards_visible', $nilai) || !empty($nilai['cards_visible']);
+$nilaiCardsLimit = max(1, min(12, (int) ($nilai['cards_limit'] ?? 5)));
+$nilaiCardsColumns = max(2, min(6, (int) ($nilai['cards_columns'] ?? 5)));
+$nilaiColumnClass = [2 => 'col-lg-6', 3 => 'col-lg-4', 4 => 'col-lg-3', 5 => 'col-lg', 6 => 'col-lg-2'][$nilaiCardsColumns] ?? 'col-lg';
+$nilaiButtonClass = ['left' => 'text-start', 'center' => 'text-center', 'right' => 'text-end'][$nilaiButtonPosition];
+?>
     <section data-section-key="<?= esc((string) ($section['section_key'] ?? '')); ?>" class="py-5 text-white position-relative overflow-hidden" id="section-<?= esc($section['section_key'] ?? 'section'); ?>"
         style="background: linear-gradient(135deg, #111111 0%, #2b0000 100%);">
         <div class="position-absolute" style="top: -20%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(204,0,0,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none;"></div>
