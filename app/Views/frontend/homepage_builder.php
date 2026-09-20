@@ -25,6 +25,7 @@ $sourceRows = static function (string $source) use ($agenda, $news, $writingArti
         'board' => $board,
         'partners' => $partners,
         'about_values' => $aboutValues,
+        'about_links' => $homepageItems['about_links'] ?? [],
         'social' => $homepageItems['social'] ?? [],
         'join_interest' => $homepageItems['join_interest'] ?? [],
         default => [],
@@ -44,7 +45,9 @@ $blockItems = static function (array $data, string $source, array $section) use 
 <?php foreach ($builderSections as $section): ?>
     <?php foreach (($section['blocks'] ?? []) as $block): $data = $block['data'] ?? []; $en = $block['data_en'] ?? []; if ($locale === 'en') $data = array_replace($data, $en); $type = $block['block_type']; $source = (string) ($data['source'] ?? 'manual'); $items = $blockItems(array_merge($data, ['section_key' => $section['section_key']]), $source, $section); $limit = max(1, min(24, (int) ($data['limit'] ?? 4))); $items = array_slice($items, 0, $limit); $columns = max(1, min(6, (int) ($data['columns'] ?? 3))); $col = max(1, (int) floor(12 / $columns)); $sectionDomKey = preg_replace('/[^a-zA-Z0-9_-]+/', '-', (string) $section['section_key']); ?>
     <div class="homepage-block-section" data-section-key="<?= esc($section['section_key']); ?>" id="section-<?= esc($sectionDomKey); ?>">
-    <?php if ($type === 'spacer'): ?><div style="height:<?= max(20, min(240, (int) ($data['height'] ?? 80))); ?>px"></div>
+    <?php $variant = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($data['template_variant'] ?? '')); ?>
+    <?php if ($variant !== ''): ?><?= view('frontend/blocks/' . $variant, ['section' => $section, 'items' => $items, 'locale' => $locale, 'block' => $block]); ?>
+    <?php elseif ($type === 'spacer'): ?><div style="height:<?= max(20, min(240, (int) ($data['height'] ?? 80))); ?>px"></div>
     <?php elseif ($type === 'rich_text'): ?><section class="py-5 bg-white"><div class="container py-4"><h2 class="fw-bold text-danger mb-3"><?= esc($data['title'] ?? $t($section, 'title')); ?></h2><article class="page-body fs-5 lh-lg"><?= $data['body'] ?? ($t($section, 'content') ?: $t($section, 'subtitle')); ?></article></div></section>
     <?php elseif ($type === 'quote'): ?><section class="py-5 bg-light"><div class="container"><figure class="border-start border-4 border-danger p-4"><blockquote class="fs-3 fst-italic">“<?= esc($data['body'] ?? $section['quote'] ?? ''); ?>”</blockquote><figcaption><?= esc($data['title'] ?? ''); ?></figcaption></figure></div></section>
     <?php elseif ($type === 'cta'): ?><section class="py-5 bg-danger text-white"><div class="container d-flex flex-wrap justify-content-between align-items-center gap-3"><h2 class="h3 mb-0"><?= esc($data['body'] ?? $data['title'] ?? ''); ?></h2><?php if (!empty($data['button_url'])): ?><a class="btn btn-warning rounded-pill" href="<?= esc($resolveUrl($data['button_url'])); ?>"><?= esc($data['button_label'] ?? 'Selengkapnya'); ?> ↗</a><?php endif; ?></div></section>
