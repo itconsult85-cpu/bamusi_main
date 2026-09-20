@@ -44,7 +44,7 @@ $blockItems = static function (array $data, string $source, array $section) use 
 <main class="homepage-builder" data-homepage-renderer="blocks">
 <?php foreach ($builderSections as $section): ?>
     <?php foreach (($section['blocks'] ?? []) as $block): $data = $block['data'] ?? []; $en = $block['data_en'] ?? []; if ($locale === 'en') $data = array_replace($data, $en); $type = $block['block_type']; $source = (string) ($data['source'] ?? 'manual'); $items = $blockItems(array_merge($data, ['section_key' => $section['section_key']]), $source, $section); $limit = max(1, min(24, (int) ($data['limit'] ?? 4))); $items = array_slice($items, 0, $limit); $columns = max(1, min(6, (int) ($data['columns'] ?? 3))); $col = max(1, (int) floor(12 / $columns)); $sectionDomKey = preg_replace('/[^a-zA-Z0-9_-]+/', '-', (string) $section['section_key']); ?>
-    <div class="homepage-block-section" data-section-key="<?= esc($section['section_key']); ?>" id="section-<?= esc($sectionDomKey); ?>">
+    <div class="homepage-block-section" data-section-key="<?= esc($section['section_key']); ?>" id="<?= esc($sectionDomKey); ?>" style="scroll-margin-top: 88px;">
     <?php $variant = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) ($data['template_variant'] ?? '')); ?>
     <?php if ($variant !== ''): ?><?= view('frontend/blocks/' . $variant, ['section' => $section, 'items' => $items, 'locale' => $locale, 'block' => $block]); ?>
     <?php elseif ($type === 'spacer'): ?><div style="height:<?= max(20, min(240, (int) ($data['height'] ?? 80))); ?>px"></div>
