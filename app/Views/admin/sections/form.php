@@ -107,7 +107,7 @@
                     </div>
                     <?php endif; ?>
 
-                    <?php if (($section['section_key'] ?? '') === 'nilai'): ?>
+                    <?php if (($section['render_key'] ?? $section['section_key'] ?? '') === 'nilai'): ?>
                     <div class="card card-warning card-outline mb-4">
                         <div class="card-header"><h5 class="card-title m-0"><i class="fas fa-star me-2"></i>Data Kartu Nilai Utama</h5><small class="text-muted">Data ini adalah bagian dari section Nilai dan disimpan bersama form ini.</small></div>
                         <div class="card-body" id="aboutValuesRows">
@@ -212,7 +212,6 @@
                     <div class="card card-secondary mb-4">
                         <div class="card-body">
                             <div class="form-check form-switch mb-4">
-                                <input type="hidden" name="published" value="0">
                                 <input class="form-check-input" style="width: 2.5em; height: 1.25em;" type="checkbox" name="published" value="1" id="publishCheck" <?= (!isset($section) || $section['published'] == 1) ? 'checked' : '' ?>>
                                 <label class="form-check-label ms-2 pt-1 fw-bold" for="publishCheck">Tampilkan di Web</label>
                             </div>

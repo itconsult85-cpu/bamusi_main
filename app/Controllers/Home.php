@@ -86,9 +86,15 @@ class Home extends BaseController
             $options = $itemOptions($item);
             return array_merge($item, ['name' => $item['title'] ?: $item['label'], 'name_en' => $item['title_en'] ?: $item['label_en'], 'role' => $item['body'], 'role_en' => $item['body_en'], 'photo_url' => $item['media_url'], 'group_order' => (int) ($options['group_order'] ?? 0), 'member_order' => (int) ($options['member_order'] ?? $item['sort_order'])]);
         }, $homepageItems['board'] ?? []);
-        $aboutValues = array_map(static function (array $item): array {
-            return ['label' => $item['title'] ?: $item['label'], 'label_en' => $item['title_en'] ?: $item['label_en'], 'description' => $item['body'], 'description_en' => $item['body_en'], 'sort_order' => $item['sort_order'], 'published' => $item['published']];
-        }, $homepageItems['nilai'] ?? []);
+        $aboutValues = [];
+        if ($db->tableExists('about_values')) {
+            $aboutValues = $this->aboutModel->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
+        }
+        if (empty($aboutValues)) {
+            $aboutValues = array_map(static function (array $item): array {
+                return ['label' => $item['title'] ?: $item['label'], 'label_en' => $item['title_en'] ?: $item['label_en'], 'description' => $item['body'], 'description_en' => $item['body_en'], 'sort_order' => $item['sort_order'], 'published' => $item['published']];
+            }, $homepageItems['nilai'] ?? []);
+        }
 
         // Builder bersifat opt-in. Section legacy tetap dirender seperti sebelumnya
         // sampai admin mengaktifkan mode Builder dan menambahkan blok.
