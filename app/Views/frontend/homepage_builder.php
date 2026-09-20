@@ -34,9 +34,6 @@ $sourceRows = static function (string $source) use ($agenda, $news, $writingArti
 $blockItems = static function (array $data, string $source, array $section) use ($sourceRows, $homepageItems): array {
     if (!empty($data['items']) && is_array($data['items'])) return $data['items'];
     if ($source === 'section') return [$section];
-    if ($source !== 'about_values' && !empty($homepageItems[$data['section_key'] ?? ''])) {
-        return $homepageItems[$data['section_key']];
-    }
     if ($source !== 'manual') return $sourceRows($source);
     return $homepageItems[$data['section_key'] ?? ''] ?? [];
 };
