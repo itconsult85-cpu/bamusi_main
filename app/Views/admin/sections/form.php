@@ -35,6 +35,11 @@
                                 <input type="text" name="section_key" class="form-control" required placeholder="Contoh: hero_main" value="<?= isset($section) ? esc($section['section_key']) : '' ?>">
                                 <small class="text-info">Kunci unik data section. Layout homepage tetap dipertahankan saat kunci ini diubah.</small>
                             </div>
+                            <div class="col-md-6 mt-3">
+                                <label>Urutan Section Homepage</label>
+                                <input type="number" name="sort_order" class="form-control" min="0" step="1" value="<?= (int) ($section['sort_order'] ?? 0); ?>">
+                                <small class="text-muted">Angka lebih kecil tampil lebih dahulu. Contoh: 0, 10, 20.</small>
+                            </div>
                             <?php if (isset($section)): ?>
                             <div class="col-md-6 mt-3">
                                 <label>Mode Layout Homepage</label>

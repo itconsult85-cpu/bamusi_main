@@ -323,7 +323,8 @@ class SectionCMS extends BaseController
             'cards_columns'   => max(2, min(6, (int) ($this->request->getPost('cards_columns') ?: ($oldData['cards_columns'] ?? 5)))),
             'layout_mode'     => in_array($this->request->getPost('layout_mode'), ['legacy', 'builder'], true) ? $this->request->getPost('layout_mode') : 'legacy',
             'layout_options'  => trim((string) $this->request->getPost('layout_options')) ?: null,
-            'published'       => (int) $this->request->getPost('published') === 1 ? 1 : 0
+            'published'       => (int) $this->request->getPost('published') === 1 ? 1 : 0,
+            'sort_order'      => max(0, (int) ($this->request->getPost('sort_order') ?? ($oldData['sort_order'] ?? 0)))
         ];
 
         // Bidang konten tambahan berlaku seragam untuk semua section.
