@@ -486,20 +486,22 @@ body {
   min-height: 320px;
 }
 .homepage-social-handle {
-  line-height: 1.18;
-  word-break: normal;
-  overflow-wrap: break-word;
+  line-height: 1.2;
+  word-break: keep-all;
+  overflow-wrap: normal;
   hyphens: none;
   white-space: normal;
   max-width: 100%;
   text-wrap: balance;
+  font-size: clamp(1rem, 1.35vw, 1.55rem) !important;
+  letter-spacing: -0.35px;
 }
 @media (max-width: 575.98px) {
   .homepage-social-card-body {
     min-height: 280px;
   }
   .homepage-social-handle {
-    font-size: 1.45rem !important;
+    font-size: 1.2rem !important;
   }
 }
 
