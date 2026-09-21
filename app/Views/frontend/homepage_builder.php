@@ -78,11 +78,10 @@ const initHomepageReveal = function () {
     const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     const builder = document.querySelector('.homepage-builder[data-homepage-renderer="blocks"]');
     const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
-    if (!builder) return;
     const sectionFor = block => Array.from(block.children).find(child => child.tagName === 'SECTION') || block.querySelector('section');
     const revealTargets = new Set();
     const addTargets = (selector, className, stagger) => {
-        builder.querySelectorAll(selector).forEach((element) => {
+        document.querySelectorAll(selector).forEach((element) => {
             if (element.classList.contains('reveal')) return;
             element.classList.add('reveal', className);
             if (stagger) {
