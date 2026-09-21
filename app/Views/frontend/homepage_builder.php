@@ -77,41 +77,49 @@ document.addEventListener('DOMContentLoaded', function () {
     const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     const builder = document.querySelector('.homepage-builder[data-homepage-renderer="blocks"]');
     const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
-    const revealItems = [
-        '.row > [class*="col-"]', '.card', '.about-link', '.feature-list-item',
-        '.nav-item', '.homepage-reveal-content', 'form', '.btn'
-    ];
-    if (builder) builder.classList.add('homepage-reveal-ready');
+    if (!builder) return;
     const sectionFor = block => Array.from(block.children).find(child => child.tagName === 'SECTION') || block.querySelector('section');
-    const revealTargets = [];
-    const sectionTransitions = ['transition-fade-up', 'transition-slide-left', 'transition-slide-right', 'transition-soft-zoom'];
+    const revealTargets = new Set();
+    const addTargets = (selector, className, stagger) => {
+        builder.querySelectorAll(selector).forEach((element) => {
+            if (element.classList.contains('reveal')) return;
+            element.classList.add('reveal', className);
+            if (stagger) {
+                const siblingIndex = Array.from(element.parentNode.children).indexOf(element);
+                element.style.transitionDelay = `${siblingIndex * 0.1}s`;
+            }
+            revealTargets.add(element);
+        });
+    };
+    // Pola ini sama dengan home.php workspace: kolom masuk dari sisi berbeda.
+    addTargets('.row > .col-lg-5:first-child, .row > .col-lg-6:first-child, .row > .col-lg-7:first-child', 'slide-from-left', false);
+    addTargets('.row > .col-lg-5:last-child, .row > .col-lg-6:last-child, .row > .col-lg-7:last-child', 'slide-from-right', false);
+    addTargets('.row > .col-lg-4, .row > .col-lg-3, .row > .col, .row > .col-6', 'fade-up-stagger', true);
+    addTargets('section > .container-fluid > h2.text-center, .eyebrow-text', 'zoom-in', false);
+    // Section tanpa grid tetap mengikuti model yang sama melalui container utamanya.
     blocks.forEach(block => {
         const section = sectionFor(block);
         if (!section) return;
-        revealTargets.push({block, section});
-        section.classList.add(sectionTransitions[Math.floor(Math.random() * sectionTransitions.length)]);
-        section.classList.add('homepage-reveal-section');
-        const items = Array.from(new Set(revealItems.flatMap(selector => Array.from(section.querySelectorAll(selector)))));
-        items.forEach((item, index) => {
-            item.classList.add('homepage-reveal-item');
-            item.style.setProperty('--homepage-reveal-delay', `${Math.min(index, 7) * 70}ms`);
-        });
+        const hasTarget = section.querySelector('.reveal');
+        if (!hasTarget) {
+            const container = section.querySelector(':scope > .container, :scope > .container-fluid');
+            if (container) {
+                container.classList.add('reveal', 'fade-up-stagger');
+                revealTargets.add(container);
+            }
+        }
     });
-    const playTransition = block => {
-        if (block.dataset.transitionPlayed === 'true') return;
-        const section = sectionFor(block);
-        if (!section) return;
-        section.classList.add('is-visible');
-        section.querySelectorAll('.homepage-reveal-item').forEach(item => item.classList.add('is-visible'));
-        block.dataset.transitionPlayed = 'true';
-    };
+    const observerOptions = {rootMargin: '0px 0px -50px 0px', threshold: 0.05};
     if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-            if (entry.isIntersecting) playTransition(entry.target.closest('.homepage-block-section'));
-        }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-        revealTargets.forEach(({section}) => observer.observe(section));
-    } else revealTargets.forEach(({block}) => playTransition(block));
-    window.setTimeout(() => revealTargets.slice(0, 1).forEach(({block}) => playTransition(block)), 250);
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('in-view');
+            });
+        }, observerOptions);
+        revealTargets.forEach(element => observer.observe(element));
+    } else {
+        revealTargets.forEach(element => element.classList.add('in-view'));
+    }
     const resolveTarget = hash => {
         const token = normalize(String(hash || '').replace(/^#/, ''));
         if (!token) return null;
