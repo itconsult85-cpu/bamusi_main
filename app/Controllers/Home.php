@@ -46,7 +46,13 @@ class Home extends BaseController
         // Hanya section yang dipublikasikan yang dikirim ke frontend. Section
         // draft tetap tersimpan dan dapat diedit dari CMS, tetapi tidak boleh
         // membuat markup homepage maupun alias render-nya muncul kembali.
-        $sectionsData = $this->sectionModel->where('published', 1)->orderBy('sort_order', 'ASC')->findAll();
+        // Kontak homepage legacy sudah diwakili oleh footer global.
+        // Data section tetap disimpan untuk kompatibilitas, tetapi tidak dirender lagi.
+        $sectionsData = $this->sectionModel
+            ->where('published', 1)
+            ->where('section_key !=', 'contact')
+            ->orderBy('sort_order', 'ASC')
+            ->findAll();
         $sections = $sectionsData;
 
         $homepageItems = [];

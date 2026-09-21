@@ -53,8 +53,11 @@ class SectionCMS extends BaseController
                 ->groupEnd();
         }
 
+        // Section contact homepage legacy sudah digantikan oleh footer global.
+        $builder->where('section_key !=', 'contact');
+
         $recordsFiltered = $builder->countAllResults(false);
-        $recordsTotal = $this->sectionModel->countAllResults();
+        $recordsTotal = $this->sectionModel->where('section_key !=', 'contact')->countAllResults();
 
         $builder->orderBy('sort_order', 'ASC');
         $builder->limit($length, $start);
