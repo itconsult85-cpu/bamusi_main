@@ -72,12 +72,31 @@ foreach ($builderSections as $candidate) {
     <?php endforeach; ?>
 <?php endforeach; ?>
 </main>
+<style id="bamusi-homepage-reveal-inline">
+.homepage-builder .reveal,
+.homepage-reveal-legacy .reveal {
+    opacity: 0;
+    will-change: opacity, transform;
+    transition: opacity .8s cubic-bezier(.165,.84,.44,1), transform .8s cubic-bezier(.165,.84,.44,1);
+}
+.homepage-builder .reveal.slide-from-left,
+.homepage-reveal-legacy .reveal.slide-from-left { transform: translateX(-40px); }
+.homepage-builder .reveal.slide-from-right,
+.homepage-reveal-legacy .reveal.slide-from-right { transform: translateX(40px); }
+.homepage-builder .reveal.fade-up-stagger,
+.homepage-reveal-legacy .reveal.fade-up-stagger { transform: translateY(40px); }
+.homepage-builder .reveal.zoom-in,
+.homepage-reveal-legacy .reveal.zoom-in { transform: scale(.95); }
+.homepage-builder .reveal.in-view,
+.homepage-reveal-legacy .reveal.in-view { opacity: 1; transform: translate(0) scale(1); }
+</style>
 <script>
 (function () {
 const initHomepageReveal = function () {
     const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     const builder = document.querySelector('.homepage-builder[data-homepage-renderer="blocks"]');
     const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
+    if (!builder) document.body.classList.add('homepage-reveal-legacy');
     const sectionFor = block => Array.from(block.children).find(child => child.tagName === 'SECTION') || block.querySelector('section');
     const revealTargets = new Set();
     const addTargets = (selector, className, stagger) => {
@@ -110,6 +129,12 @@ const initHomepageReveal = function () {
         }
     });
     const observerOptions = {rootMargin: '0px 0px -50px 0px', threshold: 0.05};
+    const activateVisible = function () {
+        revealTargets.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            if (rect.top < window.innerHeight - 50 && rect.bottom > 0) element.classList.add('in-view');
+        });
+    };
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -120,6 +145,8 @@ const initHomepageReveal = function () {
     } else {
         revealTargets.forEach(element => element.classList.add('in-view'));
     }
+    window.requestAnimationFrame(activateVisible);
+    window.addEventListener('scroll', activateVisible, {passive: true});
     const resolveTarget = hash => {
         const token = normalize(String(hash || '').replace(/^#/, ''));
         if (!token) return null;
