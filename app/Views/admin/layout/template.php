@@ -125,6 +125,14 @@
                             </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a href="<?= base_url('admin/footer'); ?>"
+                                class="nav-link <?= (strpos(current_url(), 'admin/footer') !== false) ? 'active' : ''; ?>">
+                                <i class="nav-icon fas fa-shoe-prints"></i>
+                                <p>Edit Footer &amp; Kontak</p>
+                            </a>
+                        </li>
+
                     </ul>
                 </nav>
             </div>

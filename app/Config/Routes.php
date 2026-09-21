@@ -35,6 +35,8 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'ad
     $routes->post('settings/save', 'SettingCMS::save');
     $routes->get('settings/delete/(:num)', 'SettingCMS::delete/$1');
     $routes->get('settings/bulkTranslate', 'SettingCMS::bulkTranslate');
+    $routes->get('footer', 'FooterCMS::index');
+    $routes->post('footer/save', 'FooterCMS::save');
 
     $routes->get('board', 'BoardMember::index');
     $routes->get('board/ajaxData', 'BoardMember::ajaxData');
