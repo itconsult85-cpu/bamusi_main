@@ -55,9 +55,9 @@ $sectionImg = static function (string $key) use ($section): string {
                         style="background-color: var(--bamusi-red, #cc0000); transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
                         onmouseover="this.style.transform='translateY(-10px)';" onmouseout="this.style.transform='translateY(0)';">
                         <div class="position-absolute" style="bottom: -20px; right: -20px; width: 150px; height: 150px; border-radius: 50%; background: rgba(0,0,0,0.1);"></div>
-                        <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
+                        <div class="homepage-social-card-body p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
                             <span class="text-white fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;"><?= esc($t($instagramItem, 'label')); ?></span>
-                            <h3 class="text-white fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
+                            <h3 class="homepage-social-handle text-white fw-bolder mb-4" style="font-size: clamp(1.35rem, 2vw, 2.2rem);">
                                 <?= esc($t($instagramItem, 'title')); ?>
                             </h3>
                             <div class="mt-auto d-flex align-items-center gap-3">
@@ -79,9 +79,9 @@ $sectionImg = static function (string $key) use ($section): string {
                         style="background-color: #ffffff; transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
                         onmouseover="this.style.transform='translateY(-10px)';" onmouseout="this.style.transform='translateY(0)';">
                         <div class="position-absolute" style="bottom: 0; right: 0; width: 200px; height: 200px; border-top-left-radius: 200px; background: rgba(0,0,0,0.03);"></div>
-                        <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
+                        <div class="homepage-social-card-body p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
                             <span class="text-secondary fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;"><?= esc($t($tiktokItem, 'label')); ?></span>
-                            <h3 class="text-dark fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
+                            <h3 class="homepage-social-handle text-dark fw-bolder mb-4" style="font-size: clamp(1.35rem, 2vw, 2.2rem);">
                                 <?= esc($t($tiktokItem, 'title')); ?>
                             </h3>
                             <div class="mt-auto d-flex align-items-center gap-3">
@@ -101,9 +101,9 @@ $sectionImg = static function (string $key) use ($section): string {
                         style="background-color: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"
                         onmouseover="this.style.transform='translateY(-10px)'; this.style.borderColor='var(--bamusi-red, #cc0000)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.1)';">
                         <div class="position-absolute" style="top: -20px; right: -20px; width: 120px; height: 120px; border: 20px solid rgba(255,255,255,0.02); border-radius: 20px; transform: rotate(15deg);"></div>
-                        <div class="p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
+                        <div class="homepage-social-card-body p-4 p-lg-5 d-flex flex-column h-100 position-relative z-1">
                             <span class="text-white opacity-75 fw-bold text-uppercase mb-4" style="letter-spacing: 2px; font-size: 0.8rem;"><?= esc($t($youtubeItem, 'label')); ?></span>
-                            <h3 class="text-white fw-bolder mb-5 pb-4" style="font-size: clamp(1.5rem, 2vw, 2.2rem); word-break: break-word; line-height: 1.1;">
+                            <h3 class="homepage-social-handle text-white fw-bolder mb-4" style="font-size: clamp(1.35rem, 2vw, 2.2rem);">
                                 <?= esc($t($youtubeItem, 'title')); ?>
                             </h3>
                             <div class="mt-auto d-flex align-items-center gap-3">

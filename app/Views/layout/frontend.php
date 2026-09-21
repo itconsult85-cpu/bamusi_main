@@ -127,7 +127,7 @@ $partnerLogoUrl = $imgUrl('partner_logo_url', 'assets/images/pdi.png');
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?= base_url('assets/css/bamusi.css?v=20260921-workspace-reveal-2'); ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/bamusi.css?v=20260921-social-card-1'); ?>">
 
     <style>
         /* =========================================================

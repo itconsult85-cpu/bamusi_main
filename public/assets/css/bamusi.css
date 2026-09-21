@@ -481,6 +481,28 @@ body {
   margin-top: 2px;
 }
 
+/* Social cards: keep long handles readable without cutting words or content. */
+.homepage-social-card-body {
+  min-height: 320px;
+}
+.homepage-social-handle {
+  line-height: 1.18;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: none;
+  white-space: normal;
+  max-width: 100%;
+  text-wrap: balance;
+}
+@media (max-width: 575.98px) {
+  .homepage-social-card-body {
+    min-height: 280px;
+  }
+  .homepage-social-handle {
+    font-size: 1.45rem !important;
+  }
+}
+
 /* Responsive */
 @media (max-width: 992px) {
   .about-sidebar {
