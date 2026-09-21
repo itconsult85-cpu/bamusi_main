@@ -73,7 +73,8 @@ foreach ($builderSections as $candidate) {
 <?php endforeach; ?>
 </main>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
+const initHomepageReveal = function () {
     const normalize = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     const builder = document.querySelector('.homepage-builder[data-homepage-renderer="blocks"]');
     const blocks = Array.from(document.querySelectorAll('.homepage-block-section[data-section-key]'));
@@ -140,5 +141,11 @@ document.addEventListener('DOMContentLoaded', function () {
         go(hash);
     }));
     if (window.location.hash) window.setTimeout(() => go(window.location.hash), 0);
-});
+};
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHomepageReveal, {once: true});
+} else {
+    initHomepageReveal();
+}
+})();
 </script>
