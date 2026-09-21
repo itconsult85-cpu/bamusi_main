@@ -121,3 +121,32 @@ $sectionImg = static function (string $key) use ($section): string {
             </div>
         </div>
     </section>
+<script>
+(function () {
+    const fitSocialHandles = function () {
+        document.querySelectorAll('.homepage-social-handle').forEach(function (handleGroup) {
+            const cardRow = handleGroup.closest('.row');
+            if (!cardRow) return;
+            const handles = Array.from(cardRow.querySelectorAll('.homepage-social-handle'));
+            if (!handles.length) return;
+            const minimum = window.innerWidth < 576 ? 15 : 17;
+            let size = window.innerWidth < 576 ? 30 : 36;
+            handles.forEach(handle => {
+                handle.style.whiteSpace = 'nowrap';
+                handle.style.fontSize = size + 'px';
+            });
+            while (size > minimum && handles.some(handle => handle.scrollWidth > handle.clientWidth + 1)) {
+                size -= 0.5;
+                handles.forEach(handle => handle.style.fontSize = size + 'px');
+            }
+            handles.forEach(handle => handle.dataset.fittedFontSize = size + 'px');
+        });
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fitSocialHandles, {once: true});
+    } else {
+        fitSocialHandles();
+    }
+    window.addEventListener('resize', fitSocialHandles, {passive: true});
+})();
+</script>
